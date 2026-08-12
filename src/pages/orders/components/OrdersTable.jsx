@@ -51,7 +51,7 @@ export default function OrdersTable({ orders, currency, onView, onEdit, onDelete
       render: (value) => new Date(value).toLocaleDateString(),
     },
     {
-      accessorKey: 'id',
+      accessorKey: '__actions',
       header: 'Actions',
       render: (_value, row) => (
         <div className="flex items-center gap-2">

@@ -1,6 +1,6 @@
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-let products = [
+export const mockProducts = [
   { id: 1, name: 'Purified Water', type: 'water_refill', volume_gallons: 5, price: 25, stock_quantity: 100, reorder_point: 20 },
   { id: 2, name: 'Alkaline Water', type: 'water_refill', volume_gallons: 5, price: 35, stock_quantity: 50, reorder_point: 10 },
   { id: 3, name: 'Water Jug 5 Gal', type: 'accessory', volume_gallons: 5, price: 150, stock_quantity: 30, reorder_point: 5 },
@@ -8,6 +8,8 @@ let products = [
   { id: 5, name: 'Seal', type: 'accessory', volume_gallons: null, price: 1, stock_quantity: 500, reorder_point: 100 },
   { id: 6, name: 'Dispenser', type: 'equipment', volume_gallons: null, price: 500, stock_quantity: 5, reorder_point: 1 },
 ];
+
+let products = [...mockProducts];
 
 let nextId = 7;
 

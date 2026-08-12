@@ -1,4 +1,4 @@
-import { mockCustomers } from './accounts';
+import { mockCustomers } from './customersMock';
 import { mockProducts } from './productsMock';
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -101,7 +101,7 @@ export async function createOrder(payload) {
     id: nextOrderId++,
     customer_name: customer?.name ?? 'Walk-in',
     change_returned: Number(payload.amount_paid) - Number(payload.total_amount),
-    items: payload.items || [],
+    items: (payload.items || []).map((item) => ({ ...item, id: nextItemId++ })),
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
   };

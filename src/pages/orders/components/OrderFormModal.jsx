@@ -40,8 +40,16 @@ export default function OrderFormModal({ isOpen, onClose, editingId, initialData
     }))
   );
 
-  const customers = useCustomersStore((state) => state.customers);
-  const products = useProductsStore((state) => state.products);
+  const customers = useCustomersStore(
+    useShallow((state) => ({
+      customers: state.customers,
+    }))
+  );
+  const products = useProductsStore(
+    useShallow((state) => ({
+      products: state.products,
+    }))
+  );
 
   const {
     register,
@@ -161,7 +169,7 @@ export default function OrderFormModal({ isOpen, onClose, editingId, initialData
           {watchedItems.map((item, index) => (
             <div key={index} className="flex items-center gap-2 mb-2">
               <select
-                {...register(`items.${index}.product_id` as const, { required: 'Product is required.' })}
+                {...register(`items.${index}.product_id`, { required: 'Product is required.' })}
                 className="flex-1 px-3 py-2 text-sm border border-slate-300 rounded focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
               >
                 <option value="">Select product</option>
@@ -174,7 +182,7 @@ export default function OrderFormModal({ isOpen, onClose, editingId, initialData
               <input
                 type="number"
                 min="1"
-                {...register(`items.${index}.quantity` as const, { required: true, valueAsNumber: true, min: { value: 1, message: 'Min 1' } })}
+                {...register(`items.${index}.quantity`, { required: true, valueAsNumber: true, min: { value: 1, message: 'Min 1' } })}
                 className="w-20 px-3 py-2 text-sm border border-slate-300 rounded focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
               />
               <Button type="button" variant="secondary" onClick={() => removeItem(index)} className="px-2 py-2">

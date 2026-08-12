@@ -30,6 +30,18 @@ export const orderRules = {
   },
 };
 
+export const statusBadgeVariants = {
+  queued: 'slate',
+  processing: 'amber',
+  transit: 'blue',
+  completed: 'green',
+};
+
+export const typeBadgeVariants = {
+  walk_in: 'slate',
+  delivery: 'violet',
+};
+
 const initialState = {
   orders: [],
   status: 'idle',

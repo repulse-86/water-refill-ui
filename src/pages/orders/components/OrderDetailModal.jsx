@@ -1,7 +1,8 @@
 import { Eye } from 'lucide-react';
+import { useShallow } from 'zustand/shallow';
 import Modal from '../../../components/ui/Modal';
 import Button from '../../../components/ui/Button';
-import useOrdersStore, { statusBadgeVariants, typeBadgeVariants } from '../../../store/ordersStore';
+import useOrdersStore from '../../../store/ordersStore';
 
 const statusLabels = {
   queued: 'Queued',
@@ -10,12 +11,19 @@ const statusLabels = {
   completed: 'Completed',
 };
 
+const statusBadgeVariants = {
+  queued: 'slate',
+  processing: 'amber',
+  transit: 'blue',
+  completed: 'green',
+};
+
 export default function OrderDetailModal({ isOpen, onClose, order, onAdvance }) {
   const { advanceStatus, status: storeStatus } = useOrdersStore(
-    (state) => ({
+    useShallow((state) => ({
       advanceStatus: state.advanceStatus,
       status: state.status,
-    })
+    }))
   );
 
   if (!isOpen || !order) return null;

@@ -6,6 +6,7 @@ import ModulePage from './pages/dashboard/ModulePage';
 import Settings from './pages/settings/Settings';
 import Products from './pages/inventory/Products';
 import Customers from './pages/customers/Customers';
+import Orders from './pages/orders/Orders';
 import RequireAuth from './guards/RequireAuth';
 
 function App() {
@@ -24,7 +25,7 @@ function App() {
         >
           <Route path="/dashboard" element={<ModulePage title="Dashboard" />} />
           <Route path="/pos" element={<ModulePage title="POS & Refill Sales" />} />
-          <Route path="/orders" element={<ModulePage title="Order Management & Delivery" />} />
+          <Route path="/orders" element={<Orders />} />
           <Route path="/customers" element={<Customers />} />
           <Route path="/meter-reading" element={<ModulePage title="Meter Reading & Shift Audit" />} />
           <Route path="/settings" element={<Settings />} />
