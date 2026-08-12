@@ -1,89 +1,127 @@
-import { useState } from 'react';
-import { Lock, X } from 'lucide-react';
-import useAuthModalStore from '../../store/authModalStore';
+import { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
+import { useShallow } from 'zustand/shallow';
+import { Lock } from 'lucide-react';
+import useAuthStore, { loginRules } from '../../store/authStore';
+import useServerFieldErrors from '../../hooks/useServerFieldErrors';
+import FormField from '../ui/FormField';
+import Button from '../ui/Button';
+import Modal from '../ui/Modal';
 
-export default function AuthModal() {
-  const isOpen = useAuthModalStore((state) => state.isOpen);
-  const closeAuth = useAuthModalStore((state) => state.closeAuth);
-  const [employeeId, setEmployeeId] = useState('STAFF-OPERATOR');
-  const [pin, setPin] = useState('123456');
+export default function AuthModal({ isOpen, onClose }) {
+  const navigate = useNavigate();
+  const { login, status, message, fieldErrors, resetErrors } = useAuthStore(
+    useShallow((state) => ({
+      login: state.login,
+      status: state.status,
+      message: state.message,
+      fieldErrors: state.fieldErrors,
+      resetErrors: state.resetErrors,
+    }))
+  );
+
+  const {
+    register,
+    handleSubmit,
+    setError,
+    setValue,
+    clearErrors,
+    reset,
+    formState: { errors },
+  } = useForm({
+    defaultValues: { username: 'owner', password: '' },
+  });
+
+  useServerFieldErrors({ setError, fieldErrors });
+
+  useEffect(() => {
+    if (isOpen) {
+      reset({ username: 'owner', password: '' });
+      resetErrors();
+    }
+  }, [isOpen, reset, resetErrors]);
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    closeAuth();
+  const isLoading = status === 'loading';
+  const hasFieldError = Boolean(errors.username || errors.password);
+
+  const fillDemo = () => {
+    setValue('username', 'owner');
+    setValue('password', 'password');
+    clearErrors();
+  };
+
+  const onSubmit = async (data) => {
+    const result = await login(data);
+    if (result.success) {
+      onClose();
+      reset();
+      navigate('/dashboard');
+    }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-      <div className="bg-white rounded border border-slate-300 shadow-xl max-w-md w-full p-6 relative">
-        <div className="flex justify-between items-center border-b border-slate-200 pb-4 mb-4">
-          <div className="flex items-center space-x-2">
-            <Lock className="w-5 h-5 text-sky-600" />
-            <h3 className="font-bold text-slate-900 text-base">Authentication Required</h3>
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Authentication Required"
+      icon={Lock}
+    >
+      <p className="text-xs text-slate-600 mb-4">
+        Accessing the Owner Operations Workspace.
+        Please enter your username and password.
+      </p>
+
+        {message && !hasFieldError && (
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded text-xs text-red-700">
+            {message}
           </div>
-          <button
-            onClick={closeAuth}
-            className="text-slate-400 hover:text-slate-600 text-sm font-semibold px-2 py-1"
-          >
-            <X className="w-4 h-4" />
-          </button>
-        </div>
+        )}
 
-        <p className="text-xs text-slate-600 mb-4">
-          Accessing the Owner Operations Workspace.
-          Please enter your employee PIN or store staff key.
-        </p>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-xs font-medium text-slate-700 mb-1">
-              Employee ID / User Key
-            </label>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
+          <FormField label="Username" htmlFor="login-username" error={errors.username?.message}>
             <input
               type="text"
-              placeholder="e.g. EMP-104"
-              value={employeeId}
-              onChange={(e) => setEmployeeId(e.target.value)}
-              className="w-full px-3 py-2 text-sm border border-slate-300 rounded focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+              placeholder="e.g. owner"
+              {...register('username', loginRules.username)}
             />
-          </div>
+          </FormField>
 
-          <div>
-            <label className="block text-xs font-medium text-slate-700 mb-1">
-              Passcode / Security PIN
-            </label>
+          <FormField label="Password" htmlFor="login-password" error={errors.password?.message}>
             <input
               type="password"
               placeholder="••••••••"
-              value={pin}
-              onChange={(e) => setPin(e.target.value)}
-              className="w-full px-3 py-2 text-sm border border-slate-300 rounded focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+              {...register('password', loginRules.password)}
             />
-          </div>
+          </FormField>
 
-          <div className="p-3 bg-slate-50 rounded border border-slate-200 text-xs text-slate-500">
-            Data metrics, financial registers, and customer lists are rendered after session authorization.
-          </div>
+          <button
+            type="button"
+            onClick={fillDemo}
+            disabled={isLoading}
+            className="w-full p-3 bg-sky-50 border border-sky-200 rounded text-left text-xs text-slate-600 hover:bg-sky-100 transition-colors disabled:opacity-50"
+          >
+            Demo credentials - click to autofill:{' '}
+            <span className="font-semibold text-sky-700">owner</span> /{' '}
+            <span className="font-semibold text-sky-700">password</span>
+          </button>
 
           <div className="flex justify-end space-x-3 pt-2">
-            <button
+            <Button
               type="button"
-              onClick={closeAuth}
-              className="px-4 py-2 border border-slate-300 rounded text-xs font-medium text-slate-700 hover:bg-slate-50"
+              variant="secondary"
+              onClick={onClose}
+              disabled={isLoading}
             >
               Cancel
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white rounded text-xs font-semibold"
-            >
-              Authenticate Session
-            </button>
+            </Button>
+            <Button type="submit" isLoading={isLoading}>
+              {isLoading ? 'Authenticating…' : 'Authenticate Session'}
+            </Button>
           </div>
         </form>
-      </div>
-    </div>
+    </Modal>
   );
 }

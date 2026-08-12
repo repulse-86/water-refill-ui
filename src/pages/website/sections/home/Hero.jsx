@@ -1,8 +1,6 @@
 import { ArrowRight } from 'lucide-react';
-import useAuthModalStore from '../../../../store/authModalStore';
 
-export default function Hero() {
-  const openAuth = useAuthModalStore((state) => state.openAuth);
+export default function Hero({ onOpenAuth }) {
 
   return (
     <section className="bg-white border-b border-slate-200 py-12 md:py-16">
@@ -19,7 +17,7 @@ export default function Hero() {
 
           <div className="flex flex-col sm:flex-row gap-3">
             <button
-              onClick={openAuth}
+              onClick={onOpenAuth}
               className="inline-flex items-center justify-center bg-sky-600 hover:bg-sky-700 text-white px-5 py-3 rounded text-sm font-semibold transition-colors"
             >
               Launch Operations Console
