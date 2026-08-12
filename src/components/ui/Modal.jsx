@@ -1,6 +1,6 @@
 import { X } from 'lucide-react';
 
-export default function Modal({ isOpen, onClose, title, icon: Icon, children }) {
+export default function Modal({ isOpen, onClose, title, icon: Icon, hideClose = false, children }) {
   if (!isOpen) return null;
 
   return (
@@ -11,12 +11,14 @@ export default function Modal({ isOpen, onClose, title, icon: Icon, children }) 
             {Icon && <Icon className="w-5 h-5 text-sky-600" />}
             <h3 className="font-bold text-slate-900 text-base">{title}</h3>
           </div>
-          <button
-            onClick={onClose}
-            className="text-slate-400 hover:text-slate-600 text-sm font-semibold px-2 py-1"
-          >
-            <X className="w-4 h-4" />
-          </button>
+          {!hideClose && (
+            <button
+              onClick={onClose}
+              className="text-slate-400 hover:text-slate-600 text-sm font-semibold px-2 py-1"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
         </div>
 
         {children}
