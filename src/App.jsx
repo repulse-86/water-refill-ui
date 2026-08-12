@@ -4,6 +4,7 @@ import AppLayout from './layouts/AppLayout';
 import Home from './pages/website/Home';
 import ModulePage from './pages/dashboard/ModulePage';
 import Settings from './pages/settings/Settings';
+import Products from './pages/inventory/Products';
 import RequireAuth from './guards/RequireAuth';
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
           <Route path="/customers" element={<ModulePage title="Customer Registry & Ledger" />} />
           <Route path="/meter-reading" element={<ModulePage title="Meter Reading & Shift Audit" />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/inventory" element={<Products />} />
         </Route>
       </Routes>
     </BrowserRouter>

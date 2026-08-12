@@ -1,9 +1,10 @@
 import { NavLink, Link, useNavigate } from 'react-router-dom';
-import { Droplet, LayoutDashboard, Package, Truck, Users, Gauge, Settings, LogOut } from 'lucide-react';
+import { Droplet, LayoutDashboard, Package, Truck, Users, Gauge, Settings, Boxes, LogOut } from 'lucide-react';
 import useAuthStore from '../../store/authStore';
 
 const navItems = [
   { to: '/dashboard', label: 'Overview', icon: LayoutDashboard },
+  { to: '/inventory', label: 'Inventory & Products', icon: Boxes },
   { to: '/pos', label: 'POS & Refill Sales', icon: Package },
   { to: '/orders', label: 'Orders & Delivery', icon: Truck },
   { to: '/customers', label: 'Customer Ledger', icon: Users },
