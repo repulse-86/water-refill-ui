@@ -1,5 +1,5 @@
 import { NavLink, Link, useNavigate } from 'react-router-dom';
-import { Droplet, LayoutDashboard, Package, Truck, Users, Gauge, LogOut } from 'lucide-react';
+import { Droplet, LayoutDashboard, Package, Truck, Users, Gauge, Settings, LogOut } from 'lucide-react';
 import useAuthStore from '../../store/authStore';
 
 const navItems = [
@@ -8,6 +8,7 @@ const navItems = [
   { to: '/orders', label: 'Orders & Delivery', icon: Truck },
   { to: '/customers', label: 'Customer Ledger', icon: Users },
   { to: '/meter-reading', label: 'Meter & Shift Audit', icon: Gauge },
+  { to: '/settings', label: 'Store Settings', icon: Settings },
 ];
 
 export default function SidebarContent({ onNavigate }) {
