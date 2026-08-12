@@ -1,12 +1,12 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import MainLayout from './layouts/MainLayout';
+import GuestLayout from './layouts/GuestLayout';
 import Home from './pages/website/Home';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<MainLayout />}>
+        <Route path="/" element={<GuestLayout />}>
           <Route index element={<Home />} />
           {/* Add more routes as needed */}
         </Route>
