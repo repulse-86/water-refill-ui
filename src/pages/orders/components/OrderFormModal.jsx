@@ -40,16 +40,8 @@ export default function OrderFormModal({ isOpen, onClose, editingId, initialData
     }))
   );
 
-  const customers = useCustomersStore(
-    useShallow((state) => ({
-      customers: state.customers,
-    }))
-  );
-  const products = useProductsStore(
-    useShallow((state) => ({
-      products: state.products,
-    }))
-  );
+  const customers = useCustomersStore((state) => state.customers);
+  const products = useProductsStore((state) => state.products);
 
   const {
     register,
