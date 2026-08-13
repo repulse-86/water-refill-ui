@@ -105,7 +105,7 @@ export const mockOrders = [
   },
 ];
 
-function makeCompletedOrder({ orderType, paymentMethod, customerId, customerName, items, deliveryFee = 0, daysAgo, notes = null, address = '123 Main St' }) {
+function makeCompletedOrder({ orderType, paymentMethod, customerId, customerName, items, deliveryFee = 0, daysAgo, notes = null, address = '123 Main St', bottlesReturned = 0 }) {
   const subtotal = items.reduce((sum, item) => sum + item.quantity * item.unit_price, 0);
   const total = subtotal + deliveryFee;
   const timestamp = isoDaysAgo(daysAgo);
@@ -134,7 +134,7 @@ function makeCompletedOrder({ orderType, paymentMethod, customerId, customerName
     delivery_address: orderType === 'delivery' ? address : null,
     delivery_status: orderType === 'delivery' ? 'delivered' : null,
     delivered_at: orderType === 'delivery' ? timestamp : null,
-    bottles_returned_at_delivery: 0,
+    bottles_returned_at_delivery: orderType === 'delivery' ? bottlesReturned : 0,
     cash_collected_at_delivery: orderType === 'delivery' && paymentMethod !== 'credit' ? total : 0,
   };
 }
@@ -169,6 +169,7 @@ mockOrders.push(
     deliveryFee: 20,
     daysAgo: 3,
     address: '456 Oak Ave',
+    bottlesReturned: 2,
   }),
   makeCompletedOrder({
     orderType: 'walk_in',
@@ -193,6 +194,27 @@ mockOrders.push(
     ],
     deliveryFee: 15,
     daysAgo: 1,
+    bottlesReturned: 1,
+  }),
+  makeCompletedOrder({
+    orderType: 'walk_in',
+    paymentMethod: 'cash',
+    customerId: 4,
+    customerName: 'Ana Garcia',
+    items: [{ product_id: 1, product_name: 'Purified Water', quantity: 2, unit_price: 25 }],
+    daysAgo: 0,
+    notes: 'Morning refill',
+  }),
+  makeCompletedOrder({
+    orderType: 'walk_in',
+    paymentMethod: 'e_wallet',
+    customerId: null,
+    customerName: 'Walk-in',
+    items: [
+      { product_id: 1, product_name: 'Purified Water', quantity: 1, unit_price: 25 },
+      { product_id: 5, product_name: 'Seal', quantity: 1, unit_price: 1 },
+    ],
+    daysAgo: 0,
   })
 );
 

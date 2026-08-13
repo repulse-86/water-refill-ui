@@ -6,7 +6,7 @@ export const mockProducts = [
   { id: 3, name: 'Water Jug 5 Gal', type: 'accessory', volume_gallons: 5, price: 150, stock_quantity: 30, reorder_point: 5 },
   { id: 4, name: 'Cap', type: 'accessory', volume_gallons: null, price: 2, stock_quantity: 500, reorder_point: 100 },
   { id: 5, name: 'Seal', type: 'accessory', volume_gallons: null, price: 1, stock_quantity: 500, reorder_point: 100 },
-  { id: 6, name: 'Dispenser', type: 'equipment', volume_gallons: null, price: 500, stock_quantity: 5, reorder_point: 1 },
+  { id: 6, name: 'Dispenser', type: 'equipment', volume_gallons: null, price: 500, stock_quantity: 0, reorder_point: 1 },
 ];
 
 export const billOfMaterials = {
