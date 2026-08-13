@@ -1,4 +1,5 @@
 import { mockCustomers } from './customersMock';
+import { applySaleEffects } from './productsMock';
 import { canTransition, DELIVERY_STATUSES, ORDER_STATUSES } from '../domain/orderStatus';
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -114,6 +115,7 @@ export async function createOrder(payload) {
     ...payload,
     id: nextOrderId++,
     customer_name: customer?.name ?? 'Walk-in',
+    status: ORDER_STATUSES.queued,
     change_returned: Number(payload.amount_paid) - Number(payload.total_amount),
     items: (payload.items || []).map((item) => ({ ...item, id: nextItemId++ })),
     created_at: new Date().toISOString(),
@@ -125,6 +127,19 @@ export async function createOrder(payload) {
     cash_collected_at_delivery: 0,
   };
   mockOrders.unshift(order);
+
+  await applySaleEffects(payload.items);
+
+  if (customer) {
+    const bottlesReturned = Number(payload.bottles_returned ?? 0);
+    if (bottlesReturned > 0) {
+      customer.bottle_debt = Math.max(0, customer.bottle_debt - bottlesReturned);
+    }
+    if (payload.payment_method === 'credit') {
+      customer.outstanding_balance = Number(customer.outstanding_balance) + Number(payload.total_amount);
+    }
+  }
+
   return { ...order, items: [...order.items] };
 }
 
