@@ -30,18 +30,6 @@ export const orderRules = {
   },
 };
 
-export const statusBadgeVariants = {
-  queued: 'slate',
-  processing: 'amber',
-  transit: 'blue',
-  completed: 'green',
-};
-
-export const typeBadgeVariants = {
-  walk_in: 'slate',
-  delivery: 'violet',
-};
-
 const initialState = {
   orders: [],
   status: 'idle',
@@ -51,7 +39,7 @@ const initialState = {
 
 const useOrdersStore = create(
   persist(
-    (set, get) => ({
+    (set) => ({
       ...initialState,
 
       fetchOrders: async () => {
@@ -122,26 +110,6 @@ const useOrdersStore = create(
             status: 'error',
             fieldErrors: null,
             message: err?.message ?? 'Unable to delete the order.',
-          };
-          set(payload);
-          return { success: false, ...payload };
-        }
-      },
-
-      advanceStatus: async (id) => {
-        set({ status: 'loading', fieldErrors: null, message: null });
-        try {
-          const order = await ordersApi.advanceStatus(id);
-          set((state) => ({
-            orders: state.orders.map((o) => (o.id === id ? order : o)),
-            status: 'success',
-          }));
-          return { success: true, order };
-        } catch (err) {
-          const payload = {
-            status: 'error',
-            fieldErrors: null,
-            message: err?.message ?? 'Unable to advance order status.',
           };
           set(payload);
           return { success: false, ...payload };

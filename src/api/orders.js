@@ -3,7 +3,6 @@ import {
   createOrder as mockCreateOrder,
   updateOrder as mockUpdateOrder,
   deleteOrder as mockDeleteOrder,
-  advanceStatus as mockAdvanceStatus,
 } from '../mock/ordersMock';
 
 export async function listOrders() {
@@ -20,8 +19,4 @@ export async function updateOrder(id, payload) {
 
 export async function deleteOrder(id) {
   return mockDeleteOrder(id);
-}
-
-export async function advanceStatus(id) {
-  return mockAdvanceStatus(id);
 }

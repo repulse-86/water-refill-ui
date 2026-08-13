@@ -2,26 +2,13 @@ import { Eye } from 'lucide-react';
 import { useShallow } from 'zustand/shallow';
 import Modal from '../../../components/ui/Modal';
 import Button from '../../../components/ui/Button';
-import useOrdersStore from '../../../store/ordersStore';
-
-const statusLabels = {
-  queued: 'Queued',
-  processing: 'Processing',
-  transit: 'Transit',
-  completed: 'Completed',
-};
-
-const statusBadgeVariants = {
-  queued: 'slate',
-  processing: 'amber',
-  transit: 'blue',
-  completed: 'green',
-};
+import useFulfillmentStore from '../../../store/fulfillmentStore';
+import { STATUS_LABELS, STATUS_BADGE_VARIANTS, getNextStatus, isTerminal } from '../../../domain/orderStatus';
 
 export default function OrderDetailModal({ isOpen, onClose, order, onAdvance }) {
-  const { advanceStatus, status: storeStatus } = useOrdersStore(
+  const { transitionOrderStatus, status: storeStatus } = useFulfillmentStore(
     useShallow((state) => ({
-      advanceStatus: state.advanceStatus,
+      transitionOrderStatus: state.transitionOrderStatus,
       status: state.status,
     }))
   );
@@ -29,10 +16,11 @@ export default function OrderDetailModal({ isOpen, onClose, order, onAdvance }) 
   if (!isOpen || !order) return null;
 
   const isLoading = storeStatus === 'loading';
-  const canAdvance = order.status !== 'completed';
+  const canAdvance = !isTerminal(order);
 
   const handleAdvance = async () => {
-    await advanceStatus(order.id);
+    const next = getNextStatus(order);
+    if (next) await transitionOrderStatus(order.id, next);
     if (onAdvance) onAdvance();
   };
 
@@ -41,8 +29,8 @@ export default function OrderDetailModal({ isOpen, onClose, order, onAdvance }) 
       <div className="space-y-4">
         <div className="flex items-center gap-2">
           <span className="text-xs text-slate-500">Status:</span>
-          <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-${statusBadgeVariants[order.status]}-100 text-${statusBadgeVariants[order.status]}-700`}>
-            {statusLabels[order.status]}
+          <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-${STATUS_BADGE_VARIANTS[order.status]}-100 text-${STATUS_BADGE_VARIANTS[order.status]}-700`}>
+            {STATUS_LABELS[order.status]}
           </span>
         </div>
 

@@ -9,16 +9,13 @@ import OrderDetailModal from './components/OrderDetailModal';
 import OrderDeleteDialog from './components/OrderDeleteDialog';
 
 export default function Orders() {
-  const { orders, status, fetchOrders, createOrder, updateOrder, deleteOrder, advanceStatus } =
+  const { orders, status, fetchOrders, deleteOrder } =
     useOrdersStore(
       useShallow((state) => ({
         orders: state.orders,
         status: state.status,
         fetchOrders: state.fetchOrders,
-        createOrder: state.createOrder,
-        updateOrder: state.updateOrder,
         deleteOrder: state.deleteOrder,
-        advanceStatus: state.advanceStatus,
       }))
     );
 

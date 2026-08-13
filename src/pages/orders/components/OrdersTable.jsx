@@ -2,18 +2,7 @@ import { Eye, Pencil, Trash2 } from 'lucide-react';
 import DataTable from '../../../components/ui/DataTable';
 import IconButton from '../../../components/ui/IconButton';
 import Badge from '../../../components/ui/Badge';
-
-const statusBadgeVariants = {
-  queued: 'slate',
-  processing: 'amber',
-  transit: 'blue',
-  completed: 'green',
-};
-
-const typeBadgeVariants = {
-  walk_in: 'slate',
-  delivery: 'violet',
-};
+import { STATUS_BADGE_VARIANTS, TYPE_BADGE_VARIANTS, TYPE_LABELS, STATUS_LABELS } from '../../../domain/orderStatus';
 
 export default function OrdersTable({ orders, currency, onView, onEdit, onDelete }) {
   const columns = [
@@ -22,12 +11,12 @@ export default function OrdersTable({ orders, currency, onView, onEdit, onDelete
     {
       accessorKey: 'order_type',
       header: 'Type',
-      render: (value) => <Badge variant={typeBadgeVariants[value]}>{value === 'walk_in' ? 'Walk-In' : 'Delivery'}</Badge>,
+      render: (value) => <Badge variant={TYPE_BADGE_VARIANTS[value]}>{TYPE_LABELS[value]}</Badge>,
     },
     {
       accessorKey: 'status',
       header: 'Status',
-      render: (value) => <Badge variant={statusBadgeVariants[value]}>{value.charAt(0).toUpperCase() + value.slice(1)}</Badge>,
+      render: (value) => <Badge variant={STATUS_BADGE_VARIANTS[value]}>{STATUS_LABELS[value]}</Badge>,
     },
     {
       accessorKey: 'payment_method',
