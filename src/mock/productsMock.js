@@ -9,9 +9,41 @@ export const mockProducts = [
   { id: 6, name: 'Dispenser', type: 'equipment', volume_gallons: null, price: 500, stock_quantity: 5, reorder_point: 1 },
 ];
 
+export const billOfMaterials = {
+  1: [
+    { component_id: 4, quantity: 1 },
+    { component_id: 5, quantity: 1 },
+  ],
+  2: [
+    { component_id: 4, quantity: 1 },
+    { component_id: 5, quantity: 1 },
+  ],
+};
+
 let products = [...mockProducts];
 
 let nextId = 7;
+
+function deductStock(productId, quantity) {
+  const index = products.findIndex((p) => p.id === Number(productId));
+  if (index === -1) return;
+  products[index] = {
+    ...products[index],
+    stock_quantity: Math.max(0, products[index].stock_quantity - Number(quantity)),
+  };
+}
+
+export async function applySaleEffects(items) {
+  await delay(200);
+  (items || []).forEach((item) => {
+    deductStock(item.product_id, item.quantity);
+    const components = billOfMaterials[Number(item.product_id)];
+    if (components) {
+      components.forEach((component) => deductStock(component.component_id, component.quantity * Number(item.quantity)));
+    }
+  });
+  return { success: true };
+}
 
 const clone = (p) => ({ ...p });
 

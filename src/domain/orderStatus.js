@@ -16,6 +16,18 @@ export const DELIVERY_STATUSES = {
   failed: 'failed',
 };
 
+export const PAYMENT_METHODS = {
+  cash: 'cash',
+  e_wallet: 'e_wallet',
+  credit: 'credit',
+};
+
+export const PAYMENT_METHOD_LABELS = {
+  [PAYMENT_METHODS.cash]: 'Cash',
+  [PAYMENT_METHODS.e_wallet]: 'E-Wallet',
+  [PAYMENT_METHODS.credit]: 'Credit',
+};
+
 export const STATUS_LABELS = {
   queued: 'Queued',
   processing: 'Processing',
