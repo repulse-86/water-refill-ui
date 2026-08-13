@@ -13,27 +13,17 @@ function dateKey(offsetDays) {
 }
 
 export const mockMeterReadings = [
-  {
-    id: 1,
-    reading_date: dateKey(-1),
-    meter_value: 100,
-    notes: 'End of previous day',
-    created_at: new Date(Date.now() - 86400000).toISOString(),
-    updated_at: new Date(Date.now() - 86400000).toISOString(),
-  },
-  {
-    id: 2,
-    reading_date: dateKey(0),
-    meter_value: 108.5,
-    notes: 'End of shift',
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
+  { id: 1, reading_date: dateKey(-5), meter_value: 0, notes: 'Start of week', created_at: new Date(Date.now() - 5 * 86400000).toISOString(), updated_at: new Date(Date.now() - 5 * 86400000).toISOString() },
+  { id: 2, reading_date: dateKey(-4), meter_value: 15, notes: null, created_at: new Date(Date.now() - 4 * 86400000).toISOString(), updated_at: new Date(Date.now() - 4 * 86400000).toISOString() },
+  { id: 3, reading_date: dateKey(-3), meter_value: 25, notes: null, created_at: new Date(Date.now() - 3 * 86400000).toISOString(), updated_at: new Date(Date.now() - 3 * 86400000).toISOString() },
+  { id: 4, reading_date: dateKey(-2), meter_value: 35, notes: null, created_at: new Date(Date.now() - 2 * 86400000).toISOString(), updated_at: new Date(Date.now() - 2 * 86400000).toISOString() },
+  { id: 5, reading_date: dateKey(-1), meter_value: 45, notes: 'End of previous day', created_at: new Date(Date.now() - 86400000).toISOString(), updated_at: new Date(Date.now() - 86400000).toISOString() },
+  { id: 6, reading_date: dateKey(0), meter_value: 54, notes: 'End of shift', created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
 ];
 
 let readings = [...mockMeterReadings];
 
-let nextId = 3;
+let nextId = 7;
 
 const validate = (payload = {}, excludeId = null) => {
   const errors = {};
@@ -61,6 +51,10 @@ const validate = (payload = {}, excludeId = null) => {
 
   return errors;
 };
+
+export function getMeterReadings() {
+  return readings;
+}
 
 export async function listMeterReadings() {
   await delay(300);

@@ -7,6 +7,8 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 let nextOrderId = 1;
 let nextItemId = 1;
 
+const isoDaysAgo = (days) => new Date(Date.now() - days * 86400000).toISOString();
+
 export const mockOrders = [
   {
     id: nextOrderId++,
@@ -102,6 +104,97 @@ export const mockOrders = [
     cash_collected_at_delivery: 0,
   },
 ];
+
+function makeCompletedOrder({ orderType, paymentMethod, customerId, customerName, items, deliveryFee = 0, daysAgo, notes = null, address = '123 Main St' }) {
+  const subtotal = items.reduce((sum, item) => sum + item.quantity * item.unit_price, 0);
+  const total = subtotal + deliveryFee;
+  const timestamp = isoDaysAgo(daysAgo);
+  return {
+    id: nextOrderId++,
+    customer_id: customerId,
+    customer_name: customerName,
+    order_type: orderType,
+    status: 'completed',
+    payment_method: paymentMethod,
+    total_amount: total,
+    amount_paid: paymentMethod === 'credit' ? 0 : total,
+    change_returned: 0,
+    delivery_fee: deliveryFee,
+    notes,
+    items: items.map((item) => ({
+      id: nextItemId++,
+      product_id: item.product_id,
+      product_name: item.product_name,
+      quantity: item.quantity,
+      unit_price: item.unit_price,
+      subtotal: item.quantity * item.unit_price,
+    })),
+    created_at: timestamp,
+    updated_at: timestamp,
+    delivery_address: orderType === 'delivery' ? address : null,
+    delivery_status: orderType === 'delivery' ? 'delivered' : null,
+    delivered_at: orderType === 'delivery' ? timestamp : null,
+    bottles_returned_at_delivery: 0,
+    cash_collected_at_delivery: orderType === 'delivery' && paymentMethod !== 'credit' ? total : 0,
+  };
+}
+
+mockOrders.push(
+  makeCompletedOrder({
+    orderType: 'walk_in',
+    paymentMethod: 'cash',
+    customerId: 2,
+    customerName: 'Maria Santos',
+    items: [{ product_id: 1, product_name: 'Purified Water', quantity: 3, unit_price: 25 }],
+    daysAgo: 5,
+    notes: 'Weekend pickup',
+  }),
+  makeCompletedOrder({
+    orderType: 'walk_in',
+    paymentMethod: 'e_wallet',
+    customerId: 4,
+    customerName: 'Ana Garcia',
+    items: [{ product_id: 1, product_name: 'Purified Water', quantity: 3, unit_price: 25 }],
+    daysAgo: 4,
+  }),
+  makeCompletedOrder({
+    orderType: 'delivery',
+    paymentMethod: 'cash',
+    customerId: 3,
+    customerName: 'Pedro Reyes',
+    items: [
+      { product_id: 1, product_name: 'Purified Water', quantity: 2, unit_price: 25 },
+      { product_id: 5, product_name: 'Seal', quantity: 1, unit_price: 1 },
+    ],
+    deliveryFee: 20,
+    daysAgo: 3,
+    address: '456 Oak Ave',
+  }),
+  makeCompletedOrder({
+    orderType: 'walk_in',
+    paymentMethod: 'credit',
+    customerId: 1,
+    customerName: 'Juan Dela Cruz',
+    items: [
+      { product_id: 1, product_name: 'Purified Water', quantity: 2, unit_price: 25 },
+      { product_id: 3, product_name: 'Water Jug 5 Gal', quantity: 1, unit_price: 150 },
+    ],
+    daysAgo: 2,
+  }),
+  makeCompletedOrder({
+    orderType: 'delivery',
+    paymentMethod: 'e_wallet',
+    customerId: 2,
+    customerName: 'Maria Santos',
+    items: [
+      { product_id: 1, product_name: 'Purified Water', quantity: 2, unit_price: 25 },
+      { product_id: 4, product_name: 'Cap', quantity: 1, unit_price: 2 },
+      { product_id: 5, product_name: 'Seal', quantity: 1, unit_price: 1 },
+    ],
+    deliveryFee: 15,
+    daysAgo: 1,
+  })
+);
 
 export async function listOrders() {
   await delay(300);

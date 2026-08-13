@@ -86,6 +86,10 @@ const validate = (payload = {}, excludeId = null) => {
   return errors;
 };
 
+export function getProducts() {
+  return products;
+}
+
 export async function listProducts() {
   await delay(300);
   return products.map(clone);
