@@ -10,6 +10,7 @@ import Orders from './pages/orders/Orders';
 import Delivery from './pages/delivery/Delivery';
 import PosTerminal from './pages/pos/PosTerminal';
 import MeterReadings from './pages/meter/MeterReadings';
+import Reports from './pages/reports/Reports';
 import RequireAuth from './guards/RequireAuth';
 
 function App() {
@@ -32,6 +33,7 @@ function App() {
           <Route path="/delivery" element={<Delivery />} />
           <Route path="/customers" element={<Customers />} />
           <Route path="/meter-reading" element={<MeterReadings />} />
+          <Route path="/reports" element={<Reports />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/inventory" element={<Products />} />
         </Route>
