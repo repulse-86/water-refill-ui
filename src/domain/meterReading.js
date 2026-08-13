@@ -1,6 +1,6 @@
 export const VARIANCE_TOLERANCE = 0.10;
 
-function toDateKey(date) {
+export function toDateKey(date) {
   if (typeof date === 'string') return date.slice(0, 10);
   const d = new Date(date);
   const mm = String(d.getMonth() + 1).padStart(2, '0');
