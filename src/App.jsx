@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import GuestLayout from './layouts/GuestLayout';
 import AppLayout from './layouts/AppLayout';
 import Home from './pages/website/Home';
-import ModulePage from './pages/dashboard/ModulePage';
+import Dashboard from './pages/dashboard/Dashboard';
 import Settings from './pages/settings/Settings';
 import Products from './pages/inventory/Products';
 import Customers from './pages/customers/Customers';
@@ -27,7 +27,7 @@ function App() {
             </RequireAuth>
           }
         >
-          <Route path="/dashboard" element={<ModulePage title="Dashboard" />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/pos" element={<PosTerminal />} />
           <Route path="/orders" element={<Orders />} />
           <Route path="/delivery" element={<Delivery />} />

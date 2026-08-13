@@ -1,0 +1,65 @@
+import { useEffect, useRef } from 'react';
+import { useShallow } from 'zustand/shallow';
+import useDashboardStore from '../../store/dashboardStore';
+import useSettingsStore from '../../store/settingsStore';
+import DashboardHeader from './components/DashboardHeader';
+import TodaySalesCard from './components/TodaySalesCard';
+import QuickStats from './components/QuickStats';
+import PendingOrdersList from './components/PendingOrdersList';
+import LowStockAlerts from './components/LowStockAlerts';
+
+export default function Dashboard() {
+  const { dashboard, status, message, fieldErrors, fetchDashboard } = useDashboardStore(
+    useShallow((state) => ({
+      dashboard: state.dashboard,
+      status: state.status,
+      message: state.message,
+      fieldErrors: state.fieldErrors,
+      fetchDashboard: state.fetchDashboard,
+    }))
+  );
+  const currency = useSettingsStore((state) => state.settings?.currency ?? 'PHP');
+
+  const fetchedRef = useRef(false);
+
+  useEffect(() => {
+    if (!fetchedRef.current && dashboard == null && status === 'idle') {
+      fetchedRef.current = true;
+      fetchDashboard();
+    }
+  }, [dashboard, status, fetchDashboard]);
+
+  const isLoading = status === 'loading';
+  const hasError = status === 'error' && message;
+
+  return (
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <DashboardHeader />
+
+      {hasError && (
+        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded text-xs text-red-700">
+          {message}
+          {fieldErrors && <pre className="mt-2 text-[10px]">{JSON.stringify(fieldErrors, null, 2)}</pre>}
+        </div>
+      )}
+
+      {isLoading && !dashboard && (
+        <p className="text-sm text-slate-400">Loading dashboard…</p>
+      )}
+
+      {dashboard && (
+        <>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+            <TodaySalesCard today={dashboard.today} currency={currency} />
+            <QuickStats stats={dashboard.quickStats} />
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <PendingOrdersList orders={dashboard.pendingOrders} currency={currency} />
+            <LowStockAlerts products={dashboard.lowStock} />
+          </div>
+        </>
+      )}
+    </div>
+  );
+}

@@ -3,7 +3,7 @@ import { Droplet, LayoutDashboard, Package, Truck, ClipboardList, Users, Gauge, 
 import useAuthStore from '../../store/authStore';
 
 const navItems = [
-  { to: '/dashboard', label: 'Overview', icon: LayoutDashboard },
+  { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { to: '/inventory', label: 'Inventory & Products', icon: Boxes },
   { to: '/pos', label: 'POS & Refill Sales', icon: Package },
   { to: '/orders', label: 'Orders & Delivery', icon: Truck },
