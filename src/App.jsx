@@ -8,6 +8,7 @@ import Products from './pages/inventory/Products';
 import Customers from './pages/customers/Customers';
 import Orders from './pages/orders/Orders';
 import Delivery from './pages/delivery/Delivery';
+import PosTerminal from './pages/pos/PosTerminal';
 import RequireAuth from './guards/RequireAuth';
 
 function App() {
@@ -25,7 +26,7 @@ function App() {
           }
         >
           <Route path="/dashboard" element={<ModulePage title="Dashboard" />} />
-          <Route path="/pos" element={<ModulePage title="POS & Refill Sales" />} />
+          <Route path="/pos" element={<PosTerminal />} />
           <Route path="/orders" element={<Orders />} />
           <Route path="/delivery" element={<Delivery />} />
           <Route path="/customers" element={<Customers />} />
