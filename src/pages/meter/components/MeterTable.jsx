@@ -1,0 +1,72 @@
+import { Pencil, Trash2 } from 'lucide-react';
+import DataTable from '../../../components/ui/DataTable';
+import IconButton from '../../../components/ui/IconButton';
+import Badge from '../../../components/ui/Badge';
+
+function formatValue(value) {
+  if (value == null) return '—';
+  return Number(value).toFixed(2);
+}
+
+export default function MeterTable({ readings, onEdit, onDelete }) {
+  const columns = [
+    {
+      accessorKey: 'reading_date',
+      header: 'Date',
+      render: (value) => new Date(value).toLocaleDateString(),
+    },
+    {
+      accessorKey: 'meter_value',
+      header: 'Meter Reading',
+      render: (value) => `${formatValue(value)} gal`,
+    },
+    {
+      accessorKey: 'expected_volume',
+      header: 'Expected',
+      render: (value) => `${formatValue(value)} gal`,
+    },
+    {
+      accessorKey: 'actual_throughput',
+      header: 'Throughput',
+      render: (value) => `${formatValue(value)} gal`,
+    },
+    {
+      accessorKey: 'variance',
+      header: 'Variance',
+      render: (value, row) => {
+        if (value == null) return '—';
+        const pct = row.variance_pct != null ? ` (${row.variance_pct}%)` : '';
+        const className = row.flagged ? 'font-medium text-red-600' : 'text-slate-700';
+        return <span className={className}>{formatValue(value)} gal{pct}</span>;
+      },
+    },
+    {
+      accessorKey: 'flagged',
+      header: 'Status',
+      render: (value, row) => {
+        if (row.actual_throughput == null) return <Badge variant="slate">No Data</Badge>;
+        return value ? <Badge variant="red">Flagged</Badge> : <Badge variant="green">OK</Badge>;
+      },
+    },
+    {
+      accessorKey: 'id',
+      header: 'Actions',
+      render: (_value, row) => (
+        <div className="flex items-center gap-2">
+          <IconButton icon={Pencil} onClick={() => onEdit(row)} title="Edit" variant="edit" />
+          <IconButton icon={Trash2} onClick={() => onDelete(row)} title="Delete" variant="danger" />
+        </div>
+      ),
+    },
+  ];
+
+  return (
+    <DataTable
+      columns={columns}
+      data={readings}
+      searchKeys={['reading_date']}
+      searchPlaceholder="Search readings…"
+      emptyMessage="No meter readings recorded."
+    />
+  );
+}
