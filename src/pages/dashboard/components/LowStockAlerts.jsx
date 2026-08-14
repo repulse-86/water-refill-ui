@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import Badge from '../../../components/ui/Badge';
+import Button from '../../../components/ui/Button';
 import { typeLabels } from '../../../store/productsStore';
 
 export default function LowStockAlerts({ products }) {
@@ -34,9 +35,9 @@ export default function LowStockAlerts({ products }) {
       )}
 
       <div className="px-4 py-3 border-t border-slate-200">
-        <Link to="/inventory" className="text-xs font-semibold text-sky-600 hover:text-sky-700">
-          Manage inventory →
-        </Link>
+        <Button asChild variant="secondary" className="w-full">
+          <Link to="/inventory">Manage inventory →</Link>
+        </Button>
       </div>
     </div>
   );
