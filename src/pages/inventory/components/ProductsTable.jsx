@@ -10,7 +10,7 @@ const typeBadgeVariants = {
   equipment: 'violet',
 };
 
-export default function ProductsTable({ products, currency, onEdit, onDelete }) {
+export default function ProductsTable({ products, currency, isLoading, onEdit, onDelete }) {
   const columns = [
     { accessorKey: 'name', header: 'Product' },
     {
@@ -59,6 +59,7 @@ export default function ProductsTable({ products, currency, onEdit, onDelete }) 
     <DataTable
       columns={columns}
       data={products}
+      isLoading={isLoading}
       searchKeys={['name', 'type']}
       searchPlaceholder="Search products…"
       emptyMessage="No products found."

@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useShallow } from 'zustand/shallow';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 import useOrdersStore from '../../store/ordersStore';
 import useFulfillmentStore from '../../store/fulfillmentStore';
 import useSettingsStore from '../../store/settingsStore';
@@ -65,7 +67,11 @@ export default function Delivery() {
       <DeliveryHeader view={view} onViewChange={setView} />
 
       {isLoading && orders.length === 0 && (
-        <p className="text-sm text-slate-400">Loading orders…</p>
+        <div className="space-y-2">
+          <Skeleton height={64} className="!rounded" />
+          <Skeleton height={64} className="!rounded" />
+          <Skeleton height={64} className="!rounded" />
+        </div>
       )}
 
       {view === 'kanban' && (
@@ -83,6 +89,7 @@ export default function Delivery() {
         <DeliveryTable
           deliveryOrders={deliveryOrders}
           currency={currency}
+          isLoading={isLoading}
           onRecord={openRecord}
         />
       )}

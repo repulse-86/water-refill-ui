@@ -9,7 +9,7 @@ function formatValue(value) {
   return Number(value).toFixed(2);
 }
 
-export default function MeterTable({ readings, onEdit, onDelete }) {
+export default function MeterTable({ readings, isLoading, onEdit, onDelete }) {
   const columns = [
     {
       accessorKey: 'reading_date',
@@ -67,6 +67,7 @@ export default function MeterTable({ readings, onEdit, onDelete }) {
     <DataTable
       columns={columns}
       data={readings}
+      isLoading={isLoading}
       searchKeys={['reading_date']}
       searchPlaceholder="Search readings…"
       emptyMessage="No meter readings recorded."

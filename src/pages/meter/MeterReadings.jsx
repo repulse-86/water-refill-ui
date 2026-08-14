@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useShallow } from 'zustand/shallow';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 import useMeterReadingsStore from '../../store/meterReadingsStore';
 import MeterHeader from './components/MeterHeader';
 import MeterSummary from './components/MeterSummary';
@@ -61,12 +63,12 @@ export default function MeterReadings() {
       <MeterHeader onAdd={openAdd} />
 
       {isLoading && readings.length === 0 && (
-        <p className="text-sm text-slate-400">Loading meter readings…</p>
+        <Skeleton height={80} className="!rounded mb-4" />
       )}
 
       <MeterSummary reading={latest} />
 
-      <MeterTable readings={readings} onEdit={openEdit} onDelete={setDeleting} />
+      <MeterTable readings={readings} isLoading={isLoading} onEdit={openEdit} onDelete={setDeleting} />
 
       <MeterReadingModal
         isOpen={isOpen}

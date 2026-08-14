@@ -77,6 +77,7 @@ export default function Customers() {
 
       <CustomersTable
         customers={customers}
+        isLoading={isLoading}
         onEdit={openEdit}
         onSettle={openSettle}
         onDelete={setDeleting}

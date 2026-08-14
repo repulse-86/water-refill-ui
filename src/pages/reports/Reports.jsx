@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useShallow } from 'zustand/shallow';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 import useReportsStore from '../../store/reportsStore';
 import ReportsHeader from './components/ReportsHeader';
 import ReportsTabs from './components/ReportsTabs';
@@ -46,7 +48,9 @@ export default function Reports() {
 
       <ReportsTabs tabs={TABS} activeTab={activeTab} onChange={setActiveTab} />
 
-      {isLoading && <p className="text-sm text-slate-400">Loading reports…</p>}
+      {isLoading && (
+        <Skeleton height={200} className="!rounded mt-4" />
+      )}
 
       {!isLoading && activeTab === 'daily' && <DailySalesTable rows={dailySales} />}
       {!isLoading && activeTab === 'products' && <ProductPerformanceTable rows={productPerformance} />}

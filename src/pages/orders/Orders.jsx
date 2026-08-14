@@ -75,6 +75,7 @@ export default function Orders() {
       <OrdersTable
         orders={orders}
         currency={currency}
+        isLoading={isLoading}
         onView={openView}
         onEdit={openEdit}
         onDelete={setDeleting}

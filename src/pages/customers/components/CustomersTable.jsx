@@ -8,7 +8,7 @@ const statusBadgeVariants = {
   inactive: 'slate',
 };
 
-export default function CustomersTable({ customers, onEdit, onSettle, onDelete }) {
+export default function CustomersTable({ customers, isLoading, onEdit, onSettle, onDelete }) {
   const columns = [
     { accessorKey: 'name', header: 'Name' },
     { accessorKey: 'phone', header: 'Phone' },
@@ -53,6 +53,7 @@ export default function CustomersTable({ customers, onEdit, onSettle, onDelete }
     <DataTable
       columns={columns}
       data={customers}
+      isLoading={isLoading}
       searchKeys={['name', 'phone', 'email']}
       searchPlaceholder="Search customers…"
       emptyMessage="No customers found."

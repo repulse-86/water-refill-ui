@@ -1,5 +1,7 @@
 import { useMemo } from 'react';
 import { Search } from 'lucide-react';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 import {
   columnFilteringFeature,
   columnVisibilityFeature,
@@ -27,6 +29,7 @@ const features = tableFeatures({
 export default function DataTable({
   columns,
   data,
+  isLoading = false,
   searchable = true,
   searchKeys = [],
   searchPlaceholder = 'Search…',
@@ -100,16 +103,27 @@ export default function DataTable({
             ))}
           </thead>
           <tbody className="divide-y divide-slate-100">
-            {pageRows.map((row) => (
-              <tr key={row.id} className="hover:bg-slate-50 transition-colors">
-                {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id} className="px-4 py-3 text-slate-700 whitespace-nowrap">
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
-              </tr>
-            ))}
-            {pageRows.length === 0 && (
+            {isLoading &&
+              Array.from({ length: Math.min(pageSize, 5) }).map((_, rowIndex) => (
+                <tr key={`skeleton-${rowIndex}`}>
+                  {columns.map((col, colIndex) => (
+                    <td key={col.accessorKey ?? col.id ?? colIndex} className="px-4 py-3">
+                      <Skeleton className="!rounded" />
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            {!isLoading &&
+              pageRows.map((row) => (
+                <tr key={row.id} className="hover:bg-slate-50 transition-colors">
+                  {row.getVisibleCells().map((cell) => (
+                    <td key={cell.id} className="px-4 py-3 text-slate-700 whitespace-nowrap">
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            {!isLoading && pageRows.length === 0 && (
               <tr>
                 <td colSpan={columns.length} className="px-4 py-10 text-center text-sm text-slate-400">
                   {emptyMessage}

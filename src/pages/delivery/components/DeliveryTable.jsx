@@ -5,7 +5,7 @@ import Badge from '../../../components/ui/Badge';
 import { formatDate } from '../../../utils/date';
 import { DELIVERY_STATUS_BADGE_VARIANTS, DELIVERY_STATUSES } from '../../../domain/orderStatus';
 
-export default function DeliveryTable({ deliveryOrders, currency, onRecord }) {
+export default function DeliveryTable({ deliveryOrders, currency, isLoading, onRecord }) {
   const columns = [
     { accessorKey: 'id', header: 'Order #', render: (value) => `#${value}` },
     { accessorKey: 'customer_name', header: 'Customer' },
@@ -73,6 +73,7 @@ export default function DeliveryTable({ deliveryOrders, currency, onRecord }) {
     <DataTable
       columns={columns}
       data={deliveryOrders}
+      isLoading={isLoading}
       searchKeys={['customer_name', 'delivery_address', 'delivery_status']}
       searchPlaceholder="Search deliveries…"
       emptyMessage="No delivery orders found."

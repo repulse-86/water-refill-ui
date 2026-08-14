@@ -1,5 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useShallow } from 'zustand/shallow';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 import useDashboardStore from '../../store/dashboardStore';
 import useSettingsStore from '../../store/settingsStore';
 import DashboardHeader from './components/DashboardHeader';
@@ -34,7 +36,16 @@ export default function Dashboard() {
       <DashboardHeader />
 
       {isLoading && !dashboard && (
-        <p className="text-sm text-slate-400">Loading dashboard…</p>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="space-y-3">
+            <Skeleton height={140} className="!rounded" />
+            <Skeleton height={140} className="!rounded" />
+          </div>
+          <div className="space-y-3">
+            <Skeleton height={140} className="!rounded" />
+            <Skeleton height={140} className="!rounded" />
+          </div>
+        </div>
       )}
 
       {dashboard && (
