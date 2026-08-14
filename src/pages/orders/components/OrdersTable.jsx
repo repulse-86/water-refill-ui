@@ -1,6 +1,6 @@
 import { Eye, Pencil, Trash2 } from 'lucide-react';
 import DataTable from '../../../components/ui/DataTable';
-import IconButton from '../../../components/ui/IconButton';
+import RowActions from '../../../components/ui/RowActions';
 import Badge from '../../../components/ui/Badge';
 import { STATUS_BADGE_VARIANTS, TYPE_BADGE_VARIANTS, TYPE_LABELS, STATUS_LABELS } from '../../../domain/orderStatus';
 
@@ -43,11 +43,13 @@ export default function OrdersTable({ orders, currency, onView, onEdit, onDelete
       accessorKey: '__actions',
       header: 'Actions',
       render: (_value, row) => (
-        <div className="flex items-center gap-2">
-          <IconButton icon={Eye} onClick={() => onView(row)} title="View" variant="primary" />
-          <IconButton icon={Pencil} onClick={() => onEdit(row)} title="Edit" variant="edit" />
-          <IconButton icon={Trash2} onClick={() => onDelete(row)} title="Delete" variant="danger" />
-        </div>
+        <RowActions
+          actions={[
+            { icon: Eye, label: 'View', variant: 'primary', onClick: () => onView(row) },
+            { icon: Pencil, label: 'Edit', variant: 'edit', onClick: () => onEdit(row) },
+            { icon: Trash2, label: 'Delete', variant: 'danger', onClick: () => onDelete(row) },
+          ]}
+        />
       ),
     },
   ];

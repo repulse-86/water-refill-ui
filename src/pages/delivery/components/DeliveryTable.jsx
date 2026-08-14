@@ -1,6 +1,6 @@
 import { MapPin } from 'lucide-react';
 import DataTable from '../../../components/ui/DataTable';
-import IconButton from '../../../components/ui/IconButton';
+import RowActions from '../../../components/ui/RowActions';
 import Badge from '../../../components/ui/Badge';
 import { DELIVERY_STATUS_BADGE_VARIANTS, DELIVERY_STATUSES } from '../../../domain/orderStatus';
 
@@ -51,12 +51,18 @@ export default function DeliveryTable({ deliveryOrders, currency, onRecord }) {
       accessorKey: '__actions',
       header: 'Actions',
       render: (_value, row) => (
-        <IconButton
-          icon={MapPin}
-          onClick={() => onRecord(row)}
-          title="Record Delivery"
-          variant="primary"
-          disabled={row.delivery_status === DELIVERY_STATUSES.delivered || row.delivery_status === DELIVERY_STATUSES.failed}
+        <RowActions
+          actions={[
+            {
+              icon: MapPin,
+              label: 'Record Delivery',
+              variant: 'primary',
+              disabled:
+                row.delivery_status === DELIVERY_STATUSES.delivered ||
+                row.delivery_status === DELIVERY_STATUSES.failed,
+              onClick: () => onRecord(row),
+            },
+          ]}
         />
       ),
     },

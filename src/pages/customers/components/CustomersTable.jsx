@@ -1,6 +1,6 @@
 import { Pencil, Trash2, Wallet } from 'lucide-react';
 import DataTable from '../../../components/ui/DataTable';
-import IconButton from '../../../components/ui/IconButton';
+import RowActions from '../../../components/ui/RowActions';
 import Badge from '../../../components/ui/Badge';
 
 const statusBadgeVariants = {
@@ -38,11 +38,13 @@ export default function CustomersTable({ customers, onEdit, onSettle, onDelete }
       accessorKey: 'id',
       header: 'Actions',
       render: (_value, row) => (
-        <div className="flex items-center gap-2">
-          <IconButton icon={Wallet} onClick={() => onSettle(row)} title="Settle Ledger" variant="primary" />
-          <IconButton icon={Pencil} onClick={() => onEdit(row)} title="Edit" variant="edit" />
-          <IconButton icon={Trash2} onClick={() => onDelete(row)} title="Delete" variant="danger" />
-        </div>
+        <RowActions
+          actions={[
+            { icon: Wallet, label: 'Settle Ledger', variant: 'primary', onClick: () => onSettle(row) },
+            { icon: Pencil, label: 'Edit', variant: 'edit', onClick: () => onEdit(row) },
+            { icon: Trash2, label: 'Delete', variant: 'danger', onClick: () => onDelete(row) },
+          ]}
+        />
       ),
     },
   ];
