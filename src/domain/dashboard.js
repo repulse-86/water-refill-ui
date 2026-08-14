@@ -1,4 +1,5 @@
 import { toDateKey, computeExpectedVolume } from './meterReading';
+import dayjs from '../utils/date';
 
 const round2 = (n) => Number(Number(n).toFixed(2));
 
@@ -68,7 +69,7 @@ export function computePendingOrders(orders) {
       total_amount: round2(Number(o.total_amount ?? 0)),
       created_at: o.created_at,
     }))
-    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    .sort((a, b) => dayjs(b.created_at).valueOf() - dayjs(a.created_at).valueOf());
 }
 
 export function computeLowStock(products) {

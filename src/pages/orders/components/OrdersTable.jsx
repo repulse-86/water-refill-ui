@@ -2,6 +2,7 @@ import { Eye, Pencil, Trash2 } from 'lucide-react';
 import DataTable from '../../../components/ui/DataTable';
 import RowActions from '../../../components/ui/RowActions';
 import Badge from '../../../components/ui/Badge';
+import { formatDate } from '../../../utils/date';
 import { STATUS_BADGE_VARIANTS, TYPE_BADGE_VARIANTS, TYPE_LABELS, STATUS_LABELS } from '../../../domain/orderStatus';
 
 export default function OrdersTable({ orders, currency, onView, onEdit, onDelete }) {
@@ -37,7 +38,7 @@ export default function OrdersTable({ orders, currency, onView, onEdit, onDelete
     {
       accessorKey: 'created_at',
       header: 'Created',
-      render: (value) => new Date(value).toLocaleDateString(),
+      render: (value) => formatDate(value),
     },
     {
       accessorKey: '__actions',

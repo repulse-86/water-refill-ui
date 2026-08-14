@@ -10,6 +10,7 @@ import Badge from '../../../components/ui/Badge';
 import useMeterReadingsStore, { meterReadingRules } from '../../../store/meterReadingsStore';
 import useOrdersStore from '../../../store/ordersStore';
 import useProductsStore from '../../../store/productsStore';
+import { formatDate } from '../../../utils/date';
 import { computeExpectedVolume, getPreviousReading, isFlagged } from '../../../domain/meterReading';
 
 const emptyForm = {
@@ -165,7 +166,7 @@ export default function MeterReadingModal({ isOpen, onClose, editingId, initialD
           <div className="flex items-center justify-between">
             <span className="text-slate-500">Previous reading</span>
             <span className="font-medium text-slate-700">
-              {preview.previous ? `${formatValue(preview.previous.meter_value)} (${new Date(preview.previous.reading_date).toLocaleDateString()})` : '—'}
+              {preview.previous ? `${formatValue(preview.previous.meter_value)} (${formatDate(preview.previous.reading_date)})` : '—'}
             </span>
           </div>
           <div className="flex items-center justify-between">

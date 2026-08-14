@@ -2,6 +2,7 @@ import { Pencil, Trash2 } from 'lucide-react';
 import DataTable from '../../../components/ui/DataTable';
 import RowActions from '../../../components/ui/RowActions';
 import Badge from '../../../components/ui/Badge';
+import { formatDate } from '../../../utils/date';
 
 function formatValue(value) {
   if (value == null) return '—';
@@ -13,7 +14,7 @@ export default function MeterTable({ readings, onEdit, onDelete }) {
     {
       accessorKey: 'reading_date',
       header: 'Date',
-      render: (value) => new Date(value).toLocaleDateString(),
+      render: (value) => formatDate(value),
     },
     {
       accessorKey: 'meter_value',

@@ -2,6 +2,7 @@ import { Banknote, ClipboardList, CreditCard, Droplets } from 'lucide-react';
 import DataTable from '../../../components/ui/DataTable';
 import StatCards from './StatCards';
 import useSettingsStore from '../../../store/settingsStore';
+import { formatDate } from '../../../utils/date';
 
 export default function DailySalesTable({ rows }) {
   const currency = useSettingsStore((state) => state.settings?.currency ?? 'PHP');
@@ -17,7 +18,7 @@ export default function DailySalesTable({ rows }) {
     {
       accessorKey: 'date',
       header: 'Date',
-      render: (value) => new Date(`${value}T00:00:00`).toLocaleDateString(),
+      render: (value) => formatDate(value),
     },
     { accessorKey: 'order_count', header: 'Orders' },
     { accessorKey: 'cash', header: 'Cash', render: money },

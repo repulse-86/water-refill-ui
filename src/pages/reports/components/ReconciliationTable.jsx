@@ -2,6 +2,7 @@ import { CalendarDays, Droplets, Gauge, TriangleAlert } from 'lucide-react';
 import Badge from '../../../components/ui/Badge';
 import DataTable from '../../../components/ui/DataTable';
 import StatCards from './StatCards';
+import { formatDate } from '../../../utils/date';
 
 const STATUS_BADGES = {
   'No Data': 'slate',
@@ -22,7 +23,7 @@ export default function ReconciliationTable({ rows }) {
     {
       accessorKey: 'date',
       header: 'Date',
-      render: (value) => new Date(`${value}T00:00:00`).toLocaleDateString(),
+      render: (value) => formatDate(value),
     },
     {
       accessorKey: 'expected_volume',

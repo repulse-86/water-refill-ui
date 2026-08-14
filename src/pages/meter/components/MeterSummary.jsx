@@ -1,5 +1,6 @@
 import { Droplets, Gauge, Activity, TriangleAlert } from 'lucide-react';
 import Badge from '../../../components/ui/Badge';
+import { formatDate } from '../../../utils/date';
 
 function formatValue(value, suffix = 'gal') {
   if (value == null) return '—';
@@ -36,7 +37,7 @@ export default function MeterSummary({ reading }) {
   const flagged = reading.flagged;
   const varianceSub =
     reading.variance_pct != null ? `${Number(reading.variance_pct).toFixed(1)}%` : null;
-  const statusSub = `as of ${new Date(reading.reading_date).toLocaleDateString()}`;
+  const statusSub = `as of ${formatDate(reading.reading_date)}`;
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">

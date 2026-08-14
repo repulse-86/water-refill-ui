@@ -1,16 +1,12 @@
 import { LayoutDashboard } from 'lucide-react';
 import useSettingsStore from '../../../store/settingsStore';
+import { formatLongDate } from '../../../utils/date';
 
 export default function DashboardHeader() {
   const settings = useSettingsStore((state) => state.settings);
   const storeName = settings?.store_name ?? 'My Water Refilling Station';
 
-  const today = new Date().toLocaleDateString(undefined, {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
+  const today = formatLongDate(new Date());
 
   return (
     <div className="flex items-center justify-between mb-8">

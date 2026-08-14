@@ -2,6 +2,7 @@ import { MapPin } from 'lucide-react';
 import DataTable from '../../../components/ui/DataTable';
 import RowActions from '../../../components/ui/RowActions';
 import Badge from '../../../components/ui/Badge';
+import { formatDate } from '../../../utils/date';
 import { DELIVERY_STATUS_BADGE_VARIANTS, DELIVERY_STATUSES } from '../../../domain/orderStatus';
 
 export default function DeliveryTable({ deliveryOrders, currency, onRecord }) {
@@ -45,7 +46,7 @@ export default function DeliveryTable({ deliveryOrders, currency, onRecord }) {
     {
       accessorKey: 'created_at',
       header: 'Created',
-      render: (value) => new Date(value).toLocaleDateString(),
+      render: (value) => formatDate(value),
     },
     {
       accessorKey: '__actions',

@@ -1,11 +1,9 @@
+import { dateKey } from '../utils/date';
+
 export const VARIANCE_TOLERANCE = 0.10;
 
 export function toDateKey(date) {
-  if (typeof date === 'string') return date.slice(0, 10);
-  const d = new Date(date);
-  const mm = String(d.getMonth() + 1).padStart(2, '0');
-  const dd = String(d.getDate()).padStart(2, '0');
-  return `${d.getFullYear()}-${mm}-${dd}`;
+  return dateKey(date);
 }
 
 export function computeExpectedVolume(orders, products, date) {

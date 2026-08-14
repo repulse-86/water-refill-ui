@@ -4,6 +4,7 @@ import Modal from '../../../components/ui/Modal';
 import Button from '../../../components/ui/Button';
 import useFulfillmentStore from '../../../store/fulfillmentStore';
 import { STATUS_LABELS, STATUS_BADGE_VARIANTS, getNextStatus, isTerminal } from '../../../domain/orderStatus';
+import { formatDateTime } from '../../../utils/date';
 
 export default function OrderDetailModal({ isOpen, onClose, order, onAdvance }) {
   const { transitionOrderStatus, status: storeStatus } = useFulfillmentStore(
@@ -65,7 +66,7 @@ export default function OrderDetailModal({ isOpen, onClose, order, onAdvance }) 
           </div>
           <div>
             <p className="text-xs text-slate-500">Created</p>
-            <p className="text-sm font-medium text-slate-900">{new Date(order.created_at).toLocaleString()}</p>
+            <p className="text-sm font-medium text-slate-900">{formatDateTime(order.created_at)}</p>
           </div>
         </div>
 
