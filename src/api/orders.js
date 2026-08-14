@@ -1,22 +1,17 @@
-import {
-  listOrders as mockListOrders,
-  createOrder as mockCreateOrder,
-  updateOrder as mockUpdateOrder,
-  deleteOrder as mockDeleteOrder,
-} from '../mock/ordersMock';
+import client from './client';
 
 export async function listOrders() {
-  return mockListOrders();
+  return client.get('/orders');
 }
 
 export async function createOrder(payload) {
-  return mockCreateOrder(payload);
+  return client.post('/orders', payload);
 }
 
 export async function updateOrder(id, payload) {
-  return mockUpdateOrder(id, payload);
+  return client.put(`/orders/${id}`, payload);
 }
 
 export async function deleteOrder(id) {
-  return mockDeleteOrder(id);
+  return client.delete(`/orders/${id}`);
 }

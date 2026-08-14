@@ -1,9 +1,9 @@
-import { getSettings as mockGetSettings, updateSettings as mockUpdateSettings } from '../mock/settingsMock';
+import client from './client';
 
 export async function getSettings() {
-  return mockGetSettings();
+  return client.get('/settings');
 }
 
 export async function updateSettings(payload) {
-  return mockUpdateSettings(payload);
+  return client.put('/settings', payload);
 }

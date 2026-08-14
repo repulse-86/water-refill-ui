@@ -1,27 +1,21 @@
-import {
-  listCustomers as mockListCustomers,
-  createCustomer as mockCreateCustomer,
-  updateCustomer as mockUpdateCustomer,
-  deleteCustomer as mockDeleteCustomer,
-  settleCustomer as mockSettleCustomer,
-} from '../mock/customersMock';
+import client from './client';
 
 export async function listCustomers() {
-  return mockListCustomers();
+  return client.get('/customers');
 }
 
 export async function createCustomer(payload) {
-  return mockCreateCustomer(payload);
+  return client.post('/customers', payload);
 }
 
 export async function updateCustomer(id, payload) {
-  return mockUpdateCustomer(id, payload);
+  return client.put(`/customers/${id}`, payload);
 }
 
 export async function deleteCustomer(id) {
-  return mockDeleteCustomer(id);
+  return client.delete(`/customers/${id}`);
 }
 
 export async function settleCustomer(id, settlement) {
-  return mockSettleCustomer(id, settlement);
+  return client.post(`/customers/${id}/settle`, settlement);
 }

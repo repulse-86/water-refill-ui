@@ -1,9 +1,9 @@
-import { login as mockLogin, logout as mockLogout } from '../mock/authMock';
+import client from './client';
 
 export async function login(credentials) {
-  return mockLogin(credentials);
+  return client.post('/auth/login', credentials);
 }
 
 export async function logout() {
-  return mockLogout();
+  return client.post('/auth/logout');
 }

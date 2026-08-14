@@ -1,22 +1,17 @@
-import {
-  getDailySales as mockGetDailySales,
-  getProductPerformance as mockGetProductPerformance,
-  getDebtAging as mockGetDebtAging,
-  getReconciliation as mockGetReconciliation,
-} from '../mock/reportsMock';
+import client from './client';
 
 export async function getDailySales() {
-  return mockGetDailySales();
+  return client.get('/reports/daily-sales');
 }
 
 export async function getProductPerformance() {
-  return mockGetProductPerformance();
+  return client.get('/reports/product-performance');
 }
 
 export async function getDebtAging() {
-  return mockGetDebtAging();
+  return client.get('/reports/debt-aging');
 }
 
 export async function getReconciliation() {
-  return mockGetReconciliation();
+  return client.get('/reports/reconciliation');
 }

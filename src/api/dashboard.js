@@ -1,5 +1,5 @@
-import { getDashboard as mockGetDashboard } from '../mock/dashboardMock';
+import client from './client';
 
 export async function getDashboard() {
-  return mockGetDashboard();
+  return client.get('/dashboard');
 }

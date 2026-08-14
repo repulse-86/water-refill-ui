@@ -1,22 +1,17 @@
-import {
-  listProducts as mockListProducts,
-  createProduct as mockCreateProduct,
-  updateProduct as mockUpdateProduct,
-  deleteProduct as mockDeleteProduct,
-} from '../mock/productsMock';
+import client from './client';
 
 export async function listProducts() {
-  return mockListProducts();
+  return client.get('/products');
 }
 
 export async function createProduct(payload) {
-  return mockCreateProduct(payload);
+  return client.post('/products', payload);
 }
 
 export async function updateProduct(id, payload) {
-  return mockUpdateProduct(id, payload);
+  return client.put(`/products/${id}`, payload);
 }
 
 export async function deleteProduct(id) {
-  return mockDeleteProduct(id);
+  return client.delete(`/products/${id}`);
 }

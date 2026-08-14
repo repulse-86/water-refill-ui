@@ -1,22 +1,17 @@
-import {
-  listMeterReadings as mockListMeterReadings,
-  createMeterReading as mockCreateMeterReading,
-  updateMeterReading as mockUpdateMeterReading,
-  deleteMeterReading as mockDeleteMeterReading,
-} from '../mock/meterReadingsMock';
+import client from './client';
 
 export async function listMeterReadings() {
-  return mockListMeterReadings();
+  return client.get('/meter-readings');
 }
 
 export async function createMeterReading(payload) {
-  return mockCreateMeterReading(payload);
+  return client.post('/meter-readings', payload);
 }
 
 export async function updateMeterReading(id, payload) {
-  return mockUpdateMeterReading(id, payload);
+  return client.put(`/meter-readings/${id}`, payload);
 }
 
 export async function deleteMeterReading(id) {
-  return mockDeleteMeterReading(id);
+  return client.delete(`/meter-readings/${id}`);
 }
