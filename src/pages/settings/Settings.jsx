@@ -1,7 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useShallow } from 'zustand/shallow';
-import { CheckCircle } from 'lucide-react';
 import useSettingsStore from '../../store/settingsStore';
 import useServerFieldErrors from '../../hooks/useServerFieldErrors';
 import FormField from '../../components/ui/FormField';
@@ -22,20 +21,17 @@ const settingsRules = {
 };
 
 export default function Settings() {
-  const { settings, status, fieldErrors, message, fetchSettings, updateSettings, resetErrors } =
+  const { settings, status, fieldErrors, fetchSettings, updateSettings, resetErrors } =
     useSettingsStore(
       useShallow((state) => ({
         settings: state.settings,
         status: state.status,
         fieldErrors: state.fieldErrors,
-        message: state.message,
         fetchSettings: state.fetchSettings,
         updateSettings: state.updateSettings,
         resetErrors: state.resetErrors,
       }))
     );
-
-  const [saved, setSaved] = useState(false);
 
   const {
     register,
@@ -75,13 +71,10 @@ export default function Settings() {
   }, [settings, reset]);
 
   const isLoading = status === 'loading';
-  const hasFieldError = Boolean(errors.store_name || errors.currency || errors.low_stock_threshold);
 
   const onSubmit = async (data) => {
-    setSaved(false);
     const result = await updateSettings(data);
     if (result.success) {
-      setSaved(true);
       resetErrors();
     }
   };
@@ -142,19 +135,6 @@ export default function Settings() {
               {...register('low_stock_threshold', settingsRules.low_stock_threshold)}
             />
           </FormField>
-
-          {message && !hasFieldError && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded text-xs text-red-700">
-              {message}
-            </div>
-          )}
-
-          {saved && (
-            <div className="p-3 bg-emerald-50 border border-emerald-200 rounded text-xs text-emerald-700 flex items-center">
-              <CheckCircle className="w-4 h-4 mr-1.5" />
-              Store settings saved.
-            </div>
-          )}
 
           <div className="pt-2">
             <Button type="submit" isLoading={isLoading}>

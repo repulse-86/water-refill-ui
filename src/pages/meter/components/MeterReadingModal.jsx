@@ -30,7 +30,6 @@ export default function MeterReadingModal({ isOpen, onClose, editingId, initialD
     updateReading,
     status,
     fieldErrors,
-    message,
     resetErrors,
   } = useMeterReadingsStore(
     useShallow((state) => ({
@@ -38,7 +37,6 @@ export default function MeterReadingModal({ isOpen, onClose, editingId, initialD
       updateReading: state.updateReading,
       status: state.status,
       fieldErrors: state.fieldErrors,
-      message: state.message,
       resetErrors: state.resetErrors,
     }))
   );
@@ -108,7 +106,6 @@ export default function MeterReadingModal({ isOpen, onClose, editingId, initialD
   if (!isOpen) return null;
 
   const isLoading = status === 'loading';
-  const hasFieldError = Boolean(errors.reading_date || errors.meter_value);
 
   const onSubmit = async (data) => {
     const result = editingId ? await updateReading(editingId, data) : await createReading(data);
@@ -130,12 +127,6 @@ export default function MeterReadingModal({ isOpen, onClose, editingId, initialD
           ? 'Update the meter reading details below.'
           : 'Log the cumulative meter value at the end of the shift.'}
       </p>
-
-      {message && !hasFieldError && (
-        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded text-xs text-red-700">
-          {message}
-        </div>
-      )}
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
         <div className="grid grid-cols-2 gap-4">

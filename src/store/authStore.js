@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import * as authApi from '../api/auth';
 import { toFieldErrors } from '../utils/formErrors';
+import { toastError } from '../utils/toast';
 
 export const loginRules = {
   username: {
@@ -46,6 +47,7 @@ const useAuthStore = create(
             message: err?.message ?? 'Unable to sign in. Please try again.',
           };
           set(payload);
+          toastError(payload.message, Object.keys(fieldErrors ?? {}).length > 0);
           return { success: false, ...payload };
         }
       },

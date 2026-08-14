@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import * as fulfillmentApi from '../api/fulfillment';
 import { toFieldErrors } from '../utils/formErrors';
+import { toastError, toastSuccess } from '../utils/toast';
 import useOrdersStore from './ordersStore';
 
 const initialState = {
@@ -22,6 +23,7 @@ const useFulfillmentStore = create((set) => ({
     try {
       const updated = await fulfillmentApi.transitionOrderStatus(id, status);
       syncOrder(id, updated);
+      toastSuccess('Order status updated.');
       return { success: true, order: updated };
     } catch (err) {
       const fieldErrors = toFieldErrors(err?.errors);
@@ -31,6 +33,7 @@ const useFulfillmentStore = create((set) => ({
         message: err?.message ?? 'Unable to update order status.',
       };
       set(payload);
+      toastError(payload.message, Object.keys(fieldErrors ?? {}).length > 0);
       return { success: false, ...payload };
     }
   },
@@ -40,6 +43,7 @@ const useFulfillmentStore = create((set) => ({
     try {
       const updated = await fulfillmentApi.recordDelivery(id, deliveryData);
       syncOrder(id, updated);
+      toastSuccess('Delivery recorded.');
       return { success: true, order: updated };
     } catch (err) {
       const fieldErrors = toFieldErrors(err?.errors);
@@ -49,6 +53,7 @@ const useFulfillmentStore = create((set) => ({
         message: err?.message ?? 'Unable to record delivery.',
       };
       set(payload);
+      toastError(payload.message, Object.keys(fieldErrors ?? {}).length > 0);
       return { success: false, ...payload };
     }
   },

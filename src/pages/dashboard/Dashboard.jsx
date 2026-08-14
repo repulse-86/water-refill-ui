@@ -9,12 +9,10 @@ import PendingOrdersList from './components/PendingOrdersList';
 import LowStockAlerts from './components/LowStockAlerts';
 
 export default function Dashboard() {
-  const { dashboard, status, message, fieldErrors, fetchDashboard } = useDashboardStore(
+  const { dashboard, status, fetchDashboard } = useDashboardStore(
     useShallow((state) => ({
       dashboard: state.dashboard,
       status: state.status,
-      message: state.message,
-      fieldErrors: state.fieldErrors,
       fetchDashboard: state.fetchDashboard,
     }))
   );
@@ -30,18 +28,10 @@ export default function Dashboard() {
   }, [dashboard, status, fetchDashboard]);
 
   const isLoading = status === 'loading';
-  const hasError = status === 'error' && message;
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       <DashboardHeader />
-
-      {hasError && (
-        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded text-xs text-red-700">
-          {message}
-          {fieldErrors && <pre className="mt-2 text-[10px]">{JSON.stringify(fieldErrors, null, 2)}</pre>}
-        </div>
-      )}
 
       {isLoading && !dashboard && (
         <p className="text-sm text-slate-400">Loading dashboard…</p>

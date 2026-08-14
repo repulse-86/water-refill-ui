@@ -28,7 +28,6 @@ export default function OrderFormModal({ isOpen, onClose, editingId, initialData
     updateOrder,
     status,
     fieldErrors,
-    message,
     resetErrors,
   } = useOrdersStore(
     useShallow((state) => ({
@@ -36,7 +35,6 @@ export default function OrderFormModal({ isOpen, onClose, editingId, initialData
       updateOrder: state.updateOrder,
       status: state.status,
       fieldErrors: state.fieldErrors,
-      message: state.message,
       resetErrors: state.resetErrors,
     }))
   );
@@ -70,11 +68,6 @@ export default function OrderFormModal({ isOpen, onClose, editingId, initialData
   if (!isOpen) return null;
 
   const isLoading = status === 'loading';
-  const hasFieldError = Boolean(
-    errors.customer_id || errors.order_type || errors.payment_method ||
-    errors.total_amount || errors.amount_paid || errors.delivery_fee ||
-    errors.items
-  );
 
   const addItem = () => {
     setValue('items', [...watchedItems, { product_id: '', quantity: 1 }]);
@@ -103,12 +96,6 @@ export default function OrderFormModal({ isOpen, onClose, editingId, initialData
       <p className="text-xs text-slate-600 mb-4">
         {editingId ? 'Update the order details below.' : 'Create a new order.'}
       </p>
-
-      {message && !hasFieldError && (
-        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded text-xs text-red-700">
-          {message}
-        </div>
-      )}
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
         <div className="grid grid-cols-2 gap-4">

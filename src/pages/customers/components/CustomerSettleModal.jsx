@@ -18,14 +18,12 @@ export default function CustomerSettleModal({ isOpen, onClose, customer, onSettl
     settleCustomer,
     status,
     fieldErrors,
-    message,
     resetErrors,
   } = useCustomersStore(
     useShallow((state) => ({
       settleCustomer: state.settleCustomer,
       status: state.status,
       fieldErrors: state.fieldErrors,
-      message: state.message,
       resetErrors: state.resetErrors,
     }))
   );
@@ -51,7 +49,6 @@ export default function CustomerSettleModal({ isOpen, onClose, customer, onSettl
   if (!isOpen) return null;
 
   const isLoading = status === 'loading';
-  const hasFieldError = Boolean(errors.bottleReturn || errors.cashPayment);
 
   const onSubmit = async (data) => {
     const result = await settleCustomer(customer.id, data);
@@ -83,12 +80,6 @@ export default function CustomerSettleModal({ isOpen, onClose, customer, onSettl
           <p className="text-lg font-bold text-slate-900">PHP {Number(customer.outstanding_balance).toFixed(2)}</p>
         </div>
       </div>
-
-      {message && !hasFieldError && (
-        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded text-xs text-red-700">
-          {message}
-        </div>
-      )}
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
         <FormField label="Bottle Return Count" htmlFor="settle-bottles" error={errors.bottleReturn?.message}>

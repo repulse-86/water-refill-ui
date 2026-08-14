@@ -8,13 +8,11 @@ import MeterReadingModal from './components/MeterReadingModal';
 import MeterDeleteDialog from './components/MeterDeleteDialog';
 
 export default function MeterReadings() {
-  const { readings, status, message, fieldErrors, fetchReadings, deleteReading } =
+  const { readings, status, fetchReadings, deleteReading } =
     useMeterReadingsStore(
       useShallow((state) => ({
         readings: state.readings,
         status: state.status,
-        message: state.message,
-        fieldErrors: state.fieldErrors,
         fetchReadings: state.fetchReadings,
         deleteReading: state.deleteReading,
       }))
@@ -56,19 +54,11 @@ export default function MeterReadings() {
   };
 
   const isLoading = status === 'loading';
-  const hasError = status === 'error' && message;
   const latest = [...readings].sort((a, b) => b.reading_date.localeCompare(a.reading_date))[0] ?? null;
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       <MeterHeader onAdd={openAdd} />
-
-      {hasError && (
-        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded text-xs text-red-700">
-          {message}
-          {fieldErrors && <pre className="mt-2 text-[10px]">{JSON.stringify(fieldErrors, null, 2)}</pre>}
-        </div>
-      )}
 
       {isLoading && readings.length === 0 && (
         <p className="text-sm text-slate-400">Loading meter readings…</p>

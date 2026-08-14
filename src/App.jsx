@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 import GuestLayout from './layouts/GuestLayout';
 import AppLayout from './layouts/AppLayout';
 import Home from './pages/website/Home';
@@ -16,6 +17,7 @@ import RequireAuth from './guards/RequireAuth';
 function App() {
   return (
     <BrowserRouter>
+      <Toaster position="top-right" toastOptions={{ duration: 4000 }} />
       <Routes>
         <Route path="/" element={<GuestLayout />}>
           <Route index element={<Home />} />

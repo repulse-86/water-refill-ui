@@ -24,7 +24,6 @@ export default function CustomerFormModal({ isOpen, onClose, editingId, initialD
     updateCustomer,
     status,
     fieldErrors,
-    message,
     resetErrors,
   } = useCustomersStore(
     useShallow((state) => ({
@@ -32,7 +31,6 @@ export default function CustomerFormModal({ isOpen, onClose, editingId, initialD
       updateCustomer: state.updateCustomer,
       status: state.status,
       fieldErrors: state.fieldErrors,
-      message: state.message,
       resetErrors: state.resetErrors,
     }))
   );
@@ -58,7 +56,6 @@ export default function CustomerFormModal({ isOpen, onClose, editingId, initialD
   if (!isOpen) return null;
 
   const isLoading = status === 'loading';
-  const hasFieldError = Boolean(errors.name || errors.phone || errors.email || errors.subscriber_status || errors.bottle_debt || errors.outstanding_balance);
 
   const onSubmit = async (data) => {
     const result = editingId ? await updateCustomer(editingId, data) : await createCustomer(data);
@@ -78,12 +75,6 @@ export default function CustomerFormModal({ isOpen, onClose, editingId, initialD
       <p className="text-xs text-slate-600 mb-4">
         {editingId ? 'Update the customer details below.' : 'Add a new customer to your registry.'}
       </p>
-
-      {message && !hasFieldError && (
-        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded text-xs text-red-700">
-          {message}
-        </div>
-      )}
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
         <FormField label="Name" htmlFor="customer-name" error={errors.name?.message}>

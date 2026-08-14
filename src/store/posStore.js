@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import * as ordersApi from '../api/orders';
 import { ORDER_TYPES, PAYMENT_METHODS } from '../domain/orderStatus';
 import { toFieldErrors } from '../utils/formErrors';
+import { toastError, toastSuccess } from '../utils/toast';
 
 const initialState = {
   cart: [],
@@ -147,16 +148,19 @@ const usePosStore = create((set) => ({
         status: 'success',
         lastOrder: order,
       });
+      toastSuccess('Sale completed.');
       if (onSuccess) onSuccess(order);
       return { success: true, order };
     } catch (err) {
       const fieldErrors = toFieldErrors(err?.errors);
+      const message = err?.message ?? 'Unable to complete the sale.';
       set({
         status: 'error',
         fieldErrors,
-        message: err?.message ?? 'Unable to complete the sale.',
+        message,
       });
-      return { success: false, message: err?.message ?? 'Unable to complete the sale.', fieldErrors };
+      toastError(message, Object.keys(fieldErrors ?? {}).length > 0);
+      return { success: false, message, fieldErrors };
     }
   },
 }));

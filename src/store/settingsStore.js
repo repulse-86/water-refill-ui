@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import * as settingsApi from '../api/settings';
 import { toFieldErrors } from '../utils/formErrors';
+import { toastError, toastSuccess } from '../utils/toast';
 
 const initialState = {
   settings: null,
@@ -29,6 +30,7 @@ const useSettingsStore = create(
             message: err?.message ?? 'Unable to load store settings.',
           };
           set(payload);
+          toastError(payload.message, Object.keys(fieldErrors ?? {}).length > 0);
           return { success: false, ...payload };
         }
       },
@@ -38,6 +40,7 @@ const useSettingsStore = create(
         try {
           const settings = await settingsApi.updateSettings(values);
           set({ settings, status: 'success' });
+          toastSuccess('Store settings saved.');
           return { success: true, settings };
         } catch (err) {
           const fieldErrors = toFieldErrors(err?.errors);
@@ -47,6 +50,7 @@ const useSettingsStore = create(
             message: err?.message ?? 'Unable to save store settings.',
           };
           set(payload);
+          toastError(payload.message, Object.keys(fieldErrors ?? {}).length > 0);
           return { success: false, ...payload };
         }
       },

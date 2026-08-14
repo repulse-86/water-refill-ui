@@ -10,12 +10,10 @@ import DeliveryTable from './components/DeliveryTable';
 import DeliveryRecordModal from './components/DeliveryRecordModal';
 
 export default function Delivery() {
-  const { orders, status, message, fieldErrors, fetchOrders } = useOrdersStore(
+  const { orders, status, fetchOrders } = useOrdersStore(
     useShallow((state) => ({
       orders: state.orders,
       status: state.status,
-      message: state.message,
-      fieldErrors: state.fieldErrors,
       fetchOrders: state.fetchOrders,
     }))
   );
@@ -60,19 +58,11 @@ export default function Delivery() {
   };
 
   const isLoading = status === 'loading';
-  const hasError = status === 'error' && message;
   const deliveryOrders = orders.filter((order) => order.order_type === 'delivery');
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       <DeliveryHeader view={view} onViewChange={setView} />
-
-      {hasError && (
-        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded text-xs text-red-700">
-          {message}
-          {fieldErrors && <pre className="mt-2 text-[10px]">{JSON.stringify(fieldErrors, null, 2)}</pre>}
-        </div>
-      )}
 
       {isLoading && orders.length === 0 && (
         <p className="text-sm text-slate-400">Loading orders…</p>

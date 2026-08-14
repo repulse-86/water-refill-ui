@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import * as productsApi from '../api/products';
 import { toFieldErrors } from '../utils/formErrors';
+import { toastError, toastSuccess } from '../utils/toast';
 
 export const productRules = {
   name: {
@@ -60,6 +61,7 @@ const useProductsStore = create(
             message: err?.message ?? 'Unable to load products.',
           };
           set(payload);
+          toastError(payload.message, Object.keys(fieldErrors ?? {}).length > 0);
           return { success: false, ...payload };
         }
       },
@@ -69,6 +71,7 @@ const useProductsStore = create(
         try {
           const product = await productsApi.createProduct(values);
           set((state) => ({ products: [...state.products, product], status: 'success' }));
+          toastSuccess('Product created.');
           return { success: true, product };
         } catch (err) {
           const fieldErrors = toFieldErrors(err?.errors);
@@ -78,6 +81,7 @@ const useProductsStore = create(
             message: err?.message ?? 'Unable to create the product.',
           };
           set(payload);
+          toastError(payload.message, Object.keys(fieldErrors ?? {}).length > 0);
           return { success: false, ...payload };
         }
       },
@@ -90,6 +94,7 @@ const useProductsStore = create(
             products: state.products.map((p) => (p.id === id ? updated : p)),
             status: 'success',
           }));
+          toastSuccess('Product updated.');
           return { success: true, product: updated };
         } catch (err) {
           const fieldErrors = toFieldErrors(err?.errors);
@@ -99,6 +104,7 @@ const useProductsStore = create(
             message: err?.message ?? 'Unable to update the product.',
           };
           set(payload);
+          toastError(payload.message, Object.keys(fieldErrors ?? {}).length > 0);
           return { success: false, ...payload };
         }
       },
@@ -108,6 +114,7 @@ const useProductsStore = create(
         try {
           await productsApi.deleteProduct(id);
           set((state) => ({ products: state.products.filter((p) => p.id !== id), status: 'success' }));
+          toastSuccess('Product deleted.');
           return { success: true };
         } catch (err) {
           const payload = {
@@ -116,6 +123,7 @@ const useProductsStore = create(
             message: err?.message ?? 'Unable to delete the product.',
           };
           set(payload);
+          toastError(payload.message, false);
           return { success: false, ...payload };
         }
       },

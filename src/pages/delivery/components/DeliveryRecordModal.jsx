@@ -22,14 +22,12 @@ export default function DeliveryRecordModal({ isOpen, onClose, order }) {
     recordDelivery,
     status,
     fieldErrors,
-    message,
     resetErrors,
   } = useFulfillmentStore(
     useShallow((state) => ({
       recordDelivery: state.recordDelivery,
       status: state.status,
       fieldErrors: state.fieldErrors,
-      message: state.message,
       resetErrors: state.resetErrors,
     }))
   );
@@ -75,12 +73,6 @@ export default function DeliveryRecordModal({ isOpen, onClose, order }) {
       <p className="text-xs text-slate-600 mb-4">
         Record the delivery outcome for <span className="font-semibold">{order.customer_name}</span>.
       </p>
-
-      {message && (
-        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded text-xs text-red-700">
-          {message}
-        </div>
-      )}
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
         <FormField label="Delivery Status" htmlFor="delivery-status" error={errors.delivery_status?.message}>

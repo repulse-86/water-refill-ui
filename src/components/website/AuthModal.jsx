@@ -11,11 +11,10 @@ import Modal from '../ui/Modal';
 
 export default function AuthModal({ isOpen, onClose }) {
   const navigate = useNavigate();
-  const { login, status, message, fieldErrors, resetErrors } = useAuthStore(
+  const { login, status, fieldErrors, resetErrors } = useAuthStore(
     useShallow((state) => ({
       login: state.login,
       status: state.status,
-      message: state.message,
       fieldErrors: state.fieldErrors,
       resetErrors: state.resetErrors,
     }))
@@ -45,7 +44,6 @@ export default function AuthModal({ isOpen, onClose }) {
   if (!isOpen) return null;
 
   const isLoading = status === 'loading';
-  const hasFieldError = Boolean(errors.username || errors.password);
 
   const fillDemo = () => {
     setValue('username', 'owner');
@@ -73,12 +71,6 @@ export default function AuthModal({ isOpen, onClose }) {
         Accessing the Owner Operations Workspace.
         Please enter your username and password.
       </p>
-
-        {message && !hasFieldError && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded text-xs text-red-700">
-            {message}
-          </div>
-        )}
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
           <FormField label="Username" htmlFor="login-username" error={errors.username?.message}>

@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import * as reportsApi from '../api/reports';
 import { toFieldErrors } from '../utils/formErrors';
+import { toastError } from '../utils/toast';
 
 const initialState = {
   dailySales: [],
@@ -26,16 +27,17 @@ const useReportsStore = create((set) => ({
       ]);
       set({ dailySales, productPerformance, debtAging, reconciliation, status: 'idle' });
       return { success: true };
-    } catch (err) {
-      const fieldErrors = toFieldErrors(err?.errors);
-      const payload = {
-        status: 'error',
-        fieldErrors,
-        message: err?.message ?? 'Unable to load reports.',
-      };
-      set(payload);
-      return { success: false, ...payload };
-    }
+} catch (err) {
+          const fieldErrors = toFieldErrors(err?.errors);
+          const payload = {
+            status: 'error',
+            fieldErrors,
+            message: err?.message ?? 'Unable to load reports.',
+          };
+          set(payload);
+          toastError(payload.message, Object.keys(fieldErrors ?? {}).length > 0);
+          return { success: false, ...payload };
+        }
   },
 
   resetErrors: () => set({ status: 'idle', fieldErrors: null, message: null }),

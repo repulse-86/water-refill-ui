@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import * as customersApi from '../api/customers';
 import { toFieldErrors } from '../utils/formErrors';
+import { toastError, toastSuccess } from '../utils/toast';
 
 export const customerRules = {
   name: {
@@ -53,6 +54,7 @@ const useCustomersStore = create(
             message: err?.message ?? 'Unable to load customers.',
           };
           set(payload);
+          toastError(payload.message, Object.keys(fieldErrors ?? {}).length > 0);
           return { success: false, ...payload };
         }
       },
@@ -62,6 +64,7 @@ const useCustomersStore = create(
         try {
           const customer = await customersApi.createCustomer(values);
           set((state) => ({ customers: [...state.customers, customer], status: 'success' }));
+          toastSuccess('Customer created.');
           return { success: true, customer };
         } catch (err) {
           const fieldErrors = toFieldErrors(err?.errors);
@@ -71,6 +74,7 @@ const useCustomersStore = create(
             message: err?.message ?? 'Unable to create the customer.',
           };
           set(payload);
+          toastError(payload.message, Object.keys(fieldErrors ?? {}).length > 0);
           return { success: false, ...payload };
         }
       },
@@ -83,6 +87,7 @@ const useCustomersStore = create(
             customers: state.customers.map((c) => (c.id === id ? updated : c)),
             status: 'success',
           }));
+          toastSuccess('Customer updated.');
           return { success: true, customer: updated };
         } catch (err) {
           const fieldErrors = toFieldErrors(err?.errors);
@@ -92,6 +97,7 @@ const useCustomersStore = create(
             message: err?.message ?? 'Unable to update the customer.',
           };
           set(payload);
+          toastError(payload.message, Object.keys(fieldErrors ?? {}).length > 0);
           return { success: false, ...payload };
         }
       },
@@ -101,6 +107,7 @@ const useCustomersStore = create(
         try {
           await customersApi.deleteCustomer(id);
           set((state) => ({ customers: state.customers.filter((c) => c.id !== id), status: 'success' }));
+          toastSuccess('Customer deleted.');
           return { success: true };
         } catch (err) {
           const payload = {
@@ -109,6 +116,7 @@ const useCustomersStore = create(
             message: err?.message ?? 'Unable to delete the customer.',
           };
           set(payload);
+          toastError(payload.message, false);
           return { success: false, ...payload };
         }
       },
@@ -121,6 +129,7 @@ const useCustomersStore = create(
             customers: state.customers.map((c) => (c.id === id ? customer : c)),
             status: 'success',
           }));
+          toastSuccess('Customer ledger settled.');
           return { success: true, customer };
         } catch (err) {
           const payload = {
@@ -129,6 +138,7 @@ const useCustomersStore = create(
             message: err?.message ?? 'Unable to settle the customer ledger.',
           };
           set(payload);
+          toastError(payload.message, false);
           return { success: false, ...payload };
         }
       },

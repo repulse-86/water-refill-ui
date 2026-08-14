@@ -24,7 +24,6 @@ export default function ProductFormModal({ isOpen, onClose, editingId, initialDa
     updateProduct,
     status,
     fieldErrors,
-    message,
     resetErrors,
   } = useProductsStore(
     useShallow((state) => ({
@@ -32,7 +31,6 @@ export default function ProductFormModal({ isOpen, onClose, editingId, initialDa
       updateProduct: state.updateProduct,
       status: state.status,
       fieldErrors: state.fieldErrors,
-      message: state.message,
       resetErrors: state.resetErrors,
     }))
   );
@@ -60,7 +58,6 @@ export default function ProductFormModal({ isOpen, onClose, editingId, initialDa
   if (!isOpen) return null;
 
   const isLoading = status === 'loading';
-  const hasFieldError = Boolean(errors.name || errors.type || errors.volume_gallons || errors.price || errors.stock_quantity || errors.reorder_point);
 
   const onSubmit = async (data) => {
     const result = editingId ? await updateProduct(editingId, data) : await createProduct(data);
@@ -80,12 +77,6 @@ export default function ProductFormModal({ isOpen, onClose, editingId, initialDa
       <p className="text-xs text-slate-600 mb-4">
         {editingId ? 'Update the product details below.' : 'Add a new product to your inventory.'}
       </p>
-
-      {message && !hasFieldError && (
-        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded text-xs text-red-700">
-          {message}
-        </div>
-      )}
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
         <FormField label="Name" htmlFor="product-name" error={errors.name?.message}>

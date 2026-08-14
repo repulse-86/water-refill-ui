@@ -22,7 +22,6 @@ export default function CartPanel({ customers, currency, onSaleSuccess }) {
     bottlesReturned,
     tendered,
     status,
-    message,
     setCustomerId,
     setOrderType,
     setPaymentMethod,
@@ -46,7 +45,6 @@ export default function CartPanel({ customers, currency, onSaleSuccess }) {
       bottlesReturned: state.bottlesReturned,
       tendered: state.tendered,
       status: state.status,
-      message: state.message,
       setCustomerId: state.setCustomerId,
       setOrderType: state.setOrderType,
       setPaymentMethod: state.setPaymentMethod,
@@ -71,7 +69,7 @@ export default function CartPanel({ customers, currency, onSaleSuccess }) {
 
   const [notice, setNotice] = useState(null);
 
-  const note = notice || (status === 'error' ? message : null);
+  const note = notice;
 
   const handleCheckout = async () => {
     setNotice(null);

@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import * as dashboardApi from '../api/dashboard';
 import { toFieldErrors } from '../utils/formErrors';
+import { toastError } from '../utils/toast';
 
 const initialState = {
   dashboard: null,
@@ -18,16 +19,17 @@ const useDashboardStore = create((set) => ({
       const dashboard = await dashboardApi.getDashboard();
       set({ dashboard, status: 'idle' });
       return { success: true, dashboard };
-    } catch (err) {
-      const fieldErrors = toFieldErrors(err?.errors);
-      const payload = {
-        status: 'error',
-        fieldErrors,
-        message: err?.message ?? 'Unable to load the dashboard.',
-      };
-      set(payload);
-      return { success: false, ...payload };
-    }
+} catch (err) {
+          const fieldErrors = toFieldErrors(err?.errors);
+          const payload = {
+            status: 'error',
+            fieldErrors,
+            message: err?.message ?? 'Unable to load the dashboard.',
+          };
+          set(payload);
+          toastError(payload.message, Object.keys(fieldErrors ?? {}).length > 0);
+          return { success: false, ...payload };
+        }
   },
 
   resetErrors: () => set({ status: 'idle', fieldErrors: null, message: null }),
