@@ -5,6 +5,7 @@ import { Package } from 'lucide-react';
 import useServerFieldErrors from '../../../hooks/useServerFieldErrors';
 import Modal from '../../../components/ui/Modal';
 import FormField from '../../../components/ui/FormField';
+import SelectField from '../../../components/ui/SelectField';
 import Button from '../../../components/ui/Button';
 import useProductsStore, { productRules, typeLabels } from '../../../store/productsStore';
 
@@ -42,8 +43,8 @@ export default function ProductFormModal({ isOpen, onClose, editingId, initialDa
     register,
     handleSubmit,
     setError,
-    setValue,
     reset,
+    control,
     formState: { errors },
   } = useForm({ defaultValues: initialData ?? emptyForm });
 
@@ -92,19 +93,13 @@ export default function ProductFormModal({ isOpen, onClose, editingId, initialDa
         </FormField>
 
         <FormField label="Type" htmlFor="product-type" error={errors.type?.message}>
-          <select
-            {...register('type', productRules.type)}
-            onChange={(e) => {
-              setValue('type', e.target.value);
-              setSelectedType(e.target.value);
-            }}
-          >
-            {Object.entries(typeLabels).map(([value, label]) => (
-              <option key={value} value={value}>
-                {label}
-              </option>
-            ))}
-          </select>
+          <SelectField
+            name="type"
+            control={control}
+            rules={productRules.type}
+            onChange={setSelectedType}
+            options={Object.entries(typeLabels).map(([value, label]) => ({ value, label }))}
+          />
         </FormField>
 
         {selectedType === 'water_refill' && (

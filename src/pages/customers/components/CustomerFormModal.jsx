@@ -5,6 +5,7 @@ import { User } from 'lucide-react';
 import useServerFieldErrors from '../../../hooks/useServerFieldErrors';
 import Modal from '../../../components/ui/Modal';
 import FormField from '../../../components/ui/FormField';
+import SelectField from '../../../components/ui/SelectField';
 import Button from '../../../components/ui/Button';
 import useCustomersStore, { customerRules } from '../../../store/customersStore';
 
@@ -40,8 +41,8 @@ export default function CustomerFormModal({ isOpen, onClose, editingId, initialD
     register,
     handleSubmit,
     setError,
-    setValue,
     reset,
+    control,
     formState: { errors },
   } = useForm({ defaultValues: initialData ?? emptyForm });
 
@@ -99,10 +100,15 @@ export default function CustomerFormModal({ isOpen, onClose, editingId, initialD
         </div>
 
         <FormField label="Subscriber Status" htmlFor="customer-status" error={errors.subscriber_status?.message}>
-          <select {...register('subscriber_status', customerRules.subscriber_status)}>
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
-          </select>
+          <SelectField
+            name="subscriber_status"
+            control={control}
+            rules={customerRules.subscriber_status}
+            options={[
+              { value: 'active', label: 'Active' },
+              { value: 'inactive', label: 'Inactive' },
+            ]}
+          />
         </FormField>
 
         <div className="grid grid-cols-2 gap-4">

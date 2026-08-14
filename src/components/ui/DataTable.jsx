@@ -12,6 +12,7 @@ import {
   tableFeatures,
   useTable,
 } from '@tanstack/react-table';
+import { BaseSelectField } from './SelectField';
 
 const features = tableFeatures({
   columnFilteringFeature,
@@ -124,18 +125,13 @@ export default function DataTable({
           <label htmlFor="rows-per-page" className="text-slate-500">
             Rows per page
           </label>
-          <select
-            id="rows-per-page"
-            value={rowsPerPage}
-            onChange={(e) => table.setPageSize(Number(e.target.value))}
-            className="border border-slate-300 rounded px-2 py-1 bg-white focus:outline-none focus:ring-2 focus:ring-sky-500"
-          >
-            {pageSizeOptions.map((size) => (
-              <option key={size} value={size}>
-                {size}
-              </option>
-            ))}
-          </select>
+          <BaseSelectField
+            htmlFor="rows-per-page"
+            value={String(rowsPerPage)}
+            onValueChange={(value) => table.setPageSize(Number(value))}
+            options={pageSizeOptions.map((size) => ({ value: String(size), label: String(size) }))}
+            className="px-2 py-1 w-20"
+          />
           <span className="text-slate-500">
             {totalRows === 0 ? '0' : `${start}–${end} of ${totalRows}`}
           </span>

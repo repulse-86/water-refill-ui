@@ -5,6 +5,7 @@ import { CheckCircle } from 'lucide-react';
 import useSettingsStore from '../../store/settingsStore';
 import useServerFieldErrors from '../../hooks/useServerFieldErrors';
 import FormField from '../../components/ui/FormField';
+import SelectField from '../../components/ui/SelectField';
 import Button from '../../components/ui/Button';
 
 const settingsRules = {
@@ -41,6 +42,7 @@ export default function Settings() {
     handleSubmit,
     setError,
     reset,
+    control,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -118,10 +120,15 @@ export default function Settings() {
           </FormField>
 
           <FormField label="Currency" htmlFor="settings-currency" error={errors.currency?.message}>
-            <select {...register('currency', settingsRules.currency)}>
-              <option value="PHP">PHP - Philippine Peso</option>
-              <option value="USD">USD - US Dollar</option>
-            </select>
+            <SelectField
+              name="currency"
+              control={control}
+              rules={settingsRules.currency}
+              options={[
+                { value: 'PHP', label: 'PHP - Philippine Peso' },
+                { value: 'USD', label: 'USD - US Dollar' },
+              ]}
+            />
           </FormField>
 
           <FormField

@@ -5,6 +5,7 @@ import { ShoppingCart } from 'lucide-react';
 import useServerFieldErrors from '../../../hooks/useServerFieldErrors';
 import Modal from '../../../components/ui/Modal';
 import FormField from '../../../components/ui/FormField';
+import SelectField from '../../../components/ui/SelectField';
 import Button from '../../../components/ui/Button';
 import useOrdersStore, { orderRules } from '../../../store/ordersStore';
 import useCustomersStore from '../../../store/customersStore';
@@ -49,6 +50,7 @@ export default function OrderFormModal({ isOpen, onClose, editingId, initialData
     setError,
     setValue,
     reset,
+    control,
     formState: { errors },
     watch,
   } = useForm({ defaultValues: initialData ?? emptyForm });
@@ -111,31 +113,42 @@ export default function OrderFormModal({ isOpen, onClose, editingId, initialData
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
         <div className="grid grid-cols-2 gap-4">
           <FormField label="Customer" htmlFor="order-customer" error={errors.customer_id?.message}>
-            <select {...register('customer_id', orderRules.customer_id)}>
-              <option value="">Select customer</option>
-              {customers.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
+            <SelectField
+              name="customer_id"
+              control={control}
+              rules={orderRules.customer_id}
+              placeholder="Select customer"
+              options={customers.map((c) => ({ value: c.id, label: c.name }))}
+            />
           </FormField>
 
           <FormField label="Order Type" htmlFor="order-type" error={errors.order_type?.message}>
-            <select {...register('order_type', orderRules.order_type)}>
-              <option value="walk_in">Walk-In</option>
-              <option value="delivery">Delivery</option>
-            </select>
+            <SelectField
+              name="order_type"
+              control={control}
+              rules={orderRules.order_type}
+              placeholder="Select type"
+              options={[
+                { value: 'walk_in', label: 'Walk-In' },
+                { value: 'delivery', label: 'Delivery' },
+              ]}
+            />
           </FormField>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <FormField label="Payment Method" htmlFor="order-payment" error={errors.payment_method?.message}>
-            <select {...register('payment_method', orderRules.payment_method)}>
-              <option value="cash">Cash</option>
-              <option value="e_wallet">E-Wallet</option>
-              <option value="credit">Credit</option>
-            </select>
+            <SelectField
+              name="payment_method"
+              control={control}
+              rules={orderRules.payment_method}
+              placeholder="Select payment"
+              options={[
+                { value: 'cash', label: 'Cash' },
+                { value: 'e_wallet', label: 'E-Wallet' },
+                { value: 'credit', label: 'Credit' },
+              ]}
+            />
           </FormField>
 
           <FormField label="Delivery Fee" htmlFor="order-delivery-fee" error={errors.delivery_fee?.message}>
@@ -160,17 +173,15 @@ export default function OrderFormModal({ isOpen, onClose, editingId, initialData
           <label className="block text-xs font-medium text-slate-700 mb-1">Items</label>
           {watchedItems.map((item, index) => (
             <div key={index} className="flex items-center gap-2 mb-2">
-              <select
-                {...register(`items.${index}.product_id`, { required: 'Product is required.' })}
-                className="flex-1 px-3 py-2 text-sm border border-slate-300 rounded focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
-              >
-                <option value="">Select product</option>
-                {products.map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {p.name}
-                  </option>
-                ))}
-              </select>
+              <div className="flex-1">
+                <SelectField
+                  name={`items.${index}.product_id`}
+                  control={control}
+                  rules={{ required: 'Product is required.' }}
+                  placeholder="Select product"
+                  options={products.map((p) => ({ value: p.id, label: p.name }))}
+                />
+              </div>
               <input
                 type="number"
                 min="1"

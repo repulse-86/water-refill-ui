@@ -5,6 +5,7 @@ import { Truck } from 'lucide-react';
 import useServerFieldErrors from '../../../hooks/useServerFieldErrors';
 import Modal from '../../../components/ui/Modal';
 import FormField from '../../../components/ui/FormField';
+import SelectField from '../../../components/ui/SelectField';
 import Button from '../../../components/ui/Button';
 import useFulfillmentStore from '../../../store/fulfillmentStore';
 import useCustomersStore from '../../../store/customersStore';
@@ -42,6 +43,7 @@ export default function DeliveryRecordModal({ isOpen, onClose, order }) {
     handleSubmit,
     setError,
     reset,
+    control,
     formState: { errors },
   } = useForm({ defaultValues: emptyForm });
 
@@ -82,10 +84,15 @@ export default function DeliveryRecordModal({ isOpen, onClose, order }) {
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
         <FormField label="Delivery Status" htmlFor="delivery-status" error={errors.delivery_status?.message}>
-          <select {...register('delivery_status', { required: 'The delivery status field is required.' })}>
-            <option value="delivered">Delivered</option>
-            <option value="failed">Failed</option>
-          </select>
+          <SelectField
+            name="delivery_status"
+            control={control}
+            rules={{ required: 'The delivery status field is required.' }}
+            options={[
+              { value: 'delivered', label: 'Delivered' },
+              { value: 'failed', label: 'Failed' },
+            ]}
+          />
         </FormField>
 
         <div className="grid grid-cols-2 gap-4">
