@@ -78,6 +78,7 @@ export default function AuthModal({ isOpen, onClose }) {
               type="text"
               placeholder="e.g. owner"
               {...register('username', loginRules.username)}
+              autoComplete="username"
             />
           </FormField>
 
@@ -85,6 +86,7 @@ export default function AuthModal({ isOpen, onClose }) {
             <input
               type="password"
               placeholder="••••••••"
+              autoComplete="current-password"
               {...register('password', loginRules.password)}
             />
           </FormField>

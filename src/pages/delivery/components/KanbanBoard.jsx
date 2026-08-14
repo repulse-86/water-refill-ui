@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { motion } from 'framer-motion';
 import Badge from '../../../components/ui/Badge';
 import Button from '../../../components/ui/Button';
 import { STATUS_BADGE_VARIANTS, DELIVERY_STATUS_BADGE_VARIANTS } from '../../../domain/orderStatus';
@@ -17,7 +18,13 @@ function OrderCard({ order, currency, onAdvance, onRecord, onSkipDelivery, onArc
   const isProcessing = order.status === 'processing';
 
   return (
-    <div className="bg-white border border-gray-200 shadow-sm rounded p-3 hover:shadow-md transition-shadow">
+    <motion.div
+      variants={{
+        hidden: { opacity: 0, y: 12 },
+        visible: { opacity: 1, y: 0 },
+      }}
+      className="bg-white border border-gray-200 shadow-sm rounded p-3 hover:shadow-md transition-shadow"
+    >
       <div className="flex items-start justify-between gap-2 mb-2">
         <span className="text-xs font-semibold text-slate-900">#{order.id}</span>
         <Badge variant={
@@ -95,17 +102,22 @@ function OrderCard({ order, currency, onAdvance, onRecord, onSkipDelivery, onArc
           >
             Record
           </Button>
-        )}
-      </div>
-    </div>
-  );
-}
+         )}
+       </div>
+     </motion.div>
+   );
+ }
 
-function Column({ column, orders, currency, onAdvance, onRecord, onSkipDelivery, onArchive }) {
+ function Column({ column, orders, currency, onAdvance, onRecord, onSkipDelivery, onArchive }) {
   const columnOrders = orders.filter((o) => o.status === column.id);
 
   return (
-    <div className="flex-1 min-w-[280px]">
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className="flex-1 min-w-[280px]"
+    >
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wider">{column.label}</h3>
         <span className="text-xs font-medium text-slate-500 bg-white border border-slate-200 px-2 py-0.5 rounded-full">
@@ -113,7 +125,18 @@ function Column({ column, orders, currency, onAdvance, onRecord, onSkipDelivery,
         </span>
       </div>
 
-      <div className="space-y-3 min-h-[200px]">
+      <motion.div
+        className="space-y-3 min-h-[200px]"
+        variants={{
+          hidden: { opacity: 0 },
+          visible: {
+            opacity: 1,
+            transition: { staggerChildren: 0.04 },
+          },
+        }}
+        initial="hidden"
+        animate="visible"
+      >
         {columnOrders.length === 0 ? (
           <p className="text-xs text-slate-400 text-center py-8 border border-dashed border-slate-200 rounded">No orders</p>
         ) : (
@@ -129,8 +152,8 @@ function Column({ column, orders, currency, onAdvance, onRecord, onSkipDelivery,
             />
           ))
         )}
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
 
@@ -138,7 +161,17 @@ export default function KanbanBoard({ orders, currency, onAdvance, onRecord, onS
   const columns = useMemo(() => COLUMNS, []);
 
   return (
-    <div className="flex gap-8 overflow-x-auto pb-4">
+    <motion.div
+      className="flex gap-8 overflow-x-auto pb-4"
+      variants={{
+        hidden: {},
+        visible: {
+          transition: { staggerChildren: 0.08 },
+        },
+      }}
+      initial="hidden"
+      animate="visible"
+    >
       {columns.map((column) => (
         <Column
           key={column.id}
@@ -151,6 +184,6 @@ export default function KanbanBoard({ orders, currency, onAdvance, onRecord, onS
           onArchive={onArchive}
         />
       ))}
-    </div>
+    </motion.div>
   );
 }

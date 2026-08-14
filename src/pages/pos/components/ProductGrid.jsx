@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { motion } from 'framer-motion';
 import { Check, Droplet, Plus, X } from 'lucide-react';
 import Badge from '../../../components/ui/Badge';
 import usePosStore from '../../../store/posStore';
@@ -34,25 +35,36 @@ export default function ProductGrid({ products, currency }) {
 
   return (
     <div className="flex-1 min-w-0">
-      <div className="inline-flex items-center bg-gray-100 rounded-lg p-1 mb-4 gap-1">
+      <motion.div layout className="inline-flex items-center bg-gray-100 rounded-lg p-1 mb-4 gap-1">
         {CATEGORIES.map(({ id, label }) => (
-          <button
+          <motion.button
             key={id}
             type="button"
             onClick={() => setCategory(id)}
             className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors ${
               category === id ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'
             }`}
+            layout
           >
             {label}
-          </button>
+          </motion.button>
         ))}
-      </div>
+      </motion.div>
 
       {visible.length === 0 ? (
         <p className="text-sm text-slate-400">No products available.</p>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+        <motion.div
+          className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4"
+          variants={{
+            hidden: {},
+            visible: {
+              transition: { staggerChildren: 0.04 },
+            },
+          }}
+          initial="hidden"
+          animate="visible"
+        >
           {visible.map((product) => {
             const stock = Number(product.stock_quantity);
             const outOfStock = stock <= 0;
@@ -80,7 +92,7 @@ export default function ProductGrid({ products, currency }) {
                 : `${stock} in stock`;
 
             return (
-              <button
+              <motion.button
                 key={product.id}
                 type="button"
                 disabled={outOfStock}
@@ -90,6 +102,10 @@ export default function ProductGrid({ products, currency }) {
                   active:scale-[0.97]
                   focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2
                   disabled:opacity-60 disabled:saturate-0 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none disabled:active:scale-100`}
+                variants={{
+                  hidden: { opacity: 0, scale: 0.95 },
+                  visible: { opacity: 1, scale: 1 },
+                }}
               >
                 <Droplet
                   className={`pointer-events-none select-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 ${inCart ? 'text-sky-200/60' : 'text-sky-100/70'}`}
@@ -141,11 +157,11 @@ export default function ProductGrid({ products, currency }) {
                   </p>
                   <p className={`mt-1 text-[11px] font-medium leading-tight ${statusColor}`}>{statusText}</p>
                 </div>
-              </button>
-            );
-          })}
-        </div>
-      )}
-    </div>
-  );
-}
+               </motion.button>
+             );
+           })}
+         </motion.div>
+       )}
+     </div>
+   );
+ }

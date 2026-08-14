@@ -1,4 +1,5 @@
 import { Wallet } from 'lucide-react';
+import CountUp from '../../../components/ui/CountUp';
 
 const rows = [
   { key: 'cash', label: 'Cash', color: 'text-emerald-600' },
@@ -7,7 +8,7 @@ const rows = [
 ];
 
 export default function TodaySalesCard({ today, currency }) {
-  const format = (value) => `${currency} ${Number(value).toFixed(2)}`;
+  const formatCurrency = (value) => `${currency} ${Number(value).toFixed(2)}`;
 
   return (
     <div className="bg-white border border-slate-200 rounded p-5">
@@ -20,16 +21,20 @@ export default function TodaySalesCard({ today, currency }) {
         </span>
       </div>
 
-      <p className="text-2xl font-bold text-slate-900 mb-1">{format(today.revenue)}</p>
+      <p className="text-2xl font-bold text-slate-900 mb-1">
+        <CountUp end={Number(today.revenue)} decimals={2} formatter={formatCurrency} />
+      </p>
       <p className="text-xs text-slate-400 mb-4">
-        {today.order_count} completed order{today.order_count === 1 ? '' : 's'} today
+        <CountUp end={Number(today.order_count)} decimals={0} /> completed order{today.order_count === 1 ? '' : 's'} today
       </p>
 
       <div className="space-y-2 border-t border-slate-100 pt-3">
         {rows.map(({ key, label, color }) => (
           <div key={key} className="flex items-center justify-between text-sm">
             <span className="text-slate-500">{label}</span>
-            <span className={`font-semibold ${color}`}>{format(today[key])}</span>
+            <span className={`font-semibold ${color}`}>
+              <CountUp end={Number(today[key])} decimals={2} formatter={formatCurrency} />
+            </span>
           </div>
         ))}
       </div>

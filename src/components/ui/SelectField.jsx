@@ -19,36 +19,36 @@ export function BaseSelectField({
   return (
     <div>
       {label && (
-        <label htmlFor={htmlFor} className="block text-xs font-medium text-slate-700 mb-1">
+        <label htmlFor={htmlFor} className="block text-xs font-medium !text-slate-700 mb-1">
           {label}
         </label>
       )}
-      <Select.Root value={value} onValueChange={onValueChange} disabled={disabled}>
+      <Select.Root value={value != null && value !== '' ? String(value) : undefined} onValueChange={onValueChange} disabled={disabled} modal>
         <Select.Trigger
           id={htmlFor}
           aria-invalid={hasError}
           className={cn(
-            'w-full flex items-center justify-between gap-2 px-3 py-2 text-sm text-left border rounded bg-white focus:outline-none focus:ring-2',
+            'w-full flex items-center justify-between gap-2 px-3 py-2 text-sm text-left text-slate-900 border rounded bg-white focus:outline-none focus:ring-2',
             hasError
               ? 'border-red-400 focus:ring-red-500 focus:border-red-500'
               : 'border-slate-300 focus:ring-sky-500 focus:border-sky-500',
             className
           )}
         >
-          <Select.Value placeholder={placeholder} />
+          <Select.Value placeholder={placeholder} className="!text-slate-900" />
           <Select.Icon>
             <ChevronDown className="w-4 h-4 text-slate-400" />
           </Select.Icon>
         </Select.Trigger>
         <Select.Portal>
-          <Select.Content className="z-50 bg-white border border-slate-200 rounded shadow-lg">
+          <Select.Content className="z-[100] bg-white border border-slate-200 rounded shadow-lg text-slate-900">
             <Select.Viewport>
               <Select.Group>
                 {options.map((opt) => (
                   <Select.Item
-                    key={opt.value}
-                    value={opt.value}
-                    className="relative flex items-center justify-between pl-8 pr-3 py-2 text-sm text-slate-700 cursor-pointer outline-none data-[highlighted]:bg-sky-50 data-[highlighted]:text-sky-700"
+                    key={String(opt.value)}
+                    value={String(opt.value)}
+                    className="relative flex items-center justify-between pl-8 pr-3 py-2 text-sm text-slate-900 cursor-pointer outline-none data-[highlighted]:bg-sky-50 data-[highlighted]:text-sky-700"
                   >
                     <Select.ItemText>{opt.label}</Select.ItemText>
                     <Select.ItemIndicator className="absolute left-2">

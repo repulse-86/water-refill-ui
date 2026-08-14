@@ -1,4 +1,5 @@
 import { Droplet, RotateCcw, Users, Clock } from 'lucide-react';
+import CountUp from '../../../components/ui/CountUp';
 
 const icons = {
   gallonsPumped: Droplet,
@@ -9,15 +10,15 @@ const icons = {
 
 export default function QuickStats({ stats }) {
   const items = [
-    { key: 'gallonsPumped', label: 'Gallons Pumped', value: Number(stats.gallonsPumped).toFixed(1) },
-    { key: 'bottlesReturned', label: 'Bottles Returned', value: String(stats.bottlesReturned) },
-    { key: 'activeCustomers', label: 'Active Customers', value: String(stats.activeCustomers) },
-    { key: 'pendingOrders', label: 'Pending Orders', value: String(stats.pendingOrders) },
+    { key: 'gallonsPumped', label: 'Gallons Pumped', end: Number(stats.gallonsPumped), decimals: 1 },
+    { key: 'bottlesReturned', label: 'Bottles Returned', end: Number(stats.bottlesReturned), decimals: 0 },
+    { key: 'activeCustomers', label: 'Active Customers', end: Number(stats.activeCustomers), decimals: 0 },
+    { key: 'pendingOrders', label: 'Pending Orders', end: Number(stats.pendingOrders), decimals: 0 },
   ];
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      {items.map(({ key, label, value }) => {
+      {items.map(({ key, label, end, decimals }) => {
         const Icon = icons[key];
         return (
           <div key={key} className="bg-white border border-slate-200 rounded p-4">
@@ -27,7 +28,9 @@ export default function QuickStats({ stats }) {
               </div>
               <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide">{label}</span>
             </div>
-            <p className="text-lg font-bold text-slate-900">{value}</p>
+            <p className="text-lg font-bold text-slate-900">
+              <CountUp end={end} decimals={decimals} />
+            </p>
           </div>
         );
       })}
