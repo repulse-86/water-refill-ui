@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { Droplet, Menu, X } from 'lucide-react';
+import { Dialog, DialogBackdrop, DialogPanel, Transition, TransitionChild } from '@headlessui/react';
 import SidebarContent from './SidebarContent';
 
 export default function MobileSidebar() {
   const [isOpen, setIsOpen] = useState(false);
-  const close = () => setIsOpen(false);
 
   return (
     <>
@@ -24,32 +24,33 @@ export default function MobileSidebar() {
         </button>
       </header>
 
-      <div
-        className={`md:hidden fixed inset-0 z-50 flex ${
-          isOpen ? '' : 'pointer-events-none'
-        }`}
-      >
-        <div
-          className={`absolute inset-0 bg-slate-900/60 transition-opacity duration-300 ${
-            isOpen ? 'opacity-100' : 'opacity-0'
-          }`}
-          onClick={close}
-        />
-        <aside
-          className={`relative z-10 w-64 bg-sky-900 text-white flex flex-col h-full transition-transform duration-300 ease-out ${
-            isOpen ? 'translate-x-0' : '-translate-x-full'
-          }`}
-        >
-          <button
-            onClick={close}
-            className="absolute top-3 right-3 p-2 text-sky-100 hover:bg-sky-800 rounded"
-            aria-label="Close navigation menu"
-          >
-            <X className="w-5 h-5" />
-          </button>
-          <SidebarContent onNavigate={close} />
-        </aside>
-      </div>
+      <Transition show={isOpen}>
+        <Dialog onClose={() => setIsOpen(false)} className="md:hidden relative z-50">
+          <TransitionChild>
+            <DialogBackdrop
+              transition
+              className="fixed inset-0 bg-slate-900/60 transition-opacity duration-300 data-closed:opacity-0"
+            />
+          </TransitionChild>
+          <div className="fixed inset-0 flex">
+            <TransitionChild
+              transition
+              className="transition-transform duration-300 ease-out data-closed:-translate-x-full"
+            >
+              <DialogPanel className="relative z-10 w-64 bg-sky-900 text-white flex flex-col h-full">
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="absolute top-3 right-3 p-2 text-sky-100 hover:bg-sky-800 rounded"
+                  aria-label="Close navigation menu"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+                <SidebarContent onNavigate={() => setIsOpen(false)} />
+              </DialogPanel>
+            </TransitionChild>
+          </div>
+        </Dialog>
+      </Transition>
     </>
   );
 }
