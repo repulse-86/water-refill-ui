@@ -7,7 +7,7 @@ export default function AppLayout() {
     <div className="min-h-screen flex flex-col md:flex-row">
       <MobileSidebar />
       <DesktopSidebar />
-      <main className="flex-1 bg-white overflow-y-auto">
+      <main className="flex-1 bg-gray-50 overflow-y-auto">
         <Outlet />
       </main>
     </div>
