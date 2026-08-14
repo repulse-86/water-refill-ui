@@ -3,7 +3,6 @@ import useSettingsStore from '../../../store/settingsStore';
 
 export default function DashboardHeader() {
   const settings = useSettingsStore((state) => state.settings);
-  const currency = settings?.currency ?? 'PHP';
   const storeName = settings?.store_name ?? 'My Water Refilling Station';
 
   const today = new Date().toLocaleDateString(undefined, {
@@ -25,7 +24,6 @@ export default function DashboardHeader() {
         <div className="w-9 h-9 bg-sky-50 text-sky-600 rounded flex items-center justify-center">
           <LayoutDashboard className="w-5 h-5" />
         </div>
-        <span className="text-xs text-slate-500">{currency}</span>
       </div>
     </div>
   );

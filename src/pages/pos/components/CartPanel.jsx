@@ -6,7 +6,6 @@ import { ORDER_TYPES } from '../../../domain/orderStatus';
 import Button from '../../../components/ui/Button';
 import FormField from '../../../components/ui/FormField';
 import IconButton from '../../../components/ui/IconButton';
-import CustomerPicker from './CustomerPicker';
 import PaymentSummary from './PaymentSummary';
 import QuantityStepper from './QuantityStepper';
 import SegmentedControl from './SegmentedControl';
@@ -94,8 +93,6 @@ export default function CartPanel({ customers, currency, onSaleSuccess }) {
           </h2>
           <span className="text-xs text-slate-500">{cart.length} item(s)</span>
         </div>
-
-        <CustomerPicker customers={customers} value={customerId} onChange={setCustomerId} currency={currency} />
 
         <SegmentedControl
           value={orderType}

@@ -86,7 +86,7 @@ export default function PaymentSummary({
 
       {paymentMethod === PAYMENT_METHODS.e_wallet && (
         <p className="text-xs text-sky-700 bg-sky-50 border border-sky-200 rounded p-2.5">
-          Collected via e-wallet — no change required.
+          Collected via e-wallet, no change required.
         </p>
       )}
 

@@ -9,6 +9,7 @@ import PosHeader from './components/PosHeader';
 import ProductGrid from './components/ProductGrid';
 import CartPanel from './components/CartPanel';
 import CheckoutSuccessModal from './components/CheckoutSuccessModal';
+import CustomerPicker from './components/CustomerPicker';
 
 export default function PosTerminal() {
   const { products, status: productStatus, fetchProducts } = useProductsStore(
@@ -27,6 +28,8 @@ export default function PosTerminal() {
   );
 
   const currency = useSettingsStore((state) => state.settings?.currency ?? 'PHP');
+  const customerId = usePosStore((state) => state.customerId);
+  const setCustomerId = usePosStore((state) => state.setCustomerId);
   const lastOrder = usePosStore((state) => state.lastOrder);
   const fetchOrders = useOrdersStore((state) => state.fetchOrders);
 
@@ -48,7 +51,15 @@ export default function PosTerminal() {
       <PosHeader />
 
       <div className="flex flex-col lg:flex-row gap-6">
-        <ProductGrid products={products} currency={currency} />
+        <div className="flex-1 min-w-0 flex flex-col gap-4">
+          <CustomerPicker
+            customers={customers}
+            value={customerId}
+            onChange={setCustomerId}
+            currency={currency}
+          />
+          <ProductGrid products={products} currency={currency} />
+        </div>
         <CartPanel customers={customers} currency={currency} onSaleSuccess={handleSaleSuccess} />
       </div>
 
