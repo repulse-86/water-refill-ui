@@ -6,8 +6,12 @@ import AuthModal from '../components/website/AuthModal';
 
 export default function GuestLayout() {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [authDestination, setAuthDestination] = useState(null);
 
-  const openAuth = () => setIsAuthOpen(true);
+  const openAuth = (destination) => {
+    setAuthDestination(destination || null);
+    setIsAuthOpen(true);
+  };
   const closeAuth = () => setIsAuthOpen(false);
 
   return (
@@ -17,7 +21,7 @@ export default function GuestLayout() {
         <Outlet context={{ isAuthOpen, openAuth, closeAuth }} />
       </main>
       <Footer />
-      <AuthModal isOpen={isAuthOpen} onClose={closeAuth} />
+      <AuthModal isOpen={isAuthOpen} onClose={closeAuth} redirectTo={authDestination} />
     </div>
   );
 }

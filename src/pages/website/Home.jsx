@@ -9,7 +9,7 @@ export default function Home() {
   return (
     <>
       <Hero onOpenAuth={openAuth} />
-      <ModulesGrid onOpenAuth={openAuth} />
+      <ModulesGrid onOpenModule={openAuth} />
       <Checklist />
     </>
   );

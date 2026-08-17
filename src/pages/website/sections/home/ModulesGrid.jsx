@@ -7,6 +7,7 @@ const modules = [
     description:
       'Log walk-in and delivery refilling sales, Slim/Round container deposits, and cash receipts.',
     cta: 'Open POS Terminal',
+    path: '/pos',
   },
   {
     icon: Truck,
@@ -14,6 +15,7 @@ const modules = [
     description:
       'Track the order lifecycle (Queued to Completed) and record delivery status, bottles returned, and cash collected.',
     cta: 'Manage Orders',
+    path: '/orders',
   },
   {
     icon: Users,
@@ -21,6 +23,7 @@ const modules = [
     description:
       'Track dual-asset balances (bottle debt and outstanding cash) and settle ledgers in one click.',
     cta: 'View Ledgers',
+    path: '/customers',
   },
   {
     icon: Gauge,
@@ -28,10 +31,11 @@ const modules = [
     description:
       'Log daily odometer readings and reconcile expected volume against actual throughput to flag discrepancies.',
     cta: 'Run Shift Audit',
+    path: '/meter-reading',
   },
 ];
 
-export default function ModulesGrid({ onOpenAuth }) {
+export default function ModulesGrid({ onOpenModule }) {
 
   return (
     <section className="py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -43,7 +47,7 @@ export default function ModulesGrid({ onOpenAuth }) {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {modules.map(({ icon: Icon, title, description, cta }) => (
+        {modules.map(({ icon: Icon, title, description, cta, path }) => (
           <div
             key={title}
             className="bg-white border border-slate-200 p-5 rounded hover:border-slate-300 transition-all flex flex-col justify-between"
@@ -56,7 +60,7 @@ export default function ModulesGrid({ onOpenAuth }) {
               <p className="text-xs text-slate-600 mb-4 leading-normal">{description}</p>
             </div>
             <button
-              onClick={onOpenAuth}
+              onClick={() => onOpenModule(path)}
               className="w-full text-left text-xs font-semibold text-sky-700 hover:text-sky-800 pt-3 border-t border-slate-100 flex items-center justify-between"
             >
               <span>{cta}</span>

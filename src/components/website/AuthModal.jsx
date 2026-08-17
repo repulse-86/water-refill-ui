@@ -9,7 +9,7 @@ import FormField from '../ui/FormField';
 import Button from '../ui/Button';
 import Modal from '../ui/Modal';
 
-export default function AuthModal({ isOpen, onClose }) {
+export default function AuthModal({ isOpen, onClose, redirectTo }) {
   const navigate = useNavigate();
   const { login, status, fieldErrors, resetErrors } = useAuthStore(
     useShallow((state) => ({
@@ -56,7 +56,7 @@ export default function AuthModal({ isOpen, onClose }) {
     if (result.success) {
       onClose();
       reset();
-      navigate('/dashboard');
+      navigate(redirectTo || '/dashboard');
     }
   };
 
