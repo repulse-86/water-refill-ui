@@ -53,7 +53,7 @@ export default function ProductPerformanceTable({ rows }) {
         items={[
           { icon: TrendingUp, label: 'Top Product', value: top?.name ?? '—', sub: top ? money(top.revenue) : null },
           { icon: ShoppingCart, label: 'Total Units', value: totalUnits, sub: 'units sold' },
-          { icon: Banknote, label: 'Total Revenue', value: money(totalRevenue) },
+          { icon: Banknote, label: 'Total Revenue', value: totalRevenue, decimals: 2, formatter: money },
           { icon: Boxes, label: 'Products Sold', value: rows.length, sub: 'distinct products' },
         ]}
       />

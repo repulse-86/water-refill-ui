@@ -57,8 +57,8 @@ export default function ReconciliationTable({ rows }) {
       <StatCards
         items={[
           { icon: TriangleAlert, label: 'Flagged Days', value: flaggedDays, sub: flaggedDays > 0 ? 'review required' : 'no discrepancies' },
-          { icon: Droplets, label: 'Total Expected', value: formatGallons(totalExpected), sub: 'from completed sales' },
-          { icon: Gauge, label: 'Total Actual', value: formatGallons(totalActual), sub: 'from meter readings' },
+          { icon: Droplets, label: 'Total Expected', value: totalExpected, decimals: 2, formatter: (v) => `${v.toFixed(2)} gal`, sub: 'from completed sales' },
+          { icon: Gauge, label: 'Total Actual', value: totalActual, decimals: 2, formatter: (v) => `${v.toFixed(2)} gal`, sub: 'from meter readings' },
           { icon: CalendarDays, label: 'Days Covered', value: rows.length, sub: 'sales or readings' },
         ]}
       />

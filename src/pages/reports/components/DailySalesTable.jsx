@@ -40,10 +40,10 @@ export default function DailySalesTable({ rows }) {
     <>
       <StatCards
         items={[
-          { icon: Banknote, label: 'Total Revenue', value: money(totalRevenue), sub: 'completed sales' },
+          { icon: Banknote, label: 'Total Revenue', value: totalRevenue, decimals: 2, formatter: money, sub: 'completed sales' },
           { icon: ClipboardList, label: 'Orders', value: totalOrders, sub: 'completed' },
-          { icon: Droplets, label: 'Gallons Pumped', value: `${Number(totalGallons).toFixed(2)} gal` },
-          { icon: CreditCard, label: 'On Credit', value: money(totalCredit), sub: 'outstanding charges' },
+          { icon: Droplets, label: 'Gallons Pumped', value: totalGallons, decimals: 2, formatter: (v) => `${v.toFixed(2)} gal` },
+          { icon: CreditCard, label: 'On Credit', value: totalCredit, decimals: 2, formatter: money, sub: 'outstanding charges' },
         ]}
       />
       <DataTable

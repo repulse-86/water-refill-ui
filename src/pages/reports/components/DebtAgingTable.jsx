@@ -47,8 +47,8 @@ export default function DebtAgingTable({ rows }) {
       <StatCards
         items={[
           { icon: Users, label: 'Customers Owing', value: rows.length, sub: 'bottles or balance' },
-          { icon: Banknote, label: 'Total Outstanding', value: money(totalOutstanding), sub: 'unpaid cash' },
-          { icon: Droplets, label: 'Total Bottle Debt', value: `${Number(totalBottles).toFixed(0)}`, sub: 'empty jugs owed' },
+          { icon: Banknote, label: 'Total Outstanding', value: totalOutstanding, decimals: 2, formatter: money, sub: 'unpaid cash' },
+          { icon: Droplets, label: 'Total Bottle Debt', value: totalBottles, decimals: 0, sub: 'empty jugs owed' },
           { icon: Activity, label: 'Largest Debt', value: top?.name ?? '—', sub: top ? money(top.outstanding_balance) : null },
         ]}
       />
