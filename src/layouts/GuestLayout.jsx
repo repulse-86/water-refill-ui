@@ -9,7 +9,7 @@ export default function GuestLayout() {
   const [authDestination, setAuthDestination] = useState(null);
 
   const openAuth = (destination) => {
-    setAuthDestination(destination || null);
+    setAuthDestination(typeof destination === 'string' ? destination : null);
     setIsAuthOpen(true);
   };
   const closeAuth = () => setIsAuthOpen(false);

@@ -11,8 +11,8 @@ export default function DashboardHeader() {
   return (
     <div className="flex items-center justify-between mb-8">
       <div>
-        <h1 className="text-2xl font-bold text-slate-900 tracking-tight mb-1">{storeName}</h1>
-        <p className="text-sm text-slate-500">
+        <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight mb-1">{storeName}</h1>
+        <p className="text-xs sm:text-sm text-slate-500">
           Dashboard overview · {today}
         </p>
       </div>

@@ -16,8 +16,8 @@ export default function DeliveryHeader({ view, onViewChange }) {
   return (
     <div className="flex items-center justify-between mb-6">
       <div>
-        <h1 className="text-2xl font-bold text-slate-900 tracking-tight mb-1">Fulfillment</h1>
-        <p className="text-sm text-slate-500">
+        <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight mb-1">Fulfillment</h1>
+        <p className="text-xs sm:text-sm text-slate-500">
           Track and process orders through the fulfillment pipeline.
         </p>
       </div>
@@ -25,13 +25,13 @@ export default function DeliveryHeader({ view, onViewChange }) {
         selectedIndex={activeIndex}
         onChange={(index) => onViewChange(VIEWS[index].id)}
       >
-        <TabList className="inline-flex items-center bg-slate-100 rounded-lg p-1">
+        <TabList className="inline-flex flex-col sm:flex-row items-stretch sm:items-center bg-slate-100 rounded-lg p-1">
           {VIEWS.map(({ id, label, icon: Icon }) => (
             <Tab
               key={id}
               className={({ selected }) =>
                 cn(
-                  'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-colors focus:outline-none',
+                  'inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-colors focus:outline-none',
                   selected
                     ? 'bg-white text-slate-900 shadow-sm'
                     : 'text-slate-500 hover:text-slate-700'
