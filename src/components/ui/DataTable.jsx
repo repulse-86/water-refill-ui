@@ -36,6 +36,7 @@ export default function DataTable({
   pageSize = 10,
   pageSizeOptions = [5, 10, 25, 50],
   emptyMessage = 'No records found.',
+  scrollThreshold = 8,
 }) {
   const searchableKeys = useMemo(
     () => (searchKeys.length > 0 ? searchKeys : columns.map((c) => c.accessorKey || c.id)),
@@ -71,6 +72,7 @@ export default function DataTable({
   const start = totalRows === 0 ? 0 : pageIndex * rowsPerPage + 1;
   const end = Math.min(start + rowsPerPage - 1, totalRows);
   const pageRows = table.getRowModel().rows;
+  const hasScroll = pageRows.length > scrollThreshold;
 
   return (
     <div className="bg-white border border-slate-200 rounded overflow-hidden">
@@ -89,13 +91,16 @@ export default function DataTable({
         </div>
       )}
 
-      <div className="overflow-x-auto">
+      <div className={`overflow-auto ${hasScroll ? 'h-[520px]' : ''}`}>
         <table className="w-full min-w-[640px] text-sm">
           <thead className="bg-slate-100 text-left text-xs uppercase tracking-wider text-slate-500">
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <th key={header.id} className="px-4 py-3 font-semibold whitespace-nowrap">
+                  <th
+                    key={header.id}
+                    className="px-4 py-3 font-semibold whitespace-nowrap sticky top-0 bg-slate-100 z-10"
+                  >
                     {flexRender(header.column.columnDef.header, header.getContext())}
                   </th>
                 ))}
