@@ -48,10 +48,9 @@ export default function PosTerminal() {
 
   return (
     <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <PosHeader />
-
       <div className="flex flex-col lg:flex-row gap-6">
         <div className="flex-1 min-w-0 flex flex-col gap-4">
+          <PosHeader />
           <CustomerPicker
             customers={customers}
             value={customerId}
