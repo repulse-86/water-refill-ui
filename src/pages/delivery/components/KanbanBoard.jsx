@@ -126,7 +126,7 @@ function OrderCard({ order, currency, onAdvance, onRecord, onSkipDelivery, onArc
       </div>
 
       <motion.div
-        className="space-y-3 min-h-[200px]"
+        className="space-y-3 h-[600px] overflow-y-auto pr-1"
         variants={{
           hidden: { opacity: 0 },
           visible: {
