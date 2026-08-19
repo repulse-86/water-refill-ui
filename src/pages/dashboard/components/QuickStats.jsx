@@ -21,14 +21,14 @@ export default function QuickStats({ stats }) {
       {items.map(({ key, label, end, decimals }) => {
         const Icon = icons[key];
         return (
-          <div key={key} className="bg-white border border-slate-200 rounded p-4">
+          <div key={key} className="bg-white border border-slate-200 rounded-2xl p-3 sm:p-4 flex flex-col">
             <div className="flex items-center gap-2 mb-2">
-              <div className="w-7 h-7 bg-sky-50 text-sky-600 rounded flex items-center justify-center">
+              <div className="w-6 h-6 sm:w-7 sm:h-7 bg-sky-50 text-sky-600 rounded flex items-center justify-center">
                 <Icon className="w-4 h-4" />
               </div>
               <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide">{label}</span>
             </div>
-            <p className="text-lg font-bold text-slate-900">
+            <p className="mt-auto text-3xl sm:text-4xl font-bold text-slate-900">
               <CountUp end={end} decimals={decimals} />
             </p>
           </div>

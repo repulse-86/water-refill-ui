@@ -11,7 +11,7 @@ export default function TodaySalesCard({ today, currency }) {
   const formatCurrency = (value) => `${currency} ${Number(value).toFixed(2)}`;
 
   return (
-    <div className="bg-white border border-slate-200 rounded p-5">
+    <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5">
       <div className="flex items-center gap-2 mb-3">
         <div className="w-7 h-7 bg-sky-50 text-sky-600 rounded flex items-center justify-center">
           <Wallet className="w-4 h-4" />
@@ -21,7 +21,7 @@ export default function TodaySalesCard({ today, currency }) {
         </span>
       </div>
 
-      <p className="text-2xl font-bold text-slate-900 mb-1">
+      <p className="text-xl sm:text-2xl font-bold text-slate-900 mb-1">
         <CountUp end={Number(today.revenue)} decimals={2} formatter={formatCurrency} />
       </p>
       <p className="text-xs text-slate-400 mb-4">
@@ -30,7 +30,7 @@ export default function TodaySalesCard({ today, currency }) {
 
       <div className="space-y-2 border-t border-slate-100 pt-3">
         {rows.map(({ key, label, color }) => (
-          <div key={key} className="flex items-center justify-between text-sm">
+          <div key={key} className="flex items-center justify-between text-sm sm:text-base">
             <span className="text-slate-500">{label}</span>
             <span className={`font-semibold ${color}`}>
               <CountUp end={Number(today[key])} decimals={2} formatter={formatCurrency} />

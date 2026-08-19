@@ -7,6 +7,9 @@ import useSettingsStore from '../../store/settingsStore';
 import DashboardHeader from './components/DashboardHeader';
 import TodaySalesCard from './components/TodaySalesCard';
 import QuickStats from './components/QuickStats';
+import SalesTrendChart from './components/SalesTrendChart';
+import TopProductsChart from './components/TopProductsChart';
+import PaymentMixChart from './components/PaymentMixChart';
 import PendingOrdersList from './components/PendingOrdersList';
 import LowStockAlerts from './components/LowStockAlerts';
 
@@ -55,9 +58,16 @@ export default function Dashboard() {
             <QuickStats stats={dashboard.quickStats} />
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <PendingOrdersList orders={dashboard.pendingOrders} currency={currency} />
-            <LowStockAlerts products={dashboard.lowStock} />
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+            <div className="lg:col-span-2 flex flex-col gap-4">
+              <SalesTrendChart data={dashboard.salesTrend} currency={currency} />
+              <PendingOrdersList orders={dashboard.pendingOrders} currency={currency} />
+              <LowStockAlerts products={dashboard.lowStock} />
+            </div>
+            <div className="flex flex-col gap-4">
+              <PaymentMixChart data={dashboard.paymentMix} currency={currency} />
+              <TopProductsChart data={dashboard.topProducts} currency={currency} />
+            </div>
           </div>
         </>
       )}

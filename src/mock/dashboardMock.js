@@ -10,6 +10,7 @@ import {
   computePendingOrders,
   computeLowStock,
 } from '../domain/dashboard';
+import { computeDailySales, computeProductPerformance } from '../domain/reports';
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -32,5 +33,27 @@ export async function getDashboard() {
     pendingOrders: pendingOrders.length,
   };
 
-  return { today, quickStats, pendingOrders, lowStock };
+  const salesTrend = computeDailySales(orders, products)
+    .sort((a, b) => a.date.localeCompare(b.date))
+    .slice(-7);
+
+  const topProducts = computeProductPerformance(orders, products)
+    .slice(0, 5)
+    .map((p) => ({
+      name: p.name,
+      revenue: p.revenue,
+      units: p.units,
+      share_pct: p.share_pct,
+    }));
+
+  const trend = computeDailySales(orders, products);
+  const paymentMix = ['cash', 'e_wallet', 'credit'].map((key) => ({
+    key,
+    name: key === 'cash' ? 'Cash' : key === 'e_wallet' ? 'E-Wallet' : 'Credit',
+    value: Number(
+      trend.reduce((sum, row) => sum + Number(row[key] ?? 0), 0).toFixed(2)
+    ),
+  }));
+
+  return { today, quickStats, pendingOrders, lowStock, salesTrend, topProducts, paymentMix };
 }
