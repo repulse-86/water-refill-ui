@@ -1,16 +1,9 @@
-import { Banknote, ClipboardList, CreditCard, Droplets } from 'lucide-react';
 import DataTable from '../../../components/ui/DataTable';
-import StatCards from './StatCards';
 import useSettingsStore from '../../../store/settingsStore';
 import { formatDate } from '../../../utils/date';
 
 export default function DailySalesTable({ rows }) {
   const currency = useSettingsStore((state) => state.settings?.currency ?? 'PHP');
-
-  const totalRevenue = rows.reduce((sum, r) => sum + r.revenue, 0);
-  const totalOrders = rows.reduce((sum, r) => sum + r.order_count, 0);
-  const totalGallons = rows.reduce((sum, r) => sum + r.gallons, 0);
-  const totalCredit = rows.reduce((sum, r) => sum + r.credit, 0);
 
   const money = (value) => `${currency} ${Number(value).toFixed(2)}`;
 
@@ -37,21 +30,11 @@ export default function DailySalesTable({ rows }) {
   ];
 
   return (
-    <>
-      <StatCards
-        items={[
-          { icon: Banknote, label: 'Total Revenue', value: totalRevenue, decimals: 2, formatter: money, sub: 'completed sales' },
-          { icon: ClipboardList, label: 'Orders', value: totalOrders, sub: 'completed' },
-          { icon: Droplets, label: 'Gallons Pumped', value: totalGallons, decimals: 2, formatter: (v) => `${v.toFixed(2)} gal` },
-          { icon: CreditCard, label: 'On Credit', value: totalCredit, decimals: 2, formatter: money, sub: 'outstanding charges' },
-        ]}
-      />
-      <DataTable
-        columns={columns}
-        data={rows}
-        searchable={false}
-        emptyMessage="No completed sales recorded."
-      />
-    </>
+    <DataTable
+      columns={columns}
+      data={rows}
+      searchable={false}
+      emptyMessage="No completed sales recorded."
+    />
   );
 }

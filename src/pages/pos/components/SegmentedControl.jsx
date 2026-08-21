@@ -13,7 +13,7 @@ export default function SegmentedControl({ options, value, onChange, className =
             type="button"
             onClick={() => onChange(option.value)}
             className={[
-              'flex items-center justify-center gap-1.5 px-3 py-2 rounded text-xs font-semibold border transition',
+              'flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold border transition',
               active ? option.activeClass : option.idleClass,
             ].join(' ')}
           >

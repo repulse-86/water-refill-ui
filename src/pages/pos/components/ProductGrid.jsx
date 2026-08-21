@@ -97,14 +97,15 @@ export default function ProductGrid({ products, currency }) {
                 type="button"
                 disabled={outOfStock}
                 onClick={() => addToCart(product)}
-                className={`group relative aspect-square flex flex-col ${tone} border rounded-xl p-3 text-left transition-all
+                className={`group relative aspect-square flex flex-col ${tone} border rounded-xl p-3 text-left
+                  transition-all duration-[450ms] ease-[cubic-bezier(0.34,1.56,0.64,1)]
                   hover:border-sky-300 hover:shadow-md hover:shadow-sky-100/60 hover:-translate-y-0.5
-                  active:scale-[0.97]
+                  active:scale-[0.94] active:duration-100 active:ease-out
                   focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2
                   disabled:opacity-60 disabled:saturate-0 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none disabled:active:scale-100`}
                 variants={{
-                  hidden: { opacity: 0, scale: 0.95 },
-                  visible: { opacity: 1, scale: 1 },
+                  hidden: { opacity: 0 },
+                  visible: { opacity: 1 },
                 }}
               >
                 <Droplet

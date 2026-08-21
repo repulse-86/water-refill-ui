@@ -4,7 +4,7 @@ import { cva } from 'class-variance-authority';
 import { cn } from '../../utils/cn';
 
 const inputVariants = cva(
-  'w-full px-3 py-2 text-sm border rounded focus:outline-none focus:ring-2',
+  'w-full px-3 py-2 text-sm border rounded-lg focus:outline-none focus:ring-2',
   {
     variants: {
       hasError: {

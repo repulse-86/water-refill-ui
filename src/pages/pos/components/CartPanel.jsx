@@ -83,7 +83,7 @@ export default function CartPanel({ customers, currency, onSaleSuccess }) {
 
   return (
     <div className="w-full lg:w-[380px] shrink-0">
-      <div className="bg-white border border-slate-200 rounded p-4 flex flex-col space-y-4 sticky top-6">
+      <div className="bg-white border border-slate-200 rounded-2xl p-4 flex flex-col space-y-4 sticky top-6">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
             <ShoppingCart className="w-4 h-4 text-sky-600" />
@@ -139,7 +139,7 @@ export default function CartPanel({ customers, currency, onSaleSuccess }) {
         )}
 
         {cart.length === 0 ? (
-          <p className="text-xs text-slate-400 text-center py-6 border border-dashed border-slate-200 rounded">
+          <p className="text-xs text-slate-400 text-center py-6 border border-dashed border-slate-200 rounded-lg">
             Click a product to add it to the sale.
           </p>
         ) : (

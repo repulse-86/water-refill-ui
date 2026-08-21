@@ -51,7 +51,7 @@ export default function PaymentSummary({
               key={id}
               type="button"
               onClick={() => onChangePayment(id)}
-              className={`flex flex-col items-center gap-1 px-2 py-2 rounded text-[11px] font-semibold border transition ${
+              className={`flex flex-col items-center gap-1 px-2 py-2 rounded-lg text-[11px] font-semibold border transition ${
                 paymentMethod === id
                   ? 'bg-sky-600 border-sky-600 text-white'
                   : 'border-slate-300 text-slate-600 hover:bg-slate-50'
@@ -74,7 +74,7 @@ export default function PaymentSummary({
             value={tendered || ''}
             onChange={(e) => onChangeTendered(e.target.value)}
             placeholder="0.00"
-            className="w-full px-3 py-2 text-sm border border-slate-300 rounded focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+            className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
           />
           <p className={`mt-1 text-xs ${cashShort ? 'text-red-600' : 'text-emerald-600'}`}>
             {cashShort
@@ -85,13 +85,13 @@ export default function PaymentSummary({
       )}
 
       {paymentMethod === PAYMENT_METHODS.e_wallet && (
-        <p className="text-xs text-sky-700 bg-sky-50 border border-sky-200 rounded p-2.5">
+        <p className="text-xs text-sky-700 bg-sky-50 border border-sky-200 rounded-lg p-2.5">
           Collected via e-wallet, no change required.
         </p>
       )}
 
       {paymentMethod === PAYMENT_METHODS.credit && (
-        <p className="text-xs text-violet-700 bg-violet-50 border border-violet-200 rounded p-2.5">
+        <p className="text-xs text-violet-700 bg-violet-50 border border-violet-200 rounded-lg p-2.5">
           Charged to the customer's ledger (outstanding balance).
         </p>
       )}

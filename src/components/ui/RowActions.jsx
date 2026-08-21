@@ -15,7 +15,7 @@ export default function RowActions({ actions }) {
         <button
           type="button"
           aria-label="Row actions"
-          className="inline-flex items-center justify-center w-7 h-7 rounded border border-slate-300 text-slate-500 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-sky-500"
+          className="inline-flex items-center justify-center w-7 h-7 rounded text-slate-500 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-sky-500"
         >
           <MoreHorizontal className="w-4 h-4" />
         </button>

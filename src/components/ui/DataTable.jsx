@@ -75,7 +75,7 @@ export default function DataTable({
   const hasScroll = pageRows.length > scrollThreshold;
 
   return (
-    <div className="bg-white border border-slate-200 rounded overflow-hidden">
+    <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden">
       {searchable && (
         <div className="p-4 border-b border-slate-200">
           <div className="relative max-w-xs">
@@ -85,7 +85,7 @@ export default function DataTable({
               value={table.state.globalFilter ?? ''}
               onChange={(e) => table.setGlobalFilter(e.target.value)}
               placeholder={searchPlaceholder}
-              className="w-full pl-9 pr-3 py-2 text-sm border border-slate-300 rounded focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+              className="w-full pl-9 pr-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
             />
           </div>
         </div>
@@ -139,7 +139,7 @@ export default function DataTable({
         </table>
       </div>
 
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 py-3 border-t border-slate-200 text-xs text-slate-600">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 sm:px-5 py-3 border-t border-slate-200 text-xs text-slate-600">
         <div className="flex items-center gap-2">
           <label htmlFor="rows-per-page" className="text-slate-500">
             Rows per page

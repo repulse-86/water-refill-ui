@@ -18,7 +18,7 @@ export default function ReportsTabs({ tabs, activeTab, onChange }) {
             key={tab.id}
             className={({ selected }) =>
               cn(
-                'px-4 py-2 rounded text-sm font-semibold border transition focus:outline-none focus:ring-2 focus:ring-sky-500',
+                'px-4 py-2 rounded-lg text-sm font-semibold border transition focus:outline-none focus:ring-2 focus:ring-sky-500',
                 selected
                   ? 'bg-sky-600 border-sky-600 text-white'
                   : 'border-slate-300 text-slate-600 hover:bg-slate-50'

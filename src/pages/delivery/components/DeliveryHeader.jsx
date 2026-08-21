@@ -14,9 +14,9 @@ export default function DeliveryHeader({ view, onViewChange }) {
   );
 
   return (
-    <div className="flex items-center justify-between mb-6">
+    <div className="flex items-center justify-between mb-8">
       <div>
-        <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight mb-1">Fulfillment</h1>
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mb-2 leading-tight">Fulfillment</h1>
         <p className="text-xs sm:text-sm text-slate-500">
           Track and process orders through the fulfillment pipeline.
         </p>

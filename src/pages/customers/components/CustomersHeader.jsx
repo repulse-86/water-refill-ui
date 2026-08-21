@@ -3,9 +3,9 @@ import { Plus } from 'lucide-react';
 
 export default function CustomersHeader({ onAdd }) {
   return (
-    <div className="flex items-center justify-between mb-6">
+    <div className="flex items-center justify-between mb-8">
       <div>
-        <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight mb-1">Customer Registry & Ledger</h1>
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mb-2 leading-tight">Customer Registry & Ledger</h1>
         <p className="text-xs sm:text-sm text-slate-500">
           Manage customer profiles and dual-asset balances.
         </p>

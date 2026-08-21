@@ -23,7 +23,7 @@ function OrderCard({ order, currency, onAdvance, onRecord, onSkipDelivery, onArc
         hidden: { opacity: 0, y: 12 },
         visible: { opacity: 1, y: 0 },
       }}
-      className="bg-white border border-gray-200 shadow-sm rounded p-3 hover:shadow-md transition-shadow"
+      className="bg-white border border-gray-200 shadow-sm rounded-2xl p-3 sm:p-4 hover:shadow-md transition-shadow"
     >
       <div className="flex items-start justify-between gap-2 mb-2">
         <span className="text-xs font-semibold text-slate-900">#{order.id}</span>
@@ -138,7 +138,7 @@ function OrderCard({ order, currency, onAdvance, onRecord, onSkipDelivery, onArc
         animate="visible"
       >
         {columnOrders.length === 0 ? (
-          <p className="text-xs text-slate-400 text-center py-8 border border-dashed border-slate-200 rounded">No orders</p>
+          <p className="text-xs text-slate-400 text-center py-8 border border-dashed border-slate-200 rounded-lg">No orders</p>
         ) : (
           columnOrders.map((order) => (
             <OrderCard

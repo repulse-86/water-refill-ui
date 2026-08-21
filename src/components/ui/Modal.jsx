@@ -39,7 +39,7 @@ export default function Modal({ isOpen, onClose, title, icon: Icon, hideClose = 
               </Dialog.Overlay>
               <Dialog.Content asChild forceMount={isOpen}>
                 <motion.div
-                  className="fixed left-1/2 top-1/2 z-50 w-[calc(100vw-2rem)] max-w-md rounded border border-slate-300 bg-white p-6 shadow-xl"
+                  className="fixed left-1/2 top-1/2 z-50 w-[calc(100vw-2rem)] max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-xl"
                   style={{ translate: "-50% -50%" }}
                   variants={contentVariants}
                   initial="hidden"
@@ -56,7 +56,7 @@ export default function Modal({ isOpen, onClose, title, icon: Icon, hideClose = 
                     {!hideClose && (
                       <Dialog.Close asChild>
                         <button
-                          className="text-slate-400 hover:text-slate-600 text-sm font-semibold px-2 py-1"
+                          className="text-slate-400 hover:text-slate-600 hover:bg-slate-100 text-sm font-semibold px-2 py-1 rounded-lg transition-colors"
                           aria-label="Close"
                         >
                           <X className="w-4 h-4" />

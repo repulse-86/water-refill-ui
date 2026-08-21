@@ -35,7 +35,7 @@ export default function CustomerPicker({ customers, value, onChange }) {
     <div className="relative" ref={containerRef}>
       <input
         type="text"
-        className="w-full p-2 text-sm border border-slate-300 rounded bg-white focus:outline-none focus:ring-2 focus:ring-sky-500 mb-1"
+        className="w-full p-2 text-sm border border-slate-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-sky-500 mb-1"
         placeholder="Search customers…"
         value={query}
         onChange={(e) => {
@@ -46,7 +46,7 @@ export default function CustomerPicker({ customers, value, onChange }) {
       />
 
       {isOpen && (
-        <ul className="absolute z-20 mt-1 w-full bg-white border border-slate-300 rounded shadow-lg max-h-56 overflow-y-auto py-1">
+        <ul className="absolute z-20 mt-1 w-full bg-white border border-slate-300 rounded-lg shadow-lg max-h-56 overflow-y-auto py-1">
           <li
             className="cursor-default block w-full text-left px-3 py-2 text-sm text-slate-500 hover:bg-slate-50"
             onClick={() => handleSelect(walkIn)}

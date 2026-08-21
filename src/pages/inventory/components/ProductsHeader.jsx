@@ -3,14 +3,14 @@ import { Plus } from 'lucide-react';
 
 export default function ProductsHeader({ onAdd }) {
   return (
-    <div className="flex items-center justify-between mb-6">
+    <div className="flex items-center justify-between mb-8">
       <div>
-        <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight mb-1">Inventory & Products</h1>
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mb-2 leading-tight">Inventory & Products</h1>
         <p className="text-xs sm:text-sm text-slate-500">
-          Manage your product catalog refills, accessories, and equipment.
+          Manage your product catalog
         </p>
       </div>
-      <Button onClick={onAdd} className="text-[10px] sm:text-xs">
+      <Button onClick={onAdd} className="text-xs sm:text-sm">
         <Plus className="w-4 h-4 mr-1.5" />
         Add Product
       </Button>
