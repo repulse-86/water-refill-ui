@@ -2,7 +2,7 @@ import { NavLink, Link, useNavigate } from 'react-router-dom';
 import { Droplet, LayoutDashboard, Package, Truck, ClipboardList, Users, Gauge, Settings, Boxes, LogOut, BarChart3 } from 'lucide-react';
 import useAuthStore from '../../store/authStore';
 
-const navItems = [
+export const navItems = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { to: '/inventory', label: 'Inventory & Products', icon: Boxes },
   { to: '/pos', label: 'POS & Refill Sales', icon: Package },
