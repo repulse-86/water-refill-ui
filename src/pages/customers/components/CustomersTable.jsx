@@ -28,7 +28,7 @@ export default function CustomersTable({ customers, isLoading, onEdit, onSettle,
     {
       accessorKey: 'outstanding_balance',
       header: 'Outstanding Balance',
-      render: (value, row) => (
+      render: (value) => (
         <span className={Number(value) > 0 ? 'font-medium text-red-600' : ''}>
           PHP {Number(value).toFixed(2)}
         </span>

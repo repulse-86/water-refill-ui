@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useShallow } from 'zustand/shallow';
 import { Wallet } from 'lucide-react';
@@ -32,7 +32,6 @@ export default function CustomerSettleModal({ isOpen, onClose, customer, onSettl
     register,
     handleSubmit,
     setError,
-    setValue,
     reset,
     formState: { errors },
   } = useForm({ defaultValues: emptyForm });

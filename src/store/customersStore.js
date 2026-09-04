@@ -37,7 +37,7 @@ const initialState = {
 
 const useCustomersStore = create(
   persist(
-    (set, get) => ({
+    (set) => ({
       ...initialState,
 
       fetchCustomers: async () => {

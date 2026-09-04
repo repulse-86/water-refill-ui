@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { Dialog, DialogPanel } from '@headlessui/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { MoreHorizontal, LogOut, X } from 'lucide-react';
-import { navItems } from './SidebarContent';
+import navItems from './navItems';
 import useAuthStore from '../../store/authStore';
 
 const primaryItems = [

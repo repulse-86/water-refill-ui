@@ -8,14 +8,12 @@ import ProductFormModal from './components/ProductFormModal';
 import ProductDeleteDialog from './components/ProductDeleteDialog';
 
 export default function Products() {
-  const { products, status, fetchProducts, createProduct, updateProduct, deleteProduct } =
+  const { products, status, fetchProducts, deleteProduct } =
     useProductsStore(
       useShallow((state) => ({
         products: state.products,
         status: state.status,
         fetchProducts: state.fetchProducts,
-        createProduct: state.createProduct,
-        updateProduct: state.updateProduct,
         deleteProduct: state.deleteProduct,
       }))
     );

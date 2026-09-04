@@ -59,7 +59,7 @@ export default function PosTerminal() {
           />
           <ProductGrid products={products} currency={currency} />
         </div>
-        <CartPanel customers={customers} currency={currency} onSaleSuccess={handleSaleSuccess} />
+        <CartPanel currency={currency} onSaleSuccess={handleSaleSuccess} />
       </div>
 
       <CheckoutSuccessModal order={lastOrder} currency={currency} />

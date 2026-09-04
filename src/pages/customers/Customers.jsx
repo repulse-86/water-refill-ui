@@ -8,16 +8,13 @@ import CustomerSettleModal from './components/CustomerSettleModal';
 import CustomerDeleteDialog from './components/CustomerDeleteDialog';
 
 export default function Customers() {
-  const { customers, status, fetchCustomers, createCustomer, updateCustomer, deleteCustomer, settleCustomer } =
+  const { customers, status, fetchCustomers, deleteCustomer } =
     useCustomersStore(
       useShallow((state) => ({
         customers: state.customers,
         status: state.status,
         fetchCustomers: state.fetchCustomers,
-        createCustomer: state.createCustomer,
-        updateCustomer: state.updateCustomer,
         deleteCustomer: state.deleteCustomer,
-        settleCustomer: state.settleCustomer,
       }))
     );
 
@@ -57,7 +54,7 @@ export default function Customers() {
     setSettling(null);
   };
 
-  const handleSettle = (updatedCustomer) => {
+  const handleSettle = () => {
     setSettling(null);
   };
 

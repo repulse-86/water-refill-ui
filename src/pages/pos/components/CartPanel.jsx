@@ -10,7 +10,7 @@ import PaymentSummary from './PaymentSummary';
 import QuantityStepper from './QuantityStepper';
 import SegmentedControl from './SegmentedControl';
 
-export default function CartPanel({ customers, currency, onSaleSuccess }) {
+export default function CartPanel({ currency, onSaleSuccess }) {
   const {
     cart,
     customerId,
@@ -22,7 +22,6 @@ export default function CartPanel({ customers, currency, onSaleSuccess }) {
     bottlesReturned,
     tendered,
     status,
-    setCustomerId,
     setOrderType,
     setPaymentMethod,
     setDeliveryFee,
@@ -45,7 +44,6 @@ export default function CartPanel({ customers, currency, onSaleSuccess }) {
       bottlesReturned: state.bottlesReturned,
       tendered: state.tendered,
       status: state.status,
-      setCustomerId: state.setCustomerId,
       setOrderType: state.setOrderType,
       setPaymentMethod: state.setPaymentMethod,
       setDeliveryFee: state.setDeliveryFee,
