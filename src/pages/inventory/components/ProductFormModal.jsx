@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useShallow } from 'zustand/shallow';
-import { Package } from 'lucide-react';
+import { Package, X } from 'lucide-react';
 import useServerFieldErrors from '../../../hooks/useServerFieldErrors';
 import Modal from '../../../components/ui/Modal';
 import FormField from '../../../components/ui/FormField';
 import SelectField from '../../../components/ui/SelectField';
 import Button from '../../../components/ui/Button';
 import useProductsStore, { productRules, typeLabels } from '../../../store/productsStore';
+import { toastError } from '../../../utils/toast';
 
 const emptyForm = {
   name: '',
@@ -36,6 +37,7 @@ export default function ProductFormModal({ isOpen, onClose, editingId, initialDa
   );
 
   const [selectedType, setSelectedType] = useState(initialData?.type ?? 'water_refill');
+  const [imagePreview, setImagePreview] = useState(initialData?.image ?? '');
 
   const {
     register,
@@ -59,11 +61,37 @@ export default function ProductFormModal({ isOpen, onClose, editingId, initialDa
 
   const isLoading = status === 'loading';
 
+  const handleImageChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 500 * 1024) {
+      toastError('Image must be smaller than 500KB.');
+      e.target.value = '';
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const clearImage = () => {
+    setImagePreview('');
+  };
+
   const onSubmit = async (data) => {
-    const result = editingId ? await updateProduct(editingId, data) : await createProduct(data);
+    const payload = {
+      ...data,
+      image: imagePreview || null,
+    };
+    const result = editingId ? await updateProduct(editingId, payload) : await createProduct(payload);
     if (result.success) {
       onClose();
       reset();
+      setImagePreview('');
     }
   };
 
@@ -110,6 +138,44 @@ export default function ProductFormModal({ isOpen, onClose, editingId, initialDa
           <FormField label="Reorder Point" htmlFor="product-reorder" error={errors.reorder_point?.message}>
             <input type="number" {...register('reorder_point', productRules.reorder_point)} />
           </FormField>
+        </div>
+
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-slate-700">Product Image</label>
+          <div className="flex items-center gap-3">
+            {imagePreview && (
+              <div className="relative">
+                <img
+                  src={imagePreview}
+                  alt="Preview"
+                  className="w-16 h-16 object-cover rounded-lg border border-slate-200"
+                />
+                <button
+                  type="button"
+                  onClick={clearImage}
+                  className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-red-500 text-white flex items-center justify-center hover:bg-red-600"
+                >
+                  <X className="w-2.5 h-2.5" />
+                </button>
+              </div>
+            )}
+            <div>
+              <input
+                type="file"
+                id="product-image"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="hidden"
+              />
+              <label
+                htmlFor="product-image"
+                className="cursor-pointer inline-flex items-center px-3 py-2 border border-slate-300 rounded-md text-sm font-medium text-slate-700 bg-white hover:bg-slate-50"
+              >
+                {imagePreview ? 'Change Image' : 'Add Image'}
+              </label>
+              <p className="mt-1 text-xs text-slate-400">PNG, JPG up to 500KB</p>
+            </div>
+          </div>
         </div>
 
         <div className="flex justify-end space-x-3 pt-2">

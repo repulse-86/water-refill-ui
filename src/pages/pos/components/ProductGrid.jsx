@@ -97,7 +97,7 @@ export default function ProductGrid({ products, currency }) {
                 type="button"
                 disabled={outOfStock}
                 onClick={() => addToCart(product)}
-                className={`group relative aspect-square flex flex-col ${tone} border rounded-xl p-3 text-left
+                className={`group relative aspect-square flex flex-col ${tone} border rounded-xl p-3 text-left overflow-hidden
                   transition-all duration-[450ms] ease-[cubic-bezier(0.34,1.56,0.64,1)]
                   hover:border-sky-300 hover:shadow-md hover:shadow-sky-100/60 hover:-translate-y-0.5
                   active:scale-[0.94] active:duration-100 active:ease-out
@@ -108,12 +108,23 @@ export default function ProductGrid({ products, currency }) {
                   visible: { opacity: 1 },
                 }}
               >
-                <Droplet
-                  className={`pointer-events-none select-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 ${inCart ? 'text-sky-200/60' : 'text-sky-100/70'}`}
-                />
+                {product.image ? (
+                  <>
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className="pointer-events-none select-none absolute inset-0 w-full h-full object-cover"
+                    />
+                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent" />
+                  </>
+                ) : (
+                  <Droplet
+                    className={`pointer-events-none select-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 ${inCart ? 'text-sky-200/60' : 'text-sky-100/70'}`}
+                  />
+                )}
 
-                <div className="relative flex-1 flex flex-col min-h-0">
-                  <p className="text-base font-bold text-slate-800 leading-snug line-clamp-2 pr-12">{product.name}</p>
+                <div className="relative z-10 flex-1 flex flex-col min-h-0">
+                  <p className="text-base font-bold text-slate-800 leading-snug line-clamp-2 pr-12 drop-shadow-sm">{product.name}</p>
                   <div className="mt-1">
                     <Badge variant={badge.variant}>{badge.label}</Badge>
                   </div>
@@ -151,13 +162,28 @@ export default function ProductGrid({ products, currency }) {
                   )}
                 </div>
 
-                <div className="relative mt-auto pt-2.5 border-t border-slate-100">
-                  <p className="text-base font-bold text-sky-600 tabular-nums leading-none">
-                    <span className="text-[11px] font-semibold text-slate-400">{currency} </span>
-                    {Number(product.price).toFixed(2)}
-                  </p>
-                  <p className={`mt-1 text-[11px] font-medium leading-tight ${statusColor}`}>{statusText}</p>
-                </div>
+                {product.image ? (
+                  <div className="relative z-10 mt-auto pt-2.5 border-t border-white/20">
+                    <p className="text-base font-bold text-white tabular-nums leading-none drop-shadow-sm">
+                      <span className="text-[11px] font-semibold text-white/80">{currency} </span>
+                      {Number(product.price).toFixed(2)}
+                    </p>
+                    {inCart && qty > 0 && (
+                      <p className="mt-1 text-[11px] font-bold text-white/90">Qty {qty}</p>
+                    )}
+                    {!inCart && (
+                      <p className={`mt-1 text-[11px] font-medium leading-tight ${statusColor} text-white/90 drop-shadow-sm`}>{statusText}</p>
+                    )}
+                  </div>
+                ) : (
+                  <div className="relative z-10 mt-auto pt-2.5 border-t border-slate-100">
+                    <p className="text-base font-bold text-sky-600 tabular-nums leading-none">
+                      <span className="text-[11px] font-semibold text-slate-400">{currency} </span>
+                      {Number(product.price).toFixed(2)}
+                    </p>
+                    <p className={`mt-1 text-[11px] font-medium leading-tight ${statusColor}`}>{statusText}</p>
+                  </div>
+                )}
                </motion.button>
              );
            })}

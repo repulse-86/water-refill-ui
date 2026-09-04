@@ -1,4 +1,4 @@
-import { Pencil, Trash2 } from 'lucide-react';
+import { Package, Pencil, Trash2 } from 'lucide-react';
 import DataTable from '../../../components/ui/DataTable';
 import RowActions from '../../../components/ui/RowActions';
 import Badge from '../../../components/ui/Badge';
@@ -12,7 +12,22 @@ const typeBadgeVariants = {
 
 export default function ProductsTable({ products, currency, isLoading, onEdit, onDelete }) {
   const columns = [
-    { accessorKey: 'name', header: 'Product' },
+    {
+      accessorKey: 'name',
+      header: 'Product',
+      render: (value, row) => (
+        <div className="flex items-center gap-2">
+          {row.image ? (
+            <img src={row.image} alt={value} className="w-8 h-8 rounded-full object-cover border border-slate-200" />
+          ) : (
+            <div className="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400">
+              <Package className="w-4 h-4" />
+            </div>
+          )}
+          <span className="font-medium text-slate-900">{value}</span>
+        </div>
+      ),
+    },
     {
       accessorKey: 'type',
       header: 'Type',

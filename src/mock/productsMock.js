@@ -111,6 +111,7 @@ export async function createProduct(payload) {
     price: Number(payload.price),
     stock_quantity: Number(payload.stock_quantity),
     reorder_point: Number(payload.reorder_point),
+    image: payload.image ?? null,
   };
   products.push(product);
   return clone(product);
@@ -137,6 +138,7 @@ export async function updateProduct(id, payload) {
     price: Number(payload.price),
     stock_quantity: Number(payload.stock_quantity),
     reorder_point: Number(payload.reorder_point),
+    image: payload.image ?? null,
   };
   return clone(products[index]);
 }
