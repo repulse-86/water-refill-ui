@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { HashRouter, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import GuestLayout from './layouts/GuestLayout';
 import AppLayout from './layouts/AppLayout';
@@ -16,7 +16,7 @@ import RequireAuth from './guards/RequireAuth';
 
 function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Toaster position="top-right" toastOptions={{ duration: 4000 }} />
       <Routes>
         <Route path="/" element={<GuestLayout />}>
@@ -40,7 +40,7 @@ function App() {
           <Route path="/inventory" element={<Products />} />
         </Route>
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 
