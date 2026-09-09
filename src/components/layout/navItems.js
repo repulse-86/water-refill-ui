@@ -1,4 +1,4 @@
-import { LayoutDashboard, Package, Truck, ClipboardList, Users, Gauge, Settings, Boxes, BarChart3 } from 'lucide-react';
+import { LayoutDashboard, Package, Truck, ClipboardList, Users, Gauge, Settings, Boxes, BarChart3, UserCircle } from 'lucide-react';
 
 const navItems = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -10,6 +10,7 @@ const navItems = [
   { to: '/meter-reading', label: 'Meter & Shift Audit', icon: Gauge },
   { to: '/reports', label: 'Reports', icon: BarChart3 },
   { to: '/settings', label: 'Store Settings', icon: Settings },
+  { to: '/account', label: 'Account', icon: UserCircle },
 ];
 
 export default navItems;
