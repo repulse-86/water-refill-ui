@@ -1,4 +1,6 @@
 import { Package, Truck, Users, Gauge, ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import useAuthStore from '../../../../store/authStore';
 
 const modules = [
   {
@@ -36,6 +38,7 @@ const modules = [
 ];
 
 export default function ModulesGrid({ onOpenModule }) {
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
   return (
     <section id="modules" className="bg-gray-100 py-24 border-t border-gray-100">
@@ -55,31 +58,35 @@ export default function ModulesGrid({ onOpenModule }) {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {modules.map(({ icon: Icon, title, description, cta, path }) => (
-            <div
-              key={title}
-              className="group relative bg-white border border-slate-200 p-6 sm:p-8 rounded-2xl shadow-sm hover:shadow-xl hover:border-sky-200 transition-all duration-300 flex flex-col justify-between overflow-hidden cursor-pointer hover:-translate-y-1"
-              onClick={() => onOpenModule(path)}
-            >
-              <div className="absolute top-0 right-0 p-8 opacity-0 group-hover:opacity-5 transition-opacity duration-300 transform group-hover:scale-110 group-hover:-translate-y-2 group-hover:translate-x-2">
-                <Icon className="w-24 h-24 text-sky-600" />
-              </div>
-
-              <div className="relative z-10">
-                <div className="w-12 h-12 bg-sky-50/80 text-sky-600 rounded-xl flex items-center justify-center mb-6 ring-1 ring-sky-100/50">
-                  <Icon className="w-6 h-6" />
-                </div>
-                <h3 className="font-bold text-slate-900 text-lg mb-2">{title}</h3>
-                <p className="text-sm text-slate-600 leading-relaxed mb-6">{description}</p>
-              </div>
-              <div
-                className="relative z-10 mt-auto text-sm font-semibold text-sky-600 flex items-center gap-2 group-hover:text-sky-700 transition-colors"
+          {modules.map(({ icon: Icon, title, description, cta, path }) => {
+            const Tag = isAuthenticated ? Link : 'div';
+            const tagProps = isAuthenticated ? { to: path } : { onClick: () => onOpenModule(path) };
+            return (
+              <Tag
+                key={title}
+                className="group relative bg-white border border-slate-200 p-6 sm:p-8 rounded-2xl shadow-sm hover:shadow-xl hover:border-sky-200 transition-all duration-300 flex flex-col justify-between overflow-hidden cursor-pointer hover:-translate-y-1"
+                {...tagProps}
               >
-                <span>{cta}</span>
-                <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
-              </div>
-            </div>
-          ))}
+                <div className="absolute top-0 right-0 p-8 opacity-0 group-hover:opacity-5 transition-opacity duration-300 transform group-hover:scale-110 group-hover:-translate-y-2 group-hover:translate-x-2">
+                  <Icon className="w-24 h-24 text-sky-600" />
+                </div>
+
+                <div className="relative z-10">
+                  <div className="w-12 h-12 bg-sky-50/80 text-sky-600 rounded-xl flex items-center justify-center mb-6 ring-1 ring-sky-100/50">
+                    <Icon className="w-6 h-6" />
+                  </div>
+                  <h3 className="font-bold text-slate-900 text-lg mb-2">{title}</h3>
+                  <p className="text-sm text-slate-600 leading-relaxed mb-6">{description}</p>
+                </div>
+                <div
+                  className="relative z-10 mt-auto text-sm font-semibold text-sky-600 flex items-center gap-2 group-hover:text-sky-700 transition-colors"
+                >
+                  <span>{cta}</span>
+                  <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+                </div>
+              </Tag>
+            );
+          })}
         </div>
       </div>
     </section>

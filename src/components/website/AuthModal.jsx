@@ -29,14 +29,14 @@ export default function AuthModal({ isOpen, onClose, redirectTo }) {
     reset,
     formState: { errors },
   } = useForm({
-    defaultValues: { username: 'owner', password: '' },
+    defaultValues: { username: 'admin', password: '' },
   });
 
   useServerFieldErrors({ setError, fieldErrors });
 
   useEffect(() => {
     if (isOpen) {
-      reset({ username: 'owner', password: '' });
+      reset({ username: 'admin', password: '' });
       resetErrors();
     }
   }, [isOpen, reset, resetErrors]);
@@ -46,7 +46,7 @@ export default function AuthModal({ isOpen, onClose, redirectTo }) {
   const isLoading = status === 'loading';
 
   const fillDemo = () => {
-    setValue('username', 'owner');
+    setValue('username', 'admin');
     setValue('password', 'password');
     clearErrors();
   };
@@ -76,7 +76,7 @@ export default function AuthModal({ isOpen, onClose, redirectTo }) {
           <FormField label="Username" htmlFor="login-username" error={errors.username?.message}>
             <input
               type="text"
-              placeholder="e.g. owner"
+              placeholder="e.g. admin"
               {...register('username', loginRules.username)}
               autoComplete="username"
             />
@@ -98,7 +98,7 @@ export default function AuthModal({ isOpen, onClose, redirectTo }) {
             className="w-full p-3 bg-sky-50 border border-sky-200 rounded text-left text-xs text-slate-600 hover:bg-sky-100 transition-colors disabled:opacity-50"
           >
             Demo credentials - click to autofill:{' '}
-            <span className="font-semibold text-sky-700">owner</span> /{' '}
+            <span className="font-semibold text-sky-700">admin</span> /{' '}
             <span className="font-semibold text-sky-700">password</span>
           </button>
 

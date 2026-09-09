@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import GuestLayout from './layouts/GuestLayout';
@@ -13,8 +14,13 @@ import PosTerminal from './pages/pos/PosTerminal';
 import MeterReadings from './pages/meter/MeterReadings';
 import Reports from './pages/reports/Reports';
 import RequireAuth from './guards/RequireAuth';
+import useAuthStore from './store/authStore';
 
 function App() {
+  useEffect(() => {
+    useAuthStore.getState().init();
+  }, []);
+
   return (
     <BrowserRouter>
       <Toaster position="top-right" toastOptions={{ duration: 4000 }} />

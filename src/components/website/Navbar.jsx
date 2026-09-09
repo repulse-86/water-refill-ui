@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Droplet } from 'lucide-react';
+import useAuthStore from '../../store/authStore';
 
 const navLinks = [
   { label: 'Overview', target: 'overview' },
@@ -8,6 +9,7 @@ const navLinks = [
 ];
 
 export default function Navbar({ onOpenAuth }) {
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
   const scrollToSection = (e, target) => {
     e.preventDefault();
@@ -45,12 +47,21 @@ export default function Navbar({ onOpenAuth }) {
         </nav>
 
         <div className="flex items-center space-x-4">
-          <button
-            onClick={onOpenAuth}
-            className="inline-flex items-center justify-center bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-          >
-            Login
-          </button>
+          {isAuthenticated ? (
+            <Link
+              to="/dashboard"
+              className="inline-flex items-center justify-center bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+            >
+              Dashboard
+            </Link>
+          ) : (
+            <button
+              onClick={onOpenAuth}
+              className="inline-flex items-center justify-center bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+            >
+              Login
+            </button>
+          )}
         </div>
       </div>
     </header>

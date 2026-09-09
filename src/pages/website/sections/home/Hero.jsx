@@ -10,7 +10,9 @@ import {
   TrendingUp,
   Droplets,
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import useAuthStore from '../../../../store/authStore';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -39,6 +41,7 @@ const heroMetrics = [
 ];
 
 export default function Hero({ onOpenAuth }) {
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
   return (
     <section id="overview" className="relative bg-white overflow-hidden min-h-[calc(100vh-4rem)] pt-14 md:pt-20 pb-24 md:pb-32">
@@ -55,13 +58,23 @@ export default function Hero({ onOpenAuth }) {
             </motion.p>
 
             <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-4 items-start">
-              <button
-                onClick={onOpenAuth}
-                className="group inline-flex items-center justify-center w-full sm:w-auto bg-sky-600 hover:bg-sky-700 text-white px-8 py-4 rounded-xl text-sm font-semibold transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
-              >
-                Launch Operations Console
-                <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
-              </button>
+              {isAuthenticated ? (
+                <Link
+                  to="/dashboard"
+                  className="group inline-flex items-center justify-center w-full sm:w-auto bg-sky-600 hover:bg-sky-700 text-white px-8 py-4 rounded-xl text-sm font-semibold transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
+                >
+                  Go to Dashboard
+                  <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
+                </Link>
+              ) : (
+                <button
+                  onClick={onOpenAuth}
+                  className="group inline-flex items-center justify-center w-full sm:w-auto bg-sky-600 hover:bg-sky-700 text-white px-8 py-4 rounded-xl text-sm font-semibold transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
+                >
+                  Launch Operations Console
+                  <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
+                </button>
+              )}
             </motion.div>
 
             <motion.dl
