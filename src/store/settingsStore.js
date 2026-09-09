@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
 import * as settingsApi from '../api/settings';
 import { toFieldErrors } from '../utils/formErrors';
 import { toastError, toastSuccess } from '../utils/toast';
@@ -11,58 +10,49 @@ const initialState = {
   message: null,
 };
 
-const useSettingsStore = create(
-  persist(
-    (set) => ({
-      ...initialState,
+const useSettingsStore = create((set) => ({
+  ...initialState,
 
-      fetchSettings: async () => {
-        set({ status: 'loading', fieldErrors: null, message: null });
-        try {
-          const settings = await settingsApi.getSettings();
-          set({ settings, status: 'idle' });
-          return { success: true, settings };
-        } catch (err) {
-          const fieldErrors = toFieldErrors(err?.errors);
-          const payload = {
-            status: 'error',
-            fieldErrors,
-            message: err?.message ?? 'Unable to load store settings.',
-          };
-          set(payload);
-          toastError(payload.message, Object.keys(fieldErrors ?? {}).length > 0);
-          return { success: false, ...payload };
-        }
-      },
-
-      updateSettings: async (values) => {
-        set({ status: 'loading', fieldErrors: null, message: null });
-        try {
-          const settings = await settingsApi.updateSettings(values);
-          set({ settings, status: 'success' });
-          toastSuccess('Store settings saved.');
-          return { success: true, settings };
-        } catch (err) {
-          const fieldErrors = toFieldErrors(err?.errors);
-          const payload = {
-            status: 'error',
-            fieldErrors,
-            message: err?.message ?? 'Unable to save store settings.',
-          };
-          set(payload);
-          toastError(payload.message, Object.keys(fieldErrors ?? {}).length > 0);
-          return { success: false, ...payload };
-        }
-      },
-
-      resetErrors: () => set({ status: 'idle', fieldErrors: null, message: null }),
-    }),
-    {
-      name: 'water-refill-settings',
-      storage: createJSONStorage(() => localStorage),
-      partialize: (state) => ({ settings: state.settings }),
+  fetchSettings: async () => {
+    set({ status: 'loading', fieldErrors: null, message: null });
+    try {
+      const settings = await settingsApi.getSettings();
+      set({ settings, status: 'idle' });
+      return { success: true, settings };
+    } catch (err) {
+      const fieldErrors = toFieldErrors(err?.errors);
+      const payload = {
+        status: 'error',
+        fieldErrors,
+        message: err?.message ?? 'Unable to load store settings.',
+      };
+      set(payload);
+      toastError(payload.message, Object.keys(fieldErrors ?? {}).length > 0);
+      return { success: false, ...payload };
     }
-  )
-);
+  },
+
+  updateSettings: async (values) => {
+    set({ status: 'loading', fieldErrors: null, message: null });
+    try {
+      const settings = await settingsApi.updateSettings(values);
+      set({ settings, status: 'success' });
+      toastSuccess('Store settings saved.');
+      return { success: true, settings };
+    } catch (err) {
+      const fieldErrors = toFieldErrors(err?.errors);
+      const payload = {
+        status: 'error',
+        fieldErrors,
+        message: err?.message ?? 'Unable to save store settings.',
+      };
+      set(payload);
+      toastError(payload.message, Object.keys(fieldErrors ?? {}).length > 0);
+      return { success: false, ...payload };
+    }
+  },
+
+  resetErrors: () => set({ status: 'idle', fieldErrors: null, message: null }),
+}));
 
 export default useSettingsStore;

@@ -4,7 +4,6 @@ import * as ordersMock from '../mock/ordersMock';
 import * as customersMock from '../mock/customersMock';
 import * as productsMock from '../mock/productsMock';
 import * as meterReadingsMock from '../mock/meterReadingsMock';
-import * as settingsMock from '../mock/settingsMock';
 import * as reportsMock from '../mock/reportsMock';
 import * as dashboardMock from '../mock/dashboardMock';
 
@@ -136,9 +135,6 @@ if (useMocks) {
   mock.onPost('/meter-readings').reply(reply((config) => meterReadingsMock.createMeterReading(readBody(config))));
   mock.onPut(/\/meter-readings\/\d+$/).reply(reply((config) => meterReadingsMock.updateMeterReading(getId(config), readBody(config))));
   mock.onDelete(/\/meter-readings\/\d+$/).reply(reply((config) => meterReadingsMock.deleteMeterReading(getId(config))));
-
-  mock.onGet('/settings').reply(reply(() => settingsMock.getSettings()));
-  mock.onPut('/settings').reply(reply((config) => settingsMock.updateSettings(readBody(config))));
 
   mock.onGet('/reports/daily-sales').reply(reply(() => reportsMock.getDailySales()));
   mock.onGet('/reports/product-performance').reply(reply(() => reportsMock.getProductPerformance()));
