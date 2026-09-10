@@ -37,6 +37,14 @@ export default function DataTable({
   pageSizeOptions = [5, 10, 25, 50],
   emptyMessage = 'No records found.',
   scrollThreshold = 8,
+  manualPagination = false,
+  currentPage = 1,
+  pageCount,
+  totalItems = 0,
+  onPageChange,
+  onPageSizeChange,
+  onSearchChange,
+  searchValue,
 }) {
   const searchableKeys = useMemo(
     () => (searchKeys.length > 0 ? searchKeys : columns.map((c) => c.accessorKey || c.id)),
@@ -63,6 +71,22 @@ export default function DataTable({
     data,
     columns: tableColumns,
     initialState: { pagination: { pageIndex: 0, pageSize } },
+    state: manualPagination ? { pagination: { pageIndex: 0, pageSize } } : undefined,
+    pageCount: manualPagination ? pageCount : undefined,
+    onPaginationChange: manualPagination
+      ? (updater) => {
+          const newPagination = typeof updater === 'function'
+            ? updater({ pageIndex: 0, pageSize })
+            : updater;
+          if (onPageChange && newPagination.pageIndex !== table.state.pagination.pageIndex) {
+            onPageChange(newPagination.pageIndex + 1);
+          }
+          if (onPageSizeChange && newPagination.pageSize !== table.state.pagination.pageSize) {
+            onPageSizeChange(newPagination.pageSize);
+          }
+        }
+      : undefined,
+    manualPagination,
     globalFilterFn: 'includesString',
     getColumnCanGlobalFilter: (column) => searchableKeys.includes(column.id),
   });
@@ -82,8 +106,14 @@ export default function DataTable({
             <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
-              value={table.state.globalFilter ?? ''}
-              onChange={(e) => table.setGlobalFilter(e.target.value)}
+              value={manualPagination ? (searchValue ?? '') : (table.state.globalFilter ?? '')}
+              onChange={(e) => {
+                if (manualPagination) {
+                  onSearchChange?.(e.target.value);
+                } else {
+                  table.setGlobalFilter(e.target.value);
+                }
+              }}
               placeholder={searchPlaceholder}
               className="w-full pl-9 pr-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
             />
@@ -146,30 +176,38 @@ export default function DataTable({
           </label>
           <BaseSelectField
             htmlFor="rows-per-page"
-            value={String(rowsPerPage)}
-            onValueChange={(value) => table.setPageSize(Number(value))}
+            value={String(manualPagination ? pageSize : rowsPerPage)}
+            onValueChange={(value) => {
+              if (manualPagination) {
+                onPageSizeChange?.(Number(value));
+              } else {
+                table.setPageSize(Number(value));
+              }
+            }}
             options={pageSizeOptions.map((size) => ({ value: String(size), label: String(size) }))}
             className="px-2 py-1 w-20"
           />
           <span className="text-slate-500">
-            {totalRows === 0 ? '0' : `${start}–${end} of ${totalRows}`}
+            {totalRows === 0 ? '0' : manualPagination
+              ? `${(currentPage - 1) * pageSize + 1}–${Math.min(currentPage * pageSize, totalItems)} of ${totalItems}`
+              : `${start}–${end} of ${totalRows}`}
           </span>
         </div>
 
         <div className="flex items-center gap-1">
           <button
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
+            onClick={() => manualPagination ? onPageChange?.(currentPage - 1) : table.previousPage()}
+            disabled={manualPagination ? currentPage <= 1 : !table.getCanPreviousPage()}
             className="px-3 py-1.5 border border-slate-300 rounded text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed"
           >
             Prev
           </button>
           <span className="px-3">
-            Page {pageIndex + 1} of {Math.max(1, table.getPageCount())}
+            Page {manualPagination ? currentPage : pageIndex + 1} of {manualPagination ? Math.max(1, pageCount ?? 1) : Math.max(1, table.getPageCount())}
           </span>
           <button
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
+            onClick={() => manualPagination ? onPageChange?.(currentPage + 1) : table.nextPage()}
+            disabled={manualPagination ? currentPage >= (pageCount ?? 1) : !table.getCanNextPage()}
             className="px-3 py-1.5 border border-slate-300 rounded text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed"
           >
             Next
