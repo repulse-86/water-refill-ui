@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { useShallow } from 'zustand/shallow';
 import useCustomersStore from '../../store/customersStore';
 import CustomersHeader from './components/CustomersHeader';
@@ -8,13 +8,17 @@ import CustomerSettleModal from './components/CustomerSettleModal';
 import CustomerDeleteDialog from './components/CustomerDeleteDialog';
 
 export default function Customers() {
-  const { customers, status, fetchCustomers, deleteCustomer } =
+  const { customers, status, fetchCustomers, deleteCustomer, currentPage, perPage, totalItems, totalPages } =
     useCustomersStore(
       useShallow((state) => ({
         customers: state.customers,
         status: state.status,
         fetchCustomers: state.fetchCustomers,
         deleteCustomer: state.deleteCustomer,
+        currentPage: state.currentPage,
+        perPage: state.perPage,
+        totalItems: state.totalItems,
+        totalPages: state.totalPages,
       }))
     );
 
@@ -23,12 +27,30 @@ export default function Customers() {
   const [editingCustomer, setEditingCustomer] = useState(null);
   const [deleting, setDeleting] = useState(null);
   const [settling, setSettling] = useState(null);
+  const [search, setSearch] = useState('');
+  const searchTimer = useRef(null);
 
   useEffect(() => {
     if (customers.length === 0 && status === 'idle') {
-      fetchCustomers();
+      fetchCustomers({ page: 1, size: perPage });
     }
-  }, [customers.length, status, fetchCustomers]);
+  }, [customers.length, status, fetchCustomers, perPage]);
+
+  const handlePageChange = useCallback((page) => {
+    fetchCustomers({ page, size: perPage, search });
+  }, [fetchCustomers, perPage, search]);
+
+  const handlePageSizeChange = useCallback((size) => {
+    fetchCustomers({ page: 1, size, search });
+  }, [fetchCustomers, search]);
+
+  const handleSearchChange = useCallback((value) => {
+    setSearch(value);
+    if (searchTimer.current) clearTimeout(searchTimer.current);
+    searchTimer.current = setTimeout(() => {
+      fetchCustomers({ page: 1, size: perPage, search: value });
+    }, 300);
+  }, [fetchCustomers, perPage]);
 
   const openAdd = () => {
     setEditingId(null);
@@ -78,6 +100,14 @@ export default function Customers() {
         onEdit={openEdit}
         onSettle={openSettle}
         onDelete={setDeleting}
+        currentPage={currentPage}
+        perPage={perPage}
+        totalItems={totalItems}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+        onPageSizeChange={handlePageSizeChange}
+        searchValue={search}
+        onSearchChange={handleSearchChange}
       />
 
       <CustomerFormModal

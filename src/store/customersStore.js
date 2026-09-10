@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
 import * as customersApi from '../api/customers';
 import { toFieldErrors } from '../utils/formErrors';
 import { toastError, toastSuccess } from '../utils/toast';
@@ -33,19 +32,29 @@ const initialState = {
   status: 'idle',
   fieldErrors: null,
   message: null,
+  currentPage: 1,
+  perPage: 10,
+  totalItems: 0,
+  totalPages: 0,
 };
 
 const useCustomersStore = create(
-  persist(
-    (set) => ({
+  (set) => ({
       ...initialState,
 
-      fetchCustomers: async () => {
+      fetchCustomers: async (params) => {
         set({ status: 'loading', fieldErrors: null, message: null });
         try {
-          const customers = await customersApi.listCustomers();
-          set({ customers, status: 'idle' });
-          return { success: true, customers };
+          const response = await customersApi.listCustomers(params);
+          set({
+            customers: response.data,
+            status: 'idle',
+            currentPage: params?.page ?? 1,
+            perPage: params?.size ?? 10,
+            totalItems: response.total_items,
+            totalPages: response.total_pages,
+          });
+          return { success: true, customers: response.data };
         } catch (err) {
           const fieldErrors = toFieldErrors(err?.errors);
           const payload = {
@@ -144,13 +153,7 @@ const useCustomersStore = create(
       },
 
       resetErrors: () => set({ status: 'idle', fieldErrors: null, message: null }),
-    }),
-    {
-      name: 'water-refill-customers',
-      storage: createJSONStorage(() => localStorage),
-      partialize: (state) => ({ customers: state.customers }),
-    }
-  )
+    })
 );
 
 export default useCustomersStore;

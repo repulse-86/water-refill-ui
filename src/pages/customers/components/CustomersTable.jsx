@@ -8,7 +8,21 @@ const statusBadgeVariants = {
   inactive: 'slate',
 };
 
-export default function CustomersTable({ customers, isLoading, onEdit, onSettle, onDelete }) {
+export default function CustomersTable({
+  customers,
+  isLoading,
+  onEdit,
+  onSettle,
+  onDelete,
+  currentPage,
+  perPage,
+  totalItems,
+  totalPages,
+  onPageChange,
+  onPageSizeChange,
+  searchValue,
+  onSearchChange,
+}) {
   const columns = [
     { accessorKey: 'name', header: 'Name' },
     { accessorKey: 'phone', header: 'Phone' },
@@ -57,6 +71,15 @@ export default function CustomersTable({ customers, isLoading, onEdit, onSettle,
       searchKeys={['name', 'phone', 'email']}
       searchPlaceholder="Search customers…"
       emptyMessage="No customers found."
+      manualPagination
+      currentPage={currentPage}
+      pageSize={perPage}
+      pageCount={totalPages}
+      totalItems={totalItems}
+      onPageChange={onPageChange}
+      onPageSizeChange={onPageSizeChange}
+      searchValue={searchValue}
+      onSearchChange={onSearchChange}
     />
   );
 }

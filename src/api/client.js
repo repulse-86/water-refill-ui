@@ -1,7 +1,6 @@
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
 import * as ordersMock from '../mock/ordersMock';
-import * as customersMock from '../mock/customersMock';
 import * as productsMock from '../mock/productsMock';
 import * as meterReadingsMock from '../mock/meterReadingsMock';
 import * as reportsMock from '../mock/reportsMock';
@@ -119,12 +118,6 @@ if (useMocks) {
   mock.onDelete(/\/orders\/\d+$/).reply(reply((config) => ordersMock.deleteOrder(getId(config))));
   mock.onPost(/\/orders\/\d+\/status$/).reply(reply((config) => ordersMock.transitionOrderStatus(getId(config), readBody(config).status)));
   mock.onPost(/\/orders\/\d+\/delivery$/).reply(reply((config) => ordersMock.recordDelivery(getId(config), readBody(config))));
-
-  mock.onGet('/customers').reply(reply(() => customersMock.listCustomers()));
-  mock.onPost('/customers').reply(reply((config) => customersMock.createCustomer(readBody(config))));
-  mock.onPut(/\/customers\/\d+$/).reply(reply((config) => customersMock.updateCustomer(getId(config), readBody(config))));
-  mock.onDelete(/\/customers\/\d+$/).reply(reply((config) => customersMock.deleteCustomer(getId(config))));
-  mock.onPost(/\/customers\/\d+\/settle$/).reply(reply((config) => customersMock.settleCustomer(getId(config), readBody(config))));
 
   mock.onGet('/products').reply(reply(() => productsMock.listProducts()));
   mock.onPost('/products').reply(reply((config) => productsMock.createProduct(readBody(config))));
