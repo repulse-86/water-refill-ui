@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { useShallow } from 'zustand/shallow';
 import useProductsStore from '../../store/productsStore';
 import useSettingsStore from '../../store/settingsStore';
@@ -8,13 +8,17 @@ import ProductFormModal from './components/ProductFormModal';
 import ProductDeleteDialog from './components/ProductDeleteDialog';
 
 export default function Products() {
-  const { products, status, fetchProducts, deleteProduct } =
+  const { products, status, fetchProducts, deleteProduct, currentPage, perPage, totalItems, totalPages } =
     useProductsStore(
       useShallow((state) => ({
         products: state.products,
         status: state.status,
         fetchProducts: state.fetchProducts,
         deleteProduct: state.deleteProduct,
+        currentPage: state.currentPage,
+        perPage: state.perPage,
+        totalItems: state.totalItems,
+        totalPages: state.totalPages,
       }))
     );
 
@@ -24,12 +28,30 @@ export default function Products() {
   const [editingId, setEditingId] = useState(null);
   const [editingProduct, setEditingProduct] = useState(null);
   const [deleting, setDeleting] = useState(null);
+  const [search, setSearch] = useState('');
+  const searchTimer = useRef(null);
 
   useEffect(() => {
     if (products.length === 0 && status === 'idle') {
-      fetchProducts();
+      fetchProducts({ page: 1, size: perPage });
     }
-  }, [products.length, status, fetchProducts]);
+  }, [products.length, status, fetchProducts, perPage]);
+
+  const handlePageChange = useCallback((page) => {
+    fetchProducts({ page, size: perPage, search });
+  }, [fetchProducts, perPage, search]);
+
+  const handlePageSizeChange = useCallback((size) => {
+    fetchProducts({ page: 1, size, search });
+  }, [fetchProducts, search]);
+
+  const handleSearchChange = useCallback((value) => {
+    setSearch(value);
+    if (searchTimer.current) clearTimeout(searchTimer.current);
+    searchTimer.current = setTimeout(() => {
+      fetchProducts({ page: 1, size: perPage, search: value });
+    }, 300);
+  }, [fetchProducts, perPage]);
 
   const openAdd = () => {
     setEditingId(null);
@@ -61,7 +83,21 @@ export default function Products() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       <ProductsHeader onAdd={openAdd} />
 
-      <ProductsTable products={products} currency={currency} isLoading={isLoading} onEdit={openEdit} onDelete={setDeleting} />
+      <ProductsTable
+        products={products}
+        currency={currency}
+        isLoading={isLoading}
+        onEdit={openEdit}
+        onDelete={setDeleting}
+        currentPage={currentPage}
+        perPage={perPage}
+        totalItems={totalItems}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+        onPageSizeChange={handlePageSizeChange}
+        searchValue={search}
+        onSearchChange={handleSearchChange}
+      />
 
       <ProductFormModal
         isOpen={isOpen}

@@ -1,7 +1,6 @@
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
 import * as ordersMock from '../mock/ordersMock';
-import * as productsMock from '../mock/productsMock';
 import * as meterReadingsMock from '../mock/meterReadingsMock';
 import * as reportsMock from '../mock/reportsMock';
 import * as dashboardMock from '../mock/dashboardMock';
@@ -118,11 +117,6 @@ if (useMocks) {
   mock.onDelete(/\/orders\/\d+$/).reply(reply((config) => ordersMock.deleteOrder(getId(config))));
   mock.onPost(/\/orders\/\d+\/status$/).reply(reply((config) => ordersMock.transitionOrderStatus(getId(config), readBody(config).status)));
   mock.onPost(/\/orders\/\d+\/delivery$/).reply(reply((config) => ordersMock.recordDelivery(getId(config), readBody(config))));
-
-  mock.onGet('/products').reply(reply(() => productsMock.listProducts()));
-  mock.onPost('/products').reply(reply((config) => productsMock.createProduct(readBody(config))));
-  mock.onPut(/\/products\/\d+$/).reply(reply((config) => productsMock.updateProduct(getId(config), readBody(config))));
-  mock.onDelete(/\/products\/\d+$/).reply(reply((config) => productsMock.deleteProduct(getId(config))));
 
   mock.onGet('/meter-readings').reply(reply(() => meterReadingsMock.listMeterReadings()));
   mock.onPost('/meter-readings').reply(reply((config) => meterReadingsMock.createMeterReading(readBody(config))));

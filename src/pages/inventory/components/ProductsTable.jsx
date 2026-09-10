@@ -10,7 +10,21 @@ const typeBadgeVariants = {
   equipment: 'violet',
 };
 
-export default function ProductsTable({ products, currency, isLoading, onEdit, onDelete }) {
+export default function ProductsTable({
+  products,
+  currency,
+  isLoading,
+  onEdit,
+  onDelete,
+  currentPage,
+  perPage,
+  totalItems,
+  totalPages,
+  onPageChange,
+  onPageSizeChange,
+  searchValue,
+  onSearchChange,
+}) {
   const columns = [
     {
       accessorKey: 'name',
@@ -78,6 +92,15 @@ export default function ProductsTable({ products, currency, isLoading, onEdit, o
       searchKeys={['name', 'type']}
       searchPlaceholder="Search products…"
       emptyMessage="No products found."
+      manualPagination
+      currentPage={currentPage}
+      pageSize={perPage}
+      pageCount={totalPages}
+      totalItems={totalItems}
+      onPageChange={onPageChange}
+      onPageSizeChange={onPageSizeChange}
+      searchValue={searchValue}
+      onSearchChange={onSearchChange}
     />
   );
 }
