@@ -1,5 +1,4 @@
 import axios from 'axios';
-import MockAdapter from 'axios-mock-adapter';
 
 const env = (typeof import.meta !== 'undefined' && import.meta.env) || {};
 
@@ -88,44 +87,5 @@ client.interceptors.response.use(
     return Promise.reject(error);
   }
 );
-
-const useMocks = env.VITE_USE_MOCKS !== 'false';
-
-if (useMocks) {
-  const mock = new MockAdapter(client);
-
-  const reply = (handler) => async (config) => {
-    try {
-      const data = await handler(config);
-      return [200, data];
-    } catch (err) {
-      const hasFieldErrors = err?.errors && Object.keys(err.errors).length > 0;
-      return [hasFieldErrors ? 422 : 400, { message: err?.message, errors: err?.errors ?? {} }];
-    }
-  };
-
-  mock.onGet('/v1/orders').passThrough();
-  mock.onPost('/v1/orders').passThrough();
-  mock.onPut(/\/v1\/orders\/\d+$/).passThrough();
-  mock.onDelete(/\/v1\/orders\/\d+$/).passThrough();
-  mock.onPost(/\/v1\/orders\/\d+\/status$/).passThrough();
-  mock.onPost(/\/v1\/orders\/\d+\/delivery$/).passThrough();
-
-  mock.onGet('/v1/fulfillment/orders').passThrough();
-
-  mock.onGet('/v1/meter-readings').passThrough();
-  mock.onPost('/v1/meter-readings').passThrough();
-  mock.onPut(/\/v1\/meter-readings\/\d+$/).passThrough();
-  mock.onDelete(/\/v1\/meter-readings\/\d+$/).passThrough();
-
-  mock.onGet('/v1/reports/daily-sales').passThrough();
-  mock.onGet('/v1/reports/product-performance').passThrough();
-  mock.onGet('/v1/reports/debt-aging').passThrough();
-  mock.onGet('/v1/reports/reconciliation').passThrough();
-
-  mock.onGet('/v1/dashboard').passThrough();
-
-  mock.onAny().passThrough();
-}
 
 export default client;
