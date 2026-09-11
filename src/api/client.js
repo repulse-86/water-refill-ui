@@ -1,7 +1,6 @@
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
 import * as reportsMock from '../mock/reportsMock';
-import * as dashboardMock from '../mock/dashboardMock';
 
 const env = (typeof import.meta !== 'undefined' && import.meta.env) || {};
 
@@ -125,7 +124,7 @@ if (useMocks) {
   mock.onGet('/v1/reports/debt-aging').reply(reply(() => reportsMock.getDebtAging()));
   mock.onGet('/v1/reports/reconciliation').reply(reply(() => reportsMock.getReconciliation()));
 
-  mock.onGet('/v1/dashboard').reply(reply(() => dashboardMock.getDashboard()));
+  mock.onGet('/v1/dashboard').passThrough();
 
   mock.onAny().passThrough();
 }

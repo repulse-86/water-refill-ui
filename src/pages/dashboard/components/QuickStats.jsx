@@ -10,10 +10,10 @@ const icons = {
 
 export default function QuickStats({ stats }) {
   const items = [
-    { key: 'gallonsPumped', label: 'Gallons Pumped', end: Number(stats.gallonsPumped), decimals: 1 },
-    { key: 'bottlesReturned', label: 'Bottles Returned', end: Number(stats.bottlesReturned), decimals: 0 },
-    { key: 'activeCustomers', label: 'Active Customers', end: Number(stats.activeCustomers), decimals: 0 },
-    { key: 'pendingOrders', label: 'Pending Orders', end: Number(stats.pendingOrders), decimals: 0 },
+    { key: 'gallonsPumped', label: 'Gallons Pumped', end: Number(stats.gallons_pumped), decimals: 1 },
+    { key: 'bottlesReturned', label: 'Bottles Returned', end: Number(stats.bottles_returned), decimals: 0 },
+    { key: 'activeCustomers', label: 'Active Customers', end: Number(stats.active_customers), decimals: 0 },
+    { key: 'pendingOrders', label: 'Pending Orders', end: Number(stats.pending_orders), decimals: 0 },
   ];
 
   return (

@@ -55,18 +55,18 @@ export default function Dashboard() {
         <>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
             <TodaySalesCard today={dashboard.today} currency={currency} />
-            <QuickStats stats={dashboard.quickStats} />
+            <QuickStats stats={dashboard.quick_stats} />
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
             <div className="lg:col-span-2 flex flex-col gap-4">
-              <SalesTrendChart data={dashboard.salesTrend} currency={currency} />
-              <PendingOrdersList orders={dashboard.pendingOrders} currency={currency} />
-              <LowStockAlerts products={dashboard.lowStock} />
+              <SalesTrendChart data={dashboard.sales_trend} currency={currency} />
+              <PendingOrdersList orders={dashboard.pending_orders} currency={currency} />
+              <LowStockAlerts products={dashboard.low_stock} />
             </div>
             <div className="flex flex-col gap-4">
-              <PaymentMixChart data={dashboard.paymentMix} currency={currency} />
-              <TopProductsChart data={dashboard.topProducts} currency={currency} />
+              <PaymentMixChart data={dashboard.payment_mix} currency={currency} />
+              <TopProductsChart data={dashboard.top_products} currency={currency} />
             </div>
           </div>
         </>

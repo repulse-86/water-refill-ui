@@ -27,10 +27,10 @@ export async function getDashboard() {
   const lowStock = computeLowStock(products);
 
   const quickStats = {
-    gallonsPumped: computeGallonsPumped(readings, orders, products, todayKey),
-    bottlesReturned: computeBottlesReturned(orders),
-    activeCustomers: computeActiveCustomers(customers),
-    pendingOrders: pendingOrders.length,
+    gallons_pumped: computeGallonsPumped(readings, orders, products, todayKey),
+    bottles_returned: computeBottlesReturned(orders),
+    active_customers: computeActiveCustomers(customers),
+    pending_orders: pendingOrders.length,
   };
 
   const salesTrend = computeDailySales(orders, products)
@@ -55,5 +55,5 @@ export async function getDashboard() {
     ),
   }));
 
-  return { today, quickStats, pendingOrders, lowStock, salesTrend, topProducts, paymentMix };
+  return { today, quick_stats: quickStats, pending_orders: pendingOrders, low_stock: lowStock, sales_trend: salesTrend, top_products: topProducts, payment_mix: paymentMix };
 }
