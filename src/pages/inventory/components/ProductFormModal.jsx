@@ -40,6 +40,7 @@ export default function ProductFormModal({ isOpen, onClose, editingId, initialDa
 
   const [selectedType, setSelectedType] = useState(initialData?.type ?? 'water_refill');
   const [imagePreview, setImagePreview] = useState(initialData?.image ?? '');
+  const [imageFile, setImageFile] = useState(null);
   const [bomOpen, setBomOpen] = useState(false);
   const [components, setComponents] = useState([]);
 
@@ -59,6 +60,7 @@ export default function ProductFormModal({ isOpen, onClose, editingId, initialDa
       reset(initialData ?? emptyForm);
       setSelectedType(initialData?.type ?? 'water_refill');
       setImagePreview(initialData?.image ?? '');
+      setImageFile(null);
       resetErrors();
 
       if (editingId && initialData?.id) {
@@ -94,6 +96,7 @@ export default function ProductFormModal({ isOpen, onClose, editingId, initialDa
       return;
     }
 
+    setImageFile(file);
     const reader = new FileReader();
     reader.onloadend = () => {
       setImagePreview(reader.result);
@@ -103,22 +106,31 @@ export default function ProductFormModal({ isOpen, onClose, editingId, initialDa
 
   const clearImage = () => {
     setImagePreview('');
+    setImageFile(null);
   };
 
   const onSubmit = async (data) => {
     const payload = {
       ...data,
-      image: imagePreview || null,
+      image: (!imagePreview || imagePreview.startsWith('data:')) ? null : imagePreview,
       components: components.map((c) => ({
         component_id: c.component_id,
         quantity: c.quantity,
       })),
     };
-    const result = editingId ? await updateProduct(editingId, payload) : await createProduct(payload);
+    
+    const formData = new FormData();
+    formData.append('product', new Blob([JSON.stringify(payload)], { type: 'application/json' }));
+    if (imageFile) {
+      formData.append('image', imageFile);
+    }
+
+    const result = editingId ? await updateProduct(editingId, formData) : await createProduct(formData);
     if (result.success) {
       onClose();
       reset();
       setImagePreview('');
+      setImageFile(null);
       setComponents([]);
     }
   };

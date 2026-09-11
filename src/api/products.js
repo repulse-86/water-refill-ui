@@ -8,11 +8,13 @@ export async function listProducts({ page = 1, size = 10, search = '', type = ''
 }
 
 export async function createProduct(payload) {
-  return client.post('/v1/products', payload);
+  const isFormData = payload instanceof FormData;
+  return client.post('/v1/products', payload, isFormData ? { headers: { 'Content-Type': null } } : undefined);
 }
 
 export async function updateProduct(id, payload) {
-  return client.put(`/v1/products/${id}`, payload);
+  const isFormData = payload instanceof FormData;
+  return client.put(`/v1/products/${id}`, payload, isFormData ? { headers: { 'Content-Type': null } } : undefined);
 }
 
 export async function deleteProduct(id) {
