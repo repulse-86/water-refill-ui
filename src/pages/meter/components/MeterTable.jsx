@@ -1,4 +1,4 @@
-import { Pencil, Trash2 } from 'lucide-react';
+import { Pencil, Trash2, Eye } from 'lucide-react';
 import DataTable from '../../../components/ui/DataTable';
 import RowActions from '../../../components/ui/RowActions';
 import Badge from '../../../components/ui/Badge';
@@ -9,7 +9,21 @@ function formatValue(value) {
   return Number(value).toFixed(2);
 }
 
-export default function MeterTable({ readings, isLoading, onEdit, onDelete }) {
+export default function MeterTable({
+  readings,
+  isLoading,
+  onEdit,
+  onDelete,
+  onViewNotes,
+  currentPage,
+  perPage,
+  totalItems,
+  totalPages,
+  onPageChange,
+  onPageSizeChange,
+  searchValue,
+  onSearchChange,
+}) {
   const columns = [
     {
       accessorKey: 'reading_date',
@@ -55,6 +69,7 @@ export default function MeterTable({ readings, isLoading, onEdit, onDelete }) {
       render: (_value, row) => (
         <RowActions
           actions={[
+            { icon: Eye, label: 'View Notes', variant: 'edit', onClick: () => onViewNotes(row) },
             { icon: Pencil, label: 'Edit', variant: 'edit', onClick: () => onEdit(row) },
             { icon: Trash2, label: 'Delete', variant: 'danger', onClick: () => onDelete(row) },
           ]}
@@ -68,9 +83,17 @@ export default function MeterTable({ readings, isLoading, onEdit, onDelete }) {
       columns={columns}
       data={readings}
       isLoading={isLoading}
-      searchKeys={['reading_date']}
       searchPlaceholder="Search readings…"
       emptyMessage="No meter readings recorded."
+      manualPagination
+      currentPage={currentPage}
+      pageSize={perPage}
+      pageCount={totalPages}
+      totalItems={totalItems}
+      onPageChange={onPageChange}
+      onPageSizeChange={onPageSizeChange}
+      searchValue={searchValue}
+      onSearchChange={onSearchChange}
     />
   );
 }

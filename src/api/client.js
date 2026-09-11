@@ -1,6 +1,5 @@
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
-import * as meterReadingsMock from '../mock/meterReadingsMock';
 import * as reportsMock from '../mock/reportsMock';
 import * as dashboardMock from '../mock/dashboardMock';
 
@@ -107,9 +106,6 @@ if (useMocks) {
     }
   };
 
-  const getId = (config) => Number(config.url.match(/\/(\d+)(?:\/|$)/)?.[1]);
-  const readBody = (config) => (config.data ? JSON.parse(config.data) : {});
-
   mock.onGet('/v1/orders').passThrough();
   mock.onPost('/v1/orders').passThrough();
   mock.onPut(/\/v1\/orders\/\d+$/).passThrough();
@@ -119,10 +115,10 @@ if (useMocks) {
 
   mock.onGet('/v1/fulfillment/orders').passThrough();
 
-  mock.onGet('/v1/meter-readings').reply(reply(() => meterReadingsMock.listMeterReadings()));
-  mock.onPost('/v1/meter-readings').reply(reply((config) => meterReadingsMock.createMeterReading(readBody(config))));
-  mock.onPut(/\/v1\/meter-readings\/\d+$/).reply(reply((config) => meterReadingsMock.updateMeterReading(getId(config), readBody(config))));
-  mock.onDelete(/\/v1\/meter-readings\/\d+$/).reply(reply((config) => meterReadingsMock.deleteMeterReading(getId(config))));
+  mock.onGet('/v1/meter-readings').passThrough();
+  mock.onPost('/v1/meter-readings').passThrough();
+  mock.onPut(/\/v1\/meter-readings\/\d+$/).passThrough();
+  mock.onDelete(/\/v1\/meter-readings\/\d+$/).passThrough();
 
   mock.onGet('/v1/reports/daily-sales').reply(reply(() => reportsMock.getDailySales()));
   mock.onGet('/v1/reports/product-performance').reply(reply(() => reportsMock.getProductPerformance()));

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { useShallow } from 'zustand/shallow';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
@@ -8,15 +8,20 @@ import MeterSummary from './components/MeterSummary';
 import MeterTable from './components/MeterTable';
 import MeterReadingModal from './components/MeterReadingModal';
 import MeterDeleteDialog from './components/MeterDeleteDialog';
+import MeterNotesModal from './components/MeterNotesModal';
 
 export default function MeterReadings() {
-  const { readings, status, fetchReadings, deleteReading } =
+  const { readings, status, fetchReadings, deleteReading, currentPage, perPage, totalItems, totalPages } =
     useMeterReadingsStore(
       useShallow((state) => ({
         readings: state.readings,
         status: state.status,
         fetchReadings: state.fetchReadings,
         deleteReading: state.deleteReading,
+        currentPage: state.currentPage,
+        perPage: state.perPage,
+        totalItems: state.totalItems,
+        totalPages: state.totalPages,
       }))
     );
 
@@ -24,12 +29,31 @@ export default function MeterReadings() {
   const [editingId, setEditingId] = useState(null);
   const [editingReading, setEditingReading] = useState(null);
   const [deleting, setDeleting] = useState(null);
+  const [viewingNotes, setViewingNotes] = useState(null);
+  const [search, setSearch] = useState('');
+  const searchTimer = useRef(null);
 
   useEffect(() => {
     if (readings.length === 0 && status === 'idle') {
-      fetchReadings();
+      fetchReadings({ page: 1, size: perPage });
     }
-  }, [readings.length, status, fetchReadings]);
+  }, [readings.length, status, fetchReadings, perPage]);
+
+  const handlePageChange = useCallback((page) => {
+    fetchReadings({ page, size: perPage, search });
+  }, [fetchReadings, perPage, search]);
+
+  const handlePageSizeChange = useCallback((size) => {
+    fetchReadings({ page: 1, size, search });
+  }, [fetchReadings, search]);
+
+  const handleSearchChange = useCallback((value) => {
+    setSearch(value);
+    if (searchTimer.current) clearTimeout(searchTimer.current);
+    searchTimer.current = setTimeout(() => {
+      fetchReadings({ page: 1, size: perPage, search: value });
+    }, 300);
+  }, [fetchReadings, perPage]);
 
   const openAdd = () => {
     setEditingId(null);
@@ -68,7 +92,21 @@ export default function MeterReadings() {
 
       <MeterSummary reading={latest} />
 
-      <MeterTable readings={readings} isLoading={isLoading} onEdit={openEdit} onDelete={setDeleting} />
+      <MeterTable
+        readings={readings}
+        isLoading={isLoading}
+        onEdit={openEdit}
+        onDelete={setDeleting}
+        onViewNotes={setViewingNotes}
+        currentPage={currentPage}
+        perPage={perPage}
+        totalItems={totalItems}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+        onPageSizeChange={handlePageSizeChange}
+        searchValue={search}
+        onSearchChange={handleSearchChange}
+      />
 
       <MeterReadingModal
         isOpen={isOpen}
@@ -82,6 +120,12 @@ export default function MeterReadings() {
         isLoading={isLoading}
         onClose={() => setDeleting(null)}
         onConfirm={handleDelete}
+      />
+
+      <MeterNotesModal
+        isOpen={viewingNotes !== null}
+        onClose={() => setViewingNotes(null)}
+        reading={viewingNotes}
       />
     </div>
   );

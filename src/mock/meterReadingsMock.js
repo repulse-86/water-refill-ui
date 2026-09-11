@@ -56,11 +56,33 @@ export function getMeterReadings() {
   return readings;
 }
 
-export async function listMeterReadings() {
+export async function listMeterReadings({ page = 1, size = 10, search = '' } = {}) {
   await delay(300);
-  return [...readings]
+  let result = [...readings]
     .sort((a, b) => b.reading_date.localeCompare(a.reading_date))
     .map((r) => enrichReading(r, readings, mockOrders, mockProducts));
+
+  if (search) {
+    const term = search.toLowerCase();
+    result = result.filter((r) =>
+      String(r.id).includes(term) ||
+      String(r.reading_date).toLowerCase().includes(term) ||
+      (r.notes || '').toLowerCase().includes(term)
+    );
+  }
+
+  const totalItems = result.length;
+  const totalPages = Math.max(1, Math.ceil(totalItems / size));
+  const startIndex = (page - 1) * size;
+  const paginated = result.slice(startIndex, startIndex + size);
+
+  return {
+    data: paginated,
+    current_page: page,
+    per_page: size,
+    total_items: totalItems,
+    total_pages: totalPages,
+  };
 }
 
 export async function createMeterReading(payload) {

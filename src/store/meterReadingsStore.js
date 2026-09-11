@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
 import * as meterReadingsApi from '../api/meterReadings';
 import { toFieldErrors } from '../utils/formErrors';
 import { toastError, toastSuccess } from '../utils/toast';
@@ -20,19 +19,29 @@ const initialState = {
   status: 'idle',
   fieldErrors: null,
   message: null,
+  currentPage: 1,
+  perPage: 10,
+  totalItems: 0,
+  totalPages: 0,
 };
 
 const useMeterReadingsStore = create(
-  persist(
-    (set) => ({
+  (set) => ({
       ...initialState,
 
-      fetchReadings: async () => {
+      fetchReadings: async (params) => {
         set({ status: 'loading', fieldErrors: null, message: null });
         try {
-          const readings = await meterReadingsApi.listMeterReadings();
-          set({ readings, status: 'idle' });
-          return { success: true, readings };
+          const response = await meterReadingsApi.listMeterReadings(params);
+          set({
+            readings: response.data,
+            status: 'idle',
+            currentPage: params?.page ?? 1,
+            perPage: params?.size ?? 10,
+            totalItems: response.total_items,
+            totalPages: response.total_pages,
+          });
+          return { success: true, readings: response.data };
         } catch (err) {
           const fieldErrors = toFieldErrors(err?.errors);
           const payload = {
@@ -109,13 +118,7 @@ const useMeterReadingsStore = create(
       },
 
       resetErrors: () => set({ status: 'idle', fieldErrors: null, message: null }),
-    }),
-    {
-      name: 'water-refill-meter-readings',
-      storage: createJSONStorage(() => localStorage),
-      partialize: (state) => ({ readings: state.readings }),
-    }
-  )
+    })
 );
 
 export default useMeterReadingsStore;
