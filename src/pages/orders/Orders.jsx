@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { useShallow } from 'zustand/shallow';
 import useOrdersStore from '../../store/ordersStore';
 import useSettingsStore from '../../store/settingsStore';
@@ -9,13 +9,17 @@ import OrderDetailModal from './components/OrderDetailModal';
 import OrderDeleteDialog from './components/OrderDeleteDialog';
 
 export default function Orders() {
-  const { orders, status, fetchOrders, deleteOrder } =
+  const { orders, status, fetchOrders, deleteOrder, currentPage, perPage, totalItems, totalPages } =
     useOrdersStore(
       useShallow((state) => ({
         orders: state.orders,
         status: state.status,
         fetchOrders: state.fetchOrders,
         deleteOrder: state.deleteOrder,
+        currentPage: state.currentPage,
+        perPage: state.perPage,
+        totalItems: state.totalItems,
+        totalPages: state.totalPages,
       }))
     );
 
@@ -25,12 +29,30 @@ export default function Orders() {
   const [editingOrder, setEditingOrder] = useState(null);
   const [viewingOrder, setViewingOrder] = useState(null);
   const [deleting, setDeleting] = useState(null);
+  const [search, setSearch] = useState('');
+  const searchTimer = useRef(null);
 
   useEffect(() => {
     if (orders.length === 0 && status === 'idle') {
-      fetchOrders();
+      fetchOrders({ page: 1, size: perPage });
     }
-  }, [orders.length, status, fetchOrders]);
+  }, [orders.length, status, fetchOrders, perPage]);
+
+  const handlePageChange = useCallback((page) => {
+    fetchOrders({ page, size: perPage, search });
+  }, [fetchOrders, perPage, search]);
+
+  const handlePageSizeChange = useCallback((size) => {
+    fetchOrders({ page: 1, size, search });
+  }, [fetchOrders, search]);
+
+  const handleSearchChange = useCallback((value) => {
+    setSearch(value);
+    if (searchTimer.current) clearTimeout(searchTimer.current);
+    searchTimer.current = setTimeout(() => {
+      fetchOrders({ page: 1, size: perPage, search: value });
+    }, 300);
+  }, [fetchOrders, perPage]);
 
   const openAdd = () => {
     setEditingOrder(null);
@@ -79,6 +101,14 @@ export default function Orders() {
         onView={openView}
         onEdit={openEdit}
         onDelete={setDeleting}
+        currentPage={currentPage}
+        perPage={perPage}
+        totalItems={totalItems}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+        onPageSizeChange={handlePageSizeChange}
+        searchValue={search}
+        onSearchChange={handleSearchChange}
       />
 
       <OrderFormModal

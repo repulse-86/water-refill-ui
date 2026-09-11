@@ -1,6 +1,5 @@
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
-import * as ordersMock from '../mock/ordersMock';
 import * as meterReadingsMock from '../mock/meterReadingsMock';
 import * as reportsMock from '../mock/reportsMock';
 import * as dashboardMock from '../mock/dashboardMock';
@@ -111,24 +110,26 @@ if (useMocks) {
   const getId = (config) => Number(config.url.match(/\/(\d+)(?:\/|$)/)?.[1]);
   const readBody = (config) => (config.data ? JSON.parse(config.data) : {});
 
-  mock.onGet('/orders').reply(reply(() => ordersMock.listOrders()));
-  mock.onPost('/orders').reply(reply((config) => ordersMock.createOrder(readBody(config))));
-  mock.onPut(/\/orders\/\d+$/).reply(reply((config) => ordersMock.updateOrder(getId(config), readBody(config))));
-  mock.onDelete(/\/orders\/\d+$/).reply(reply((config) => ordersMock.deleteOrder(getId(config))));
-  mock.onPost(/\/orders\/\d+\/status$/).reply(reply((config) => ordersMock.transitionOrderStatus(getId(config), readBody(config).status)));
-  mock.onPost(/\/orders\/\d+\/delivery$/).reply(reply((config) => ordersMock.recordDelivery(getId(config), readBody(config))));
+  mock.onGet('/v1/orders').passThrough();
+  mock.onPost('/v1/orders').passThrough();
+  mock.onPut(/\/v1\/orders\/\d+$/).passThrough();
+  mock.onDelete(/\/v1\/orders\/\d+$/).passThrough();
+  mock.onPost(/\/v1\/orders\/\d+\/status$/).passThrough();
+  mock.onPost(/\/v1\/orders\/\d+\/delivery$/).passThrough();
 
-  mock.onGet('/meter-readings').reply(reply(() => meterReadingsMock.listMeterReadings()));
-  mock.onPost('/meter-readings').reply(reply((config) => meterReadingsMock.createMeterReading(readBody(config))));
-  mock.onPut(/\/meter-readings\/\d+$/).reply(reply((config) => meterReadingsMock.updateMeterReading(getId(config), readBody(config))));
-  mock.onDelete(/\/meter-readings\/\d+$/).reply(reply((config) => meterReadingsMock.deleteMeterReading(getId(config))));
+  mock.onGet('/v1/fulfillment/orders').passThrough();
 
-  mock.onGet('/reports/daily-sales').reply(reply(() => reportsMock.getDailySales()));
-  mock.onGet('/reports/product-performance').reply(reply(() => reportsMock.getProductPerformance()));
-  mock.onGet('/reports/debt-aging').reply(reply(() => reportsMock.getDebtAging()));
-  mock.onGet('/reports/reconciliation').reply(reply(() => reportsMock.getReconciliation()));
+  mock.onGet('/v1/meter-readings').reply(reply(() => meterReadingsMock.listMeterReadings()));
+  mock.onPost('/v1/meter-readings').reply(reply((config) => meterReadingsMock.createMeterReading(readBody(config))));
+  mock.onPut(/\/v1\/meter-readings\/\d+$/).reply(reply((config) => meterReadingsMock.updateMeterReading(getId(config), readBody(config))));
+  mock.onDelete(/\/v1\/meter-readings\/\d+$/).reply(reply((config) => meterReadingsMock.deleteMeterReading(getId(config))));
 
-  mock.onGet('/dashboard').reply(reply(() => dashboardMock.getDashboard()));
+  mock.onGet('/v1/reports/daily-sales').reply(reply(() => reportsMock.getDailySales()));
+  mock.onGet('/v1/reports/product-performance').reply(reply(() => reportsMock.getProductPerformance()));
+  mock.onGet('/v1/reports/debt-aging').reply(reply(() => reportsMock.getDebtAging()));
+  mock.onGet('/v1/reports/reconciliation').reply(reply(() => reportsMock.getReconciliation()));
+
+  mock.onGet('/v1/dashboard').reply(reply(() => dashboardMock.getDashboard()));
 
   mock.onAny().passThrough();
 }

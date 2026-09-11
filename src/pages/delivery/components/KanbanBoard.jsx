@@ -105,11 +105,11 @@ function OrderCard({ order, currency, onAdvance, onRecord, onSkipDelivery, onArc
          )}
        </div>
      </motion.div>
-   );
- }
+  );
+}
 
- function Column({ column, orders, currency, onAdvance, onRecord, onSkipDelivery, onArchive }) {
-  const columnOrders = orders.filter((o) => o.status === column.id);
+function Column({ column, groupedOrders, currency, onAdvance, onRecord, onSkipDelivery, onArchive }) {
+  const columnOrders = groupedOrders[column.id] || [];
 
   return (
     <motion.div
@@ -157,7 +157,7 @@ function OrderCard({ order, currency, onAdvance, onRecord, onSkipDelivery, onArc
   );
 }
 
-export default function KanbanBoard({ orders, currency, onAdvance, onRecord, onSkipDelivery, onArchive }) {
+export default function KanbanBoard({ groupedOrders, currency, onAdvance, onRecord, onSkipDelivery, onArchive }) {
   const columns = useMemo(() => COLUMNS, []);
 
   return (
@@ -176,7 +176,7 @@ export default function KanbanBoard({ orders, currency, onAdvance, onRecord, onS
         <Column
           key={column.id}
           column={column}
-          orders={orders}
+          groupedOrders={groupedOrders}
           currency={currency}
           onAdvance={onAdvance}
           onRecord={onRecord}

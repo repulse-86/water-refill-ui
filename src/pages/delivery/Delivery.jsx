@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { useShallow } from 'zustand/shallow';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
-import useOrdersStore from '../../store/ordersStore';
 import useFulfillmentStore from '../../store/fulfillmentStore';
 import useSettingsStore from '../../store/settingsStore';
 import { getNextStatus } from '../../domain/orderStatus';
@@ -12,23 +11,23 @@ import DeliveryTable from './components/DeliveryTable';
 import DeliveryRecordModal from './components/DeliveryRecordModal';
 
 export default function Delivery() {
-  const { orders, status, fetchOrders } = useOrdersStore(
+  const { board, status, fetchBoard, transitionOrderStatus, archiveOrder } = useFulfillmentStore(
     useShallow((state) => ({
-      orders: state.orders,
+      board: state.board,
       status: state.status,
-      fetchOrders: state.fetchOrders,
+      fetchBoard: state.fetchBoard,
+      transitionOrderStatus: state.transitionOrderStatus,
+      archiveOrder: state.archiveOrder,
     }))
   );
 
   const currency = useSettingsStore((state) => state.settings?.currency ?? 'PHP');
-  const transitionOrderStatus = useFulfillmentStore((state) => state.transitionOrderStatus);
-  const deleteOrder = useOrdersStore((state) => state.deleteOrder);
 
   useEffect(() => {
-    if (orders.length === 0 && status === 'idle') {
-      fetchOrders();
+    if (!board && status === 'idle') {
+      fetchBoard();
     }
-  }, [orders.length, status, fetchOrders]);
+  }, [board, status, fetchBoard]);
 
   const [view, setView] = useState('kanban');
   const [isRecordOpen, setIsRecordOpen] = useState(false);
@@ -46,7 +45,7 @@ export default function Delivery() {
   };
 
   const handleArchive = async (order) => {
-    await deleteOrder(order.id);
+    await archiveOrder(order.id);
   };
 
   const openRecord = (order) => {
@@ -60,13 +59,15 @@ export default function Delivery() {
   };
 
   const isLoading = status === 'loading';
-  const deliveryOrders = orders.filter((order) => order.order_type === 'delivery');
+  const deliveryOrders = board
+    ? Object.values(board).flat().filter((order) => order.order_type === 'delivery')
+    : [];
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       <DeliveryHeader view={view} onViewChange={setView} />
 
-      {isLoading && orders.length === 0 && (
+      {isLoading && !board && (
         <div className="space-y-2">
           <Skeleton height={64} className="!rounded" />
           <Skeleton height={64} className="!rounded" />
@@ -74,9 +75,9 @@ export default function Delivery() {
         </div>
       )}
 
-      {view === 'kanban' && (
+      {view === 'kanban' && board && (
         <KanbanBoard
-          orders={orders}
+          groupedOrders={board}
           currency={currency}
           onAdvance={handleAdvance}
           onRecord={openRecord}

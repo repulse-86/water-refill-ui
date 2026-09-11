@@ -220,7 +220,8 @@ mockOrders.push(
 
 export async function listOrders() {
   await delay(300);
-  return mockOrders.map((o) => ({ ...o, items: [...o.items] }));
+  const orders = mockOrders.map((o) => ({ ...o, items: [...o.items] }));
+  return orders;
 }
 
 export async function createOrder(payload) {
@@ -344,11 +345,28 @@ export async function recordDelivery(id, deliveryData) {
     bottles_returned_at_delivery: bottlesReturned,
     cash_collected_at_delivery: cashCollected,
     delivery_address: deliveryData.delivery_address ?? order.delivery_address,
-    status: canTransition(order, ORDER_STATUSES.completed)
+     status: canTransition(order, ORDER_STATUSES.completed)
       ? ORDER_STATUSES.completed
       : order.status,
-    updated_at: now,
-  };
+     updated_at: now,
+   };
 
-  return { ...mockOrders[index], items: [...mockOrders[index].items] };
-}
+   return { ...mockOrders[index], items: [...mockOrders[index].items] };
+ }
+
+export async function fetchBoard() {
+   await delay(300);
+   const columns = {
+     queued: [],
+     processing: [],
+     transit: [],
+     completed: [],
+   };
+   mockOrders.forEach((o) => {
+     const key = o.status;
+     if (columns[key]) {
+       columns[key].push({ ...o, items: [...o.items] });
+     }
+   });
+   return { columns };
+ }

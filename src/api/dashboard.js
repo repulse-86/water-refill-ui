@@ -1,5 +1,5 @@
 import client from './client';
 
 export async function getDashboard() {
-  return client.get('/dashboard');
+  return client.get('/v1/dashboard');
 }

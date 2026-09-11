@@ -5,7 +5,22 @@ import Badge from '../../../components/ui/Badge';
 import { formatDate } from '../../../utils/date';
 import { STATUS_BADGE_VARIANTS, TYPE_BADGE_VARIANTS, TYPE_LABELS, STATUS_LABELS } from '../../../domain/orderStatus';
 
-export default function OrdersTable({ orders, currency, isLoading, onView, onEdit, onDelete }) {
+export default function OrdersTable({
+  orders,
+  currency,
+  isLoading,
+  onView,
+  onEdit,
+  onDelete,
+  currentPage,
+  perPage,
+  totalItems,
+  totalPages,
+  onPageChange,
+  onPageSizeChange,
+  searchValue,
+  onSearchChange,
+}) {
   const columns = [
     { accessorKey: 'id', header: 'Order #', render: (value) => `#${value}` },
     { accessorKey: 'customer_name', header: 'Customer' },
@@ -60,9 +75,17 @@ export default function OrdersTable({ orders, currency, isLoading, onView, onEdi
       columns={columns}
       data={orders}
       isLoading={isLoading}
-      searchKeys={['customer_name', 'order_type', 'status']}
       searchPlaceholder="Search orders…"
       emptyMessage="No orders found."
+      manualPagination
+      currentPage={currentPage}
+      pageSize={perPage}
+      pageCount={totalPages}
+      totalItems={totalItems}
+      onPageChange={onPageChange}
+      onPageSizeChange={onPageSizeChange}
+      searchValue={searchValue}
+      onSearchChange={onSearchChange}
     />
   );
 }
