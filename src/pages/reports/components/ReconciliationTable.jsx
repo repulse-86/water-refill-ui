@@ -12,7 +12,18 @@ function formatGallons(value) {
   return value == null ? '—' : `${Number(value).toFixed(2)} gal`;
 }
 
-export default function ReconciliationTable({ rows }) {
+export default function ReconciliationTable({
+  rows,
+  isLoading,
+  currentPage,
+  perPage,
+  totalItems,
+  totalPages,
+  onPageChange,
+  onPageSizeChange,
+  searchValue,
+  onSearchChange,
+}) {
   const columns = [
     {
       accessorKey: 'date',
@@ -50,8 +61,19 @@ export default function ReconciliationTable({ rows }) {
     <DataTable
       columns={columns}
       data={rows}
+      isLoading={isLoading}
+      searchPlaceholder="Search dates…"
       searchable={false}
       emptyMessage="No reconciliation data."
+      manualPagination
+      currentPage={currentPage}
+      pageSize={perPage}
+      pageCount={totalPages}
+      totalItems={totalItems}
+      onPageChange={onPageChange}
+      onPageSizeChange={onPageSizeChange}
+      searchValue={searchValue}
+      onSearchChange={onSearchChange}
     />
   );
 }

@@ -2,7 +2,18 @@ import DataTable from '../../../components/ui/DataTable';
 import useSettingsStore from '../../../store/settingsStore';
 import { formatDate } from '../../../utils/date';
 
-export default function DailySalesTable({ rows }) {
+export default function DailySalesTable({
+  rows,
+  isLoading,
+  currentPage,
+  perPage,
+  totalItems,
+  totalPages,
+  onPageChange,
+  onPageSizeChange,
+  searchValue,
+  onSearchChange,
+}) {
   const currency = useSettingsStore((state) => state.settings?.currency ?? 'PHP');
 
   const money = (value) => `${currency} ${Number(value).toFixed(2)}`;
@@ -33,8 +44,18 @@ export default function DailySalesTable({ rows }) {
     <DataTable
       columns={columns}
       data={rows}
-      searchable={false}
+      isLoading={isLoading}
+      searchPlaceholder="Search dates…"
       emptyMessage="No completed sales recorded."
+      manualPagination
+      currentPage={currentPage}
+      pageSize={perPage}
+      pageCount={totalPages}
+      totalItems={totalItems}
+      onPageChange={onPageChange}
+      onPageSizeChange={onPageSizeChange}
+      searchValue={searchValue}
+      onSearchChange={onSearchChange}
     />
   );
 }

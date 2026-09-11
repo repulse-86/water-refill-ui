@@ -1,6 +1,5 @@
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
-import * as reportsMock from '../mock/reportsMock';
 
 const env = (typeof import.meta !== 'undefined' && import.meta.env) || {};
 
@@ -76,8 +75,8 @@ client.interceptors.response.use(
         const result = await client.request({ ...config, url: originalUrl, method: originalMethod, data: originalData });
         cleanupRefreshState(token);
         return result;
-    } catch {
-      cleanupRefreshState(null);
+      } catch {
+        cleanupRefreshState(null);
         return Promise.reject(error);
       }
     }
@@ -119,10 +118,10 @@ if (useMocks) {
   mock.onPut(/\/v1\/meter-readings\/\d+$/).passThrough();
   mock.onDelete(/\/v1\/meter-readings\/\d+$/).passThrough();
 
-  mock.onGet('/v1/reports/daily-sales').reply(reply(() => reportsMock.getDailySales()));
-  mock.onGet('/v1/reports/product-performance').reply(reply(() => reportsMock.getProductPerformance()));
-  mock.onGet('/v1/reports/debt-aging').reply(reply(() => reportsMock.getDebtAging()));
-  mock.onGet('/v1/reports/reconciliation').reply(reply(() => reportsMock.getReconciliation()));
+  mock.onGet('/v1/reports/daily-sales').passThrough();
+  mock.onGet('/v1/reports/product-performance').passThrough();
+  mock.onGet('/v1/reports/debt-aging').passThrough();
+  mock.onGet('/v1/reports/reconciliation').passThrough();
 
   mock.onGet('/v1/dashboard').passThrough();
 

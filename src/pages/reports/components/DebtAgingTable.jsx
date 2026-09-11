@@ -2,7 +2,18 @@ import Badge from '../../../components/ui/Badge';
 import DataTable from '../../../components/ui/DataTable';
 import useSettingsStore from '../../../store/settingsStore';
 
-export default function DebtAgingTable({ rows }) {
+export default function DebtAgingTable({
+  rows,
+  isLoading,
+  currentPage,
+  perPage,
+  totalItems,
+  totalPages,
+  onPageChange,
+  onPageSizeChange,
+  searchValue,
+  onSearchChange,
+}) {
   const currency = useSettingsStore((state) => state.settings?.currency ?? 'PHP');
 
   const money = (value) => `${currency} ${Number(value).toFixed(2)}`;
@@ -40,9 +51,19 @@ export default function DebtAgingTable({ rows }) {
     <DataTable
       columns={columns}
       data={rows}
+      isLoading={isLoading}
       searchKeys={['name', 'phone']}
       searchPlaceholder="Search customers…"
       emptyMessage="No customers with outstanding balances or bottle debt."
+      manualPagination
+      currentPage={currentPage}
+      pageSize={perPage}
+      pageCount={totalPages}
+      totalItems={totalItems}
+      onPageChange={onPageChange}
+      onPageSizeChange={onPageSizeChange}
+      searchValue={searchValue}
+      onSearchChange={onSearchChange}
     />
   );
 }

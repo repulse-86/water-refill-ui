@@ -14,7 +14,18 @@ const TYPE_LABELS = {
   equipment: 'Equipment',
 };
 
-export default function ProductPerformanceTable({ rows }) {
+export default function ProductPerformanceTable({
+  rows,
+  isLoading,
+  currentPage,
+  perPage,
+  totalItems,
+  totalPages,
+  onPageChange,
+  onPageSizeChange,
+  searchValue,
+  onSearchChange,
+}) {
   const currency = useSettingsStore((state) => state.settings?.currency ?? 'PHP');
 
   const money = (value) => `${currency} ${Number(value).toFixed(2)}`;
@@ -45,8 +56,18 @@ export default function ProductPerformanceTable({ rows }) {
     <DataTable
       columns={columns}
       data={rows}
+      isLoading={isLoading}
       searchPlaceholder="Search products…"
       emptyMessage="No product sales recorded."
+      manualPagination
+      currentPage={currentPage}
+      pageSize={perPage}
+      pageCount={totalPages}
+      totalItems={totalItems}
+      onPageChange={onPageChange}
+      onPageSizeChange={onPageSizeChange}
+      searchValue={searchValue}
+      onSearchChange={onSearchChange}
     />
   );
 }

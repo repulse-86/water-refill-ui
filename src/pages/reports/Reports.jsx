@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useShallow } from 'zustand/shallow';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
@@ -21,29 +21,66 @@ const TABS = [
 ];
 
 export default function Reports() {
-  const { dailySales, productPerformance, debtAging, reconciliation, status, fetchReports } =
-    useReportsStore(
-      useShallow((state) => ({
-        dailySales: state.dailySales,
-        productPerformance: state.productPerformance,
-        debtAging: state.debtAging,
-        reconciliation: state.reconciliation,
-        status: state.status,
-        fetchReports: state.fetchReports,
-      }))
-    );
-
-  const [activeTab, setActiveTab] = useState('daily');
-  const fetchedRef = useRef(false);
+  const {
+    dailySales,
+    productPerformance,
+    debtAging,
+    reconciliation,
+    dailySalesMeta,
+    productPerformanceMeta,
+    debtAgingMeta,
+    reconciliationMeta,
+    currentPage,
+    perPage,
+    status,
+    fetchReports,
+  } = useReportsStore(
+    useShallow((state) => ({
+      dailySales: state.dailySales,
+      productPerformance: state.productPerformance,
+      debtAging: state.debtAging,
+      reconciliation: state.reconciliation,
+      dailySalesMeta: state.dailySalesMeta,
+      productPerformanceMeta: state.productPerformanceMeta,
+      debtAgingMeta: state.debtAgingMeta,
+      reconciliationMeta: state.reconciliationMeta,
+      currentPage: state.currentPage,
+      perPage: state.perPage,
+      status: state.status,
+      fetchReports: state.fetchReports,
+    }))
+  );
 
   const currency = useSettingsStore((state) => state.settings?.currency ?? 'PHP');
 
+  const [search, setSearch] = useState('');
+
+  const [activeTab, setActiveTab] = useState('daily');
+
   useEffect(() => {
-    if (!fetchedRef.current && status === 'idle') {
-      fetchedRef.current = true;
-      fetchReports();
-    }
-  }, [status, fetchReports]);
+    const timer = setTimeout(() => {
+      fetchReports({ page: 1, size: perPage, search });
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [fetchReports, perPage, search]);
+
+  const handlePageChange = useCallback(
+    (page) => {
+      fetchReports({ page, size: perPage, search });
+    },
+    [fetchReports, perPage, search]
+  );
+
+  const handlePageSizeChange = useCallback(
+    (size) => {
+      fetchReports({ page: 1, size, search });
+    },
+    [fetchReports, search]
+  );
+
+  const handleSearchChange = useCallback((value) => {
+    setSearch(value);
+  }, []);
 
   const isLoading = status === 'loading';
 
@@ -59,17 +96,17 @@ export default function Reports() {
       value: totalRevenue,
       decimals: 2,
       formatter: (v) => `${currency} ${Number(v).toFixed(2)}`,
-      sub: `${totalOrders} completed orders`,
+      sub: `${dailySalesMeta.totalItems} daily sales rows`,
     },
     {
       icon: ShoppingCart,
       label: 'Total Orders',
       value: totalOrders,
-      sub: 'across all days',
+      sub: 'completed on this page',
     },
     {
       icon: Droplets,
-      label: 'Gallons Pumped',
+      label: 'Total Gallons',
       value: totalGallons,
       decimals: 2,
       formatter: (v) => `${Number(v).toFixed(2)} gal`,
@@ -79,7 +116,7 @@ export default function Reports() {
       icon: TriangleAlert,
       label: 'Flagged Readings',
       value: flaggedReadings,
-      sub: 'in reconciliation',
+      sub: `across ${reconciliationMeta.totalItems} reconciliation rows`,
     },
   ];
 
@@ -102,10 +139,61 @@ export default function Reports() {
 
       {!isLoading && <StatCards items={statItems} />}
 
-      {!isLoading && activeTab === 'daily' && <DailySalesTable rows={dailySales} />}
-      {!isLoading && activeTab === 'products' && <ProductPerformanceTable rows={productPerformance} />}
-      {!isLoading && activeTab === 'debts' && <DebtAgingTable rows={debtAging} />}
-      {!isLoading && activeTab === 'reconciliation' && <ReconciliationTable rows={reconciliation} />}
+      {!isLoading && activeTab === 'daily' && (
+        <DailySalesTable
+          rows={dailySales}
+          isLoading={isLoading}
+          currentPage={currentPage}
+          perPage={perPage}
+          totalItems={dailySalesMeta.totalItems}
+          totalPages={dailySalesMeta.totalPages}
+          onPageChange={handlePageChange}
+          onPageSizeChange={handlePageSizeChange}
+          searchValue={search}
+          onSearchChange={handleSearchChange}
+        />
+      )}
+      {!isLoading && activeTab === 'products' && (
+        <ProductPerformanceTable
+          rows={productPerformance}
+          isLoading={isLoading}
+          currentPage={currentPage}
+          perPage={perPage}
+          totalItems={productPerformanceMeta.totalItems}
+          totalPages={productPerformanceMeta.totalPages}
+          onPageChange={handlePageChange}
+          onPageSizeChange={handlePageSizeChange}
+          searchValue={search}
+          onSearchChange={handleSearchChange}
+        />
+      )}
+      {!isLoading && activeTab === 'debts' && (
+        <DebtAgingTable
+          rows={debtAging}
+          isLoading={isLoading}
+          currentPage={currentPage}
+          perPage={perPage}
+          totalItems={debtAgingMeta.totalItems}
+          totalPages={debtAgingMeta.totalPages}
+          onPageChange={handlePageChange}
+          onPageSizeChange={handlePageSizeChange}
+          searchValue={search}
+          onSearchChange={handleSearchChange}
+        />
+      )}
+      {!isLoading && activeTab === 'reconciliation' && (
+        <ReconciliationTable
+          rows={reconciliation}
+          currentPage={currentPage}
+          perPage={perPage}
+          totalItems={reconciliationMeta.totalItems}
+          totalPages={reconciliationMeta.totalPages}
+          onPageChange={handlePageChange}
+          onPageSizeChange={handlePageSizeChange}
+          searchValue={search}
+          onSearchChange={handleSearchChange}
+        />
+      )}
     </div>
   );
 }
