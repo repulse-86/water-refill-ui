@@ -104,6 +104,7 @@ export default function Products() {
         onClose={closeModal}
         editingId={editingId}
         initialData={editingProduct}
+        products={products}
       />
 
       <ProductDeleteDialog

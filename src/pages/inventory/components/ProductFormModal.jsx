@@ -8,7 +8,9 @@ import FormField from '../../../components/ui/FormField';
 import SelectField from '../../../components/ui/SelectField';
 import Button from '../../../components/ui/Button';
 import useProductsStore, { productRules, typeLabels } from '../../../store/productsStore';
+import ProductBomModal from './ProductBomModal';
 import { toastError } from '../../../utils/toast';
+import * as bomApi from '../../../api/bom';
 
 const emptyForm = {
   name: '',
@@ -19,7 +21,7 @@ const emptyForm = {
   reorder_point: 0,
 };
 
-export default function ProductFormModal({ isOpen, onClose, editingId, initialData }) {
+export default function ProductFormModal({ isOpen, onClose, editingId, initialData, products = [] }) {
   const {
     createProduct,
     updateProduct,
@@ -38,6 +40,8 @@ export default function ProductFormModal({ isOpen, onClose, editingId, initialDa
 
   const [selectedType, setSelectedType] = useState(initialData?.type ?? 'water_refill');
   const [imagePreview, setImagePreview] = useState(initialData?.image ?? '');
+  const [bomOpen, setBomOpen] = useState(false);
+  const [components, setComponents] = useState([]);
 
   const {
     register,
@@ -53,9 +57,28 @@ export default function ProductFormModal({ isOpen, onClose, editingId, initialDa
   useEffect(() => {
     if (isOpen) {
       reset(initialData ?? emptyForm);
+      setSelectedType(initialData?.type ?? 'water_refill');
+      setImagePreview(initialData?.image ?? '');
       resetErrors();
+
+      if (editingId && initialData?.id) {
+        bomApi
+          .listProductComponents(initialData.id, { page: 1, size: 100 })
+          .then((response) => {
+            setComponents(
+              (response.data ?? []).map((c) => ({
+                component_id: c.component_id,
+                component_name: c.component_name,
+                quantity: c.quantity,
+              }))
+            );
+          })
+          .catch(() => setComponents([]));
+      } else {
+        setComponents([]);
+      }
     }
-  }, [isOpen, reset, resetErrors, initialData]);
+  }, [isOpen, reset, resetErrors, initialData, editingId]);
 
   if (!isOpen) return null;
 
@@ -86,12 +109,17 @@ export default function ProductFormModal({ isOpen, onClose, editingId, initialDa
     const payload = {
       ...data,
       image: imagePreview || null,
+      components: components.map((c) => ({
+        component_id: c.component_id,
+        quantity: c.quantity,
+      })),
     };
     const result = editingId ? await updateProduct(editingId, payload) : await createProduct(payload);
     if (result.success) {
       onClose();
       reset();
       setImagePreview('');
+      setComponents([]);
     }
   };
 
@@ -182,11 +210,23 @@ export default function ProductFormModal({ isOpen, onClose, editingId, initialDa
           <Button type="button" variant="secondary" onClick={onClose} disabled={isLoading}>
             Cancel
           </Button>
+          <Button type="button" variant="secondary" onClick={() => setBomOpen(true)} disabled={isLoading}>
+            Manage Components {components.length > 0 && `(${components.length})`}
+          </Button>
           <Button type="submit" isLoading={isLoading}>
             {isLoading ? 'Saving…' : editingId ? 'Save Changes' : 'Add Product'}
           </Button>
         </div>
       </form>
+
+      <ProductBomModal
+        isOpen={bomOpen}
+        onClose={() => setBomOpen(false)}
+        product={editingId ? initialData : { id: '__new__', name: 'New Product' }}
+        allProducts={products}
+        components={components}
+        onChange={setComponents}
+      />
     </Modal>
   );
 }

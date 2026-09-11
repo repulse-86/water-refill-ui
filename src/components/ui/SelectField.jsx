@@ -23,7 +23,7 @@ export function BaseSelectField({
           {label}
         </label>
       )}
-      <Select.Root value={value != null && value !== '' ? String(value) : undefined} onValueChange={onValueChange} disabled={disabled} modal>
+      <Select.Root value={value ?? ''} onValueChange={onValueChange} disabled={disabled} modal>
         <Select.Trigger
           id={htmlFor}
           aria-invalid={hasError}
