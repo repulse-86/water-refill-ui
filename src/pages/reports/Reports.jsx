@@ -54,12 +54,12 @@ export default function Reports() {
   const currency = useSettingsStore((state) => state.settings?.currency ?? 'PHP');
 
   const [search, setSearch] = useState('');
-
   const [activeTab, setActiveTab] = useState('daily');
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      fetchReports({ page: 1, size: perPage, search });
+      fetchReports({ page: 1, size: perPage, search }).then(() => setReady(true));
     }, 300);
     return () => clearTimeout(timer);
   }, [fetchReports, perPage, search]);
@@ -83,6 +83,7 @@ export default function Reports() {
   }, []);
 
   const isLoading = status === 'loading';
+  const showSkeleton = !ready || isLoading;
 
   const totalRevenue = dailySales.reduce((sum, row) => sum + Number(row.revenue ?? 0), 0);
   const totalOrders = dailySales.reduce((sum, row) => sum + Number(row.order_count ?? 0), 0);
@@ -126,7 +127,7 @@ export default function Reports() {
 
       <ReportsTabs tabs={TABS} activeTab={activeTab} onChange={setActiveTab} />
 
-      {isLoading && (
+      {showSkeleton && (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             {Array.from({ length: 4 }).map((_, i) => (
@@ -137,9 +138,9 @@ export default function Reports() {
         </>
       )}
 
-      {!isLoading && <StatCards items={statItems} />}
+      {!showSkeleton && <StatCards items={statItems} />}
 
-      {!isLoading && activeTab === 'daily' && (
+      {!showSkeleton && activeTab === 'daily' && (
         <DailySalesTable
           rows={dailySales}
           isLoading={isLoading}
@@ -153,7 +154,7 @@ export default function Reports() {
           onSearchChange={handleSearchChange}
         />
       )}
-      {!isLoading && activeTab === 'products' && (
+      {!showSkeleton && activeTab === 'products' && (
         <ProductPerformanceTable
           rows={productPerformance}
           isLoading={isLoading}
@@ -167,7 +168,7 @@ export default function Reports() {
           onSearchChange={handleSearchChange}
         />
       )}
-      {!isLoading && activeTab === 'debts' && (
+      {!showSkeleton && activeTab === 'debts' && (
         <DebtAgingTable
           rows={debtAging}
           isLoading={isLoading}
@@ -181,7 +182,7 @@ export default function Reports() {
           onSearchChange={handleSearchChange}
         />
       )}
-      {!isLoading && activeTab === 'reconciliation' && (
+      {!showSkeleton && activeTab === 'reconciliation' && (
         <ReconciliationTable
           rows={reconciliation}
           currentPage={currentPage}
