@@ -39,6 +39,7 @@ const initialState = {
   perPage: 10,
   totalItems: 0,
   totalPages: 0,
+  viewMode: 'active',
 };
 
 const useOrdersStore = create(
@@ -132,6 +133,82 @@ const useOrdersStore = create(
           return { success: false, ...payload };
         }
       },
+
+      fetchDeletedOrders: async (params) => {
+        set({ status: 'loading', fieldErrors: null, message: null });
+        try {
+          const response = await ordersApi.listDeletedOrders(params);
+          set({
+            orders: response.data,
+            status: 'idle',
+            currentPage: params?.page ?? 1,
+            perPage: params?.size ?? 10,
+            totalItems: response.total_items,
+            totalPages: response.total_pages,
+          });
+          return { success: true, orders: response.data };
+        } catch (err) {
+          const fieldErrors = toFieldErrors(err?.errors);
+          const payload = {
+            status: 'error',
+            fieldErrors,
+            message: err?.message ?? 'Unable to load archived orders.',
+          };
+          set(payload);
+          toastError(payload.message, Object.keys(fieldErrors ?? {}).length > 0);
+          return { success: false, ...payload };
+        }
+      },
+
+      restoreOrder: async (id) => {
+        set({ status: 'loading', fieldErrors: null, message: null });
+        try {
+          await ordersApi.restoreOrder(id);
+          set((state) => ({ orders: state.orders.filter((o) => o.id !== id), status: 'success' }));
+          toastSuccess('Order restored.');
+          return { success: true };
+        } catch (err) {
+          const payload = {
+            status: 'error',
+            fieldErrors: null,
+            message: err?.message ?? 'Unable to restore the order.',
+          };
+          set(payload);
+          toastError(payload.message, false);
+          return { success: false, ...payload };
+        }
+      },
+
+      permanentDeleteOrder: async (id) => {
+        set({ status: 'loading', fieldErrors: null, message: null });
+        try {
+          await ordersApi.permanentDeleteOrder(id);
+          set((state) => ({ orders: state.orders.filter((o) => o.id !== id), status: 'success' }));
+          toastSuccess('Order permanently deleted.');
+          return { success: true };
+        } catch (err) {
+          const payload = {
+            status: 'error',
+            fieldErrors: null,
+            message: err?.message ?? 'Unable to permanently delete the order.',
+          };
+          set(payload);
+          toastError(payload.message, false);
+          return { success: false, ...payload };
+        }
+      },
+
+      setViewMode: (mode) =>
+        set({
+          viewMode: mode,
+          orders: [],
+          status: 'idle',
+          fieldErrors: null,
+          message: null,
+          currentPage: 1,
+          totalItems: 0,
+          totalPages: 0,
+        }),
 
       resetErrors: () => set({ status: 'idle', fieldErrors: null, message: null }),
     })

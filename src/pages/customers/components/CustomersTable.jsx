@@ -1,7 +1,8 @@
-import { Pencil, Trash2, Wallet } from 'lucide-react';
+import { Pencil, Trash2, Wallet, RotateCcw } from 'lucide-react';
 import DataTable from '../../../components/ui/DataTable';
 import RowActions from '../../../components/ui/RowActions';
 import Badge from '../../../components/ui/Badge';
+import { formatDateTime } from '../../../utils/date';
 
 const statusBadgeVariants = {
   active: 'green',
@@ -11,9 +12,12 @@ const statusBadgeVariants = {
 export default function CustomersTable({
   customers,
   isLoading,
+  viewMode = 'active',
   onEdit,
   onSettle,
   onDelete,
+  onRestore,
+  onPermanentDelete,
   currentPage,
   perPage,
   totalItems,
@@ -23,7 +27,7 @@ export default function CustomersTable({
   searchValue,
   onSearchChange,
 }) {
-  const columns = [
+  const baseColumns = [
     { accessorKey: 'name', header: 'Name' },
     { accessorKey: 'phone', header: 'Phone' },
     { accessorKey: 'email', header: 'Email' },
@@ -48,18 +52,33 @@ export default function CustomersTable({
         </span>
       ),
     },
+  ];
+
+  const columns = [
+    ...baseColumns,
+    ...(viewMode === 'archived'
+      ? [{ accessorKey: 'deleted_at', header: 'Archived', render: (value) => formatDateTime(value) }]
+      : []),
     {
-      accessorKey: 'id',
+      accessorKey: '__actions',
       header: 'Actions',
-      render: (_value, row) => (
-        <RowActions
-          actions={[
-            { icon: Wallet, label: 'Settle Ledger', variant: 'primary', onClick: () => onSettle(row) },
-            { icon: Pencil, label: 'Edit', variant: 'edit', onClick: () => onEdit(row) },
-            { icon: Trash2, label: 'Delete', variant: 'danger', onClick: () => onDelete(row) },
-          ]}
-        />
-      ),
+      render: (_value, row) =>
+        viewMode === 'archived' ? (
+          <RowActions
+            actions={[
+              { icon: RotateCcw, label: 'Restore', variant: 'primary', onClick: () => onRestore(row) },
+              { icon: Trash2, label: 'Permanent Delete', variant: 'danger', onClick: () => onPermanentDelete(row) },
+            ]}
+          />
+        ) : (
+          <RowActions
+            actions={[
+              { icon: Wallet, label: 'Settle Ledger', variant: 'primary', onClick: () => onSettle(row) },
+              { icon: Pencil, label: 'Edit', variant: 'edit', onClick: () => onEdit(row) },
+              { icon: Trash2, label: 'Delete', variant: 'danger', onClick: () => onDelete(row) },
+            ]}
+          />
+        ),
     },
   ];
 

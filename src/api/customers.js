@@ -21,3 +21,17 @@ export async function deleteCustomer(id) {
 export async function settleCustomer(id, settlement) {
   return client.post(`/v1/customers/${id}/settle`, settlement);
 }
+
+export async function listDeletedCustomers({ page = 1, size = 10, search = '' } = {}) {
+  const params = { page, size };
+  if (search) params.search = search;
+  return client.get('/v1/customers/deleted', { params });
+}
+
+export async function restoreCustomer(id) {
+  return client.post(`/v1/customers/${id}/restore`);
+}
+
+export async function permanentDeleteCustomer(id) {
+  return client.delete(`/v1/customers/${id}/permanent`);
+}

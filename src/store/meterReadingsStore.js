@@ -23,6 +23,7 @@ const initialState = {
   perPage: 10,
   totalItems: 0,
   totalPages: 0,
+  viewMode: 'active',
 };
 
 const useMeterReadingsStore = create(
@@ -116,6 +117,82 @@ const useMeterReadingsStore = create(
           return { success: false, ...payload };
         }
       },
+
+      fetchDeletedReadings: async (params) => {
+        set({ status: 'loading', fieldErrors: null, message: null });
+        try {
+          const response = await meterReadingsApi.listDeletedMeterReadings(params);
+          set({
+            readings: response.data,
+            status: 'idle',
+            currentPage: params?.page ?? 1,
+            perPage: params?.size ?? 10,
+            totalItems: response.total_items,
+            totalPages: response.total_pages,
+          });
+          return { success: true, readings: response.data };
+        } catch (err) {
+          const fieldErrors = toFieldErrors(err?.errors);
+          const payload = {
+            status: 'error',
+            fieldErrors,
+            message: err?.message ?? 'Unable to load archived meter readings.',
+          };
+          set(payload);
+          toastError(payload.message, Object.keys(fieldErrors ?? {}).length > 0);
+          return { success: false, ...payload };
+        }
+      },
+
+      restoreMeterReading: async (id) => {
+        set({ status: 'loading', fieldErrors: null, message: null });
+        try {
+          await meterReadingsApi.restoreMeterReading(id);
+          set((state) => ({ readings: state.readings.filter((r) => r.id !== id), status: 'success' }));
+          toastSuccess('Meter reading restored.');
+          return { success: true };
+        } catch (err) {
+          const payload = {
+            status: 'error',
+            fieldErrors: null,
+            message: err?.message ?? 'Unable to restore the meter reading.',
+          };
+          set(payload);
+          toastError(payload.message, false);
+          return { success: false, ...payload };
+        }
+      },
+
+      permanentDeleteMeterReading: async (id) => {
+        set({ status: 'loading', fieldErrors: null, message: null });
+        try {
+          await meterReadingsApi.permanentDeleteMeterReading(id);
+          set((state) => ({ readings: state.readings.filter((r) => r.id !== id), status: 'success' }));
+          toastSuccess('Meter reading permanently deleted.');
+          return { success: true };
+        } catch (err) {
+          const payload = {
+            status: 'error',
+            fieldErrors: null,
+            message: err?.message ?? 'Unable to permanently delete the meter reading.',
+          };
+          set(payload);
+          toastError(payload.message, false);
+          return { success: false, ...payload };
+        }
+      },
+
+      setViewMode: (mode) =>
+        set({
+          viewMode: mode,
+          readings: [],
+          status: 'idle',
+          fieldErrors: null,
+          message: null,
+          currentPage: 1,
+          totalItems: 0,
+          totalPages: 0,
+        }),
 
       resetErrors: () => set({ status: 'idle', fieldErrors: null, message: null }),
     })

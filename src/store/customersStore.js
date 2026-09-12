@@ -36,6 +36,7 @@ const initialState = {
   perPage: 10,
   totalItems: 0,
   totalPages: 0,
+  viewMode: 'active',
 };
 
 const useCustomersStore = create(
@@ -151,6 +152,82 @@ const useCustomersStore = create(
           return { success: false, ...payload };
         }
       },
+
+      fetchDeletedCustomers: async (params) => {
+        set({ status: 'loading', fieldErrors: null, message: null });
+        try {
+          const response = await customersApi.listDeletedCustomers(params);
+          set({
+            customers: response.data,
+            status: 'idle',
+            currentPage: params?.page ?? 1,
+            perPage: params?.size ?? 10,
+            totalItems: response.total_items,
+            totalPages: response.total_pages,
+          });
+          return { success: true, customers: response.data };
+        } catch (err) {
+          const fieldErrors = toFieldErrors(err?.errors);
+          const payload = {
+            status: 'error',
+            fieldErrors,
+            message: err?.message ?? 'Unable to load archived customers.',
+          };
+          set(payload);
+          toastError(payload.message, Object.keys(fieldErrors ?? {}).length > 0);
+          return { success: false, ...payload };
+        }
+      },
+
+      restoreCustomer: async (id) => {
+        set({ status: 'loading', fieldErrors: null, message: null });
+        try {
+          await customersApi.restoreCustomer(id);
+          set((state) => ({ customers: state.customers.filter((c) => c.id !== id), status: 'success' }));
+          toastSuccess('Customer restored.');
+          return { success: true };
+        } catch (err) {
+          const payload = {
+            status: 'error',
+            fieldErrors: null,
+            message: err?.message ?? 'Unable to restore the customer.',
+          };
+          set(payload);
+          toastError(payload.message, false);
+          return { success: false, ...payload };
+        }
+      },
+
+      permanentDeleteCustomer: async (id) => {
+        set({ status: 'loading', fieldErrors: null, message: null });
+        try {
+          await customersApi.permanentDeleteCustomer(id);
+          set((state) => ({ customers: state.customers.filter((c) => c.id !== id), status: 'success' }));
+          toastSuccess('Customer permanently deleted.');
+          return { success: true };
+        } catch (err) {
+          const payload = {
+            status: 'error',
+            fieldErrors: null,
+            message: err?.message ?? 'Unable to permanently delete the customer.',
+          };
+          set(payload);
+          toastError(payload.message, false);
+          return { success: false, ...payload };
+        }
+      },
+
+      setViewMode: (mode) =>
+        set({
+          viewMode: mode,
+          customers: [],
+          status: 'idle',
+          fieldErrors: null,
+          message: null,
+          currentPage: 1,
+          totalItems: 0,
+          totalPages: 0,
+        }),
 
       resetErrors: () => set({ status: 'idle', fieldErrors: null, message: null }),
     })

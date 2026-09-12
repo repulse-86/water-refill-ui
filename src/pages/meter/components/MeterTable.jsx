@@ -1,8 +1,8 @@
-import { Pencil, Trash2, Eye } from 'lucide-react';
+import { Pencil, Trash2, Eye, RotateCcw } from 'lucide-react';
 import DataTable from '../../../components/ui/DataTable';
 import RowActions from '../../../components/ui/RowActions';
 import Badge from '../../../components/ui/Badge';
-import { formatDate } from '../../../utils/date';
+import { formatDate, formatDateTime } from '../../../utils/date';
 
 function formatValue(value) {
   if (value == null) return '—';
@@ -12,9 +12,12 @@ function formatValue(value) {
 export default function MeterTable({
   readings,
   isLoading,
+  viewMode = 'active',
   onEdit,
   onDelete,
   onViewNotes,
+  onRestore,
+  onPermanentDelete,
   currentPage,
   perPage,
   totalItems,
@@ -24,7 +27,7 @@ export default function MeterTable({
   searchValue,
   onSearchChange,
 }) {
-  const columns = [
+  const baseColumns = [
     {
       accessorKey: 'reading_date',
       header: 'Date',
@@ -63,18 +66,34 @@ export default function MeterTable({
         return value ? <Badge variant="red">Flagged</Badge> : <Badge variant="green">OK</Badge>;
       },
     },
+  ];
+
+  const columns = [
+    ...baseColumns,
+    ...(viewMode === 'archived'
+      ? [{ accessorKey: 'deleted_at', header: 'Archived', render: (value) => formatDateTime(value) }]
+      : []),
     {
-      accessorKey: 'id',
+      accessorKey: '__actions',
       header: 'Actions',
-      render: (_value, row) => (
-        <RowActions
-          actions={[
-            { icon: Eye, label: 'View Notes', variant: 'edit', onClick: () => onViewNotes(row) },
-            { icon: Pencil, label: 'Edit', variant: 'edit', onClick: () => onEdit(row) },
-            { icon: Trash2, label: 'Delete', variant: 'danger', onClick: () => onDelete(row) },
-          ]}
-        />
-      ),
+      render: (_value, row) =>
+        viewMode === 'archived' ? (
+          <RowActions
+            actions={[
+              { icon: Eye, label: 'View Notes', variant: 'edit', onClick: () => onViewNotes(row) },
+              { icon: RotateCcw, label: 'Restore', variant: 'primary', onClick: () => onRestore(row) },
+              { icon: Trash2, label: 'Permanent Delete', variant: 'danger', onClick: () => onPermanentDelete(row) },
+            ]}
+          />
+        ) : (
+          <RowActions
+            actions={[
+              { icon: Eye, label: 'View Notes', variant: 'edit', onClick: () => onViewNotes(row) },
+              { icon: Pencil, label: 'Edit', variant: 'edit', onClick: () => onEdit(row) },
+              { icon: Trash2, label: 'Delete', variant: 'danger', onClick: () => onDelete(row) },
+            ]}
+          />
+        ),
     },
   ];
 

@@ -43,6 +43,7 @@ const initialState = {
   perPage: 10,
   totalItems: 0,
   totalPages: 0,
+  viewMode: 'active',
 };
 
 const useProductsStore = create(
@@ -137,7 +138,83 @@ const useProductsStore = create(
       }
     },
 
-    resetErrors: () => set({ status: 'idle', fieldErrors: null, message: null }),
+      fetchDeletedProducts: async (params) => {
+        set({ status: 'loading', fieldErrors: null, message: null });
+        try {
+          const response = await productsApi.listDeletedProducts(params);
+          set({
+            products: response.data,
+            status: 'idle',
+            currentPage: params?.page ?? 1,
+            perPage: params?.size ?? 10,
+            totalItems: response.total_items,
+            totalPages: response.total_pages,
+          });
+          return { success: true, products: response.data };
+        } catch (err) {
+          const fieldErrors = toFieldErrors(err?.errors);
+          const payload = {
+            status: 'error',
+            fieldErrors,
+            message: err?.message ?? 'Unable to load archived products.',
+          };
+          set(payload);
+          toastError(payload.message, Object.keys(fieldErrors ?? {}).length > 0);
+          return { success: false, ...payload };
+        }
+      },
+
+      restoreProduct: async (id) => {
+        set({ status: 'loading', fieldErrors: null, message: null });
+        try {
+          await productsApi.restoreProduct(id);
+          set((state) => ({ products: state.products.filter((p) => p.id !== id), status: 'success' }));
+          toastSuccess('Product restored.');
+          return { success: true };
+        } catch (err) {
+          const payload = {
+            status: 'error',
+            fieldErrors: null,
+            message: err?.message ?? 'Unable to restore the product.',
+          };
+          set(payload);
+          toastError(payload.message, false);
+          return { success: false, ...payload };
+        }
+      },
+
+      permanentDeleteProduct: async (id) => {
+        set({ status: 'loading', fieldErrors: null, message: null });
+        try {
+          await productsApi.permanentDeleteProduct(id);
+          set((state) => ({ products: state.products.filter((p) => p.id !== id), status: 'success' }));
+          toastSuccess('Product permanently deleted.');
+          return { success: true };
+        } catch (err) {
+          const payload = {
+            status: 'error',
+            fieldErrors: null,
+            message: err?.message ?? 'Unable to permanently delete the product.',
+          };
+          set(payload);
+          toastError(payload.message, false);
+          return { success: false, ...payload };
+        }
+      },
+
+      setViewMode: (mode) =>
+        set({
+          viewMode: mode,
+          products: [],
+          status: 'idle',
+          fieldErrors: null,
+          message: null,
+          currentPage: 1,
+          totalItems: 0,
+          totalPages: 0,
+        }),
+
+      resetErrors: () => set({ status: 'idle', fieldErrors: null, message: null }),
   })
 );
 

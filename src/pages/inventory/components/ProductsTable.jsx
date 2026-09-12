@@ -1,7 +1,8 @@
-import { Package, Pencil, Trash2 } from 'lucide-react';
+import { Package, Pencil, Trash2, RotateCcw } from 'lucide-react';
 import DataTable from '../../../components/ui/DataTable';
 import RowActions from '../../../components/ui/RowActions';
 import Badge from '../../../components/ui/Badge';
+import { formatDateTime } from '../../../utils/date';
 import { typeLabels } from '../../../store/productsStore';
 
 const typeBadgeVariants = {
@@ -14,8 +15,11 @@ export default function ProductsTable({
   products,
   currency,
   isLoading,
+  viewMode = 'active',
   onEdit,
   onDelete,
+  onRestore,
+  onPermanentDelete,
   currentPage,
   perPage,
   totalItems,
@@ -25,7 +29,7 @@ export default function ProductsTable({
   searchValue,
   onSearchChange,
 }) {
-  const columns = [
+  const baseColumns = [
     {
       accessorKey: 'name',
       header: 'Product',
@@ -70,17 +74,32 @@ export default function ProductsTable({
       },
     },
     { accessorKey: 'reorder_point', header: 'Reorder At' },
+  ];
+
+  const columns = [
+    ...baseColumns,
+    ...(viewMode === 'archived'
+      ? [{ accessorKey: 'deleted_at', header: 'Archived', render: (value) => formatDateTime(value) }]
+      : []),
     {
-      accessorKey: 'id',
+      accessorKey: '__actions',
       header: 'Actions',
-      render: (_value, row) => (
-        <RowActions
-          actions={[
-            { icon: Pencil, label: 'Edit', variant: 'edit', onClick: () => onEdit(row) },
-            { icon: Trash2, label: 'Delete', variant: 'danger', onClick: () => onDelete(row) },
-          ]}
-        />
-      ),
+      render: (_value, row) =>
+        viewMode === 'archived' ? (
+          <RowActions
+            actions={[
+              { icon: RotateCcw, label: 'Restore', variant: 'primary', onClick: () => onRestore(row) },
+              { icon: Trash2, label: 'Permanent Delete', variant: 'danger', onClick: () => onPermanentDelete(row) },
+            ]}
+          />
+        ) : (
+          <RowActions
+            actions={[
+              { icon: Pencil, label: 'Edit', variant: 'edit', onClick: () => onEdit(row) },
+              { icon: Trash2, label: 'Delete', variant: 'danger', onClick: () => onDelete(row) },
+            ]}
+          />
+        ),
     },
   ];
 
