@@ -8,7 +8,9 @@ import FormField from '../../../components/ui/FormField';
 import SelectField from '../../../components/ui/SelectField';
 import Button from '../../../components/ui/Button';
 import useProductsStore, { productRules, typeLabels } from '../../../store/productsStore';
+import ProductBomModal from './ProductBomModal';
 import { toastError } from '../../../utils/toast';
+import * as bomApi from '../../../api/bom';
 
 const emptyForm = {
   name: '',
@@ -19,14 +21,8 @@ const emptyForm = {
   reorder_point: 0,
 };
 
-export default function ProductFormModal({ isOpen, onClose, editingId, initialData }) {
-  const {
-    createProduct,
-    updateProduct,
-    status,
-    fieldErrors,
-    resetErrors,
-  } = useProductsStore(
+export default function ProductFormModal({ isOpen, onClose, editingId, initialData, products = [] }) {
+  const { createProduct, updateProduct, status, fieldErrors, resetErrors } = useProductsStore(
     useShallow((state) => ({
       createProduct: state.createProduct,
       updateProduct: state.updateProduct,
@@ -36,8 +32,9 @@ export default function ProductFormModal({ isOpen, onClose, editingId, initialDa
     }))
   );
 
-  const [selectedType, setSelectedType] = useState(initialData?.type ?? 'water_refill');
   const [imagePreview, setImagePreview] = useState(initialData?.image ?? '');
+  const [bomOpen, setBomOpen] = useState(false);
+  const [components, setComponents] = useState([]);
 
   const {
     register,
@@ -45,63 +42,84 @@ export default function ProductFormModal({ isOpen, onClose, editingId, initialDa
     setError,
     reset,
     control,
+    watch,
     formState: { errors },
   } = useForm({ defaultValues: initialData ?? emptyForm });
+
+  const selectedType = watch('type') ?? 'water_refill';
 
   useServerFieldErrors({ setError, fieldErrors });
 
   useEffect(() => {
-    if (isOpen) {
-      reset(initialData ?? emptyForm);
-      resetErrors();
+    if (!isOpen) return;
+
+    reset(initialData ?? emptyForm);
+    setTimeout(() => setImagePreview(initialData?.image ?? ''), 0);
+    resetErrors();
+
+    if (editingId && initialData?.id) {
+      bomApi
+        .listProductComponents(initialData.id)
+        .then((loadedComponents) => {
+          setComponents(
+            (loadedComponents || []).map((component) => ({
+              component_id: component.component_id,
+              component_name: component.component_name,
+              quantity: component.quantity,
+            }))
+          );
+        })
+        .catch(() => setComponents([]));
+    } else {
+      setComponents([]);
     }
-  }, [isOpen, reset, resetErrors, initialData]);
+  }, [isOpen, editingId, initialData, reset, resetErrors]);
 
   if (!isOpen) return null;
 
   const isLoading = status === 'loading';
 
-  const handleImageChange = (e) => {
-    const file = e.target.files?.[0];
+  const handleImageChange = (event) => {
+    const file = event.target.files?.[0];
     if (!file) return;
 
     if (file.size > 500 * 1024) {
       toastError('Image must be smaller than 500KB.');
-      e.target.value = '';
+      event.target.value = '';
       return;
     }
 
     const reader = new FileReader();
-    reader.onloadend = () => {
-      setImagePreview(reader.result);
-    };
+    reader.onloadend = () => setImagePreview(reader.result);
     reader.readAsDataURL(file);
   };
 
-  const clearImage = () => {
-    setImagePreview('');
-  };
+  const clearImage = () => setImagePreview('');
 
   const onSubmit = async (data) => {
     const payload = {
       ...data,
       image: imagePreview || null,
+      components: components.map((component) => ({
+        component_id: component.component_id,
+        quantity: component.quantity,
+      })),
     };
-    const result = editingId ? await updateProduct(editingId, payload) : await createProduct(payload);
+
+    const result = editingId
+      ? await updateProduct(editingId, payload)
+      : await createProduct(payload);
+
     if (result.success) {
       onClose();
       reset();
       setImagePreview('');
+      setComponents([]);
     }
   };
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      title={editingId ? 'Edit Product' : 'Add Product'}
-      icon={Package}
-    >
+    <Modal isOpen={isOpen} onClose={onClose} title={editingId ? 'Edit Product' : 'Add Product'} icon={Package}>
       <p className="text-xs text-slate-600 mb-4">
         {editingId ? 'Update the product details below.' : 'Add a new product to your inventory.'}
       </p>
@@ -116,7 +134,6 @@ export default function ProductFormModal({ isOpen, onClose, editingId, initialDa
             name="type"
             control={control}
             rules={productRules.type}
-            onChange={setSelectedType}
             options={Object.entries(typeLabels).map(([value, label]) => ({ value, label }))}
           />
         </FormField>
@@ -145,11 +162,7 @@ export default function ProductFormModal({ isOpen, onClose, editingId, initialDa
           <div className="flex items-center gap-3">
             {imagePreview && (
               <div className="relative">
-                <img
-                  src={imagePreview}
-                  alt="Preview"
-                  className="w-16 h-16 object-cover rounded-lg border border-slate-200"
-                />
+                <img src={imagePreview} alt="Preview" className="w-16 h-16 object-cover rounded-lg border border-slate-200" />
                 <button
                   type="button"
                   onClick={clearImage}
@@ -160,17 +173,8 @@ export default function ProductFormModal({ isOpen, onClose, editingId, initialDa
               </div>
             )}
             <div>
-              <input
-                type="file"
-                id="product-image"
-                accept="image/*"
-                onChange={handleImageChange}
-                className="hidden"
-              />
-              <label
-                htmlFor="product-image"
-                className="cursor-pointer inline-flex items-center px-3 py-2 border border-slate-300 rounded-md text-sm font-medium text-slate-700 bg-white hover:bg-slate-50"
-              >
+              <input type="file" id="product-image" accept="image/*" onChange={handleImageChange} className="hidden" />
+              <label htmlFor="product-image" className="cursor-pointer inline-flex items-center px-3 py-2 border border-slate-300 rounded-md text-sm font-medium text-slate-700 bg-white hover:bg-slate-50">
                 {imagePreview ? 'Change Image' : 'Add Image'}
               </label>
               <p className="mt-1 text-xs text-slate-400">PNG, JPG up to 500KB</p>
@@ -182,11 +186,23 @@ export default function ProductFormModal({ isOpen, onClose, editingId, initialDa
           <Button type="button" variant="secondary" onClick={onClose} disabled={isLoading}>
             Cancel
           </Button>
+          <Button type="button" variant="secondary" onClick={() => setBomOpen(true)} disabled={isLoading}>
+            Manage Components {components.length > 0 && `(${components.length})`}
+          </Button>
           <Button type="submit" isLoading={isLoading}>
             {isLoading ? 'Saving…' : editingId ? 'Save Changes' : 'Add Product'}
           </Button>
         </div>
       </form>
+
+      <ProductBomModal
+        isOpen={bomOpen}
+        onClose={() => setBomOpen(false)}
+        product={editingId ? initialData : { id: '__new__', name: 'New Product' }}
+        allProducts={products}
+        components={components}
+        onChange={setComponents}
+      />
     </Modal>
   );
 }
