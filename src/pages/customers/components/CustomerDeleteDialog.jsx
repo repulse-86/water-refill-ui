@@ -6,8 +6,9 @@ export default function CustomerDeleteDialog({ customer, isLoading, onClose, onC
       isOpen={Boolean(customer)}
       onClose={onClose}
       onConfirm={onConfirm}
-      title="Delete Customer"
-      message={customer ? `Are you sure you want to delete "${customer.name}"? This action cannot be undone.` : ''}
+      title="Archive Customer"
+      message={customer ? `Archive "${customer.name}"? It will move to Archived and can be restored later.` : ''}
+      confirmLabel="Archive"
       isLoading={isLoading}
     />
   );

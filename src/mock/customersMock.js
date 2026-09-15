@@ -47,44 +47,74 @@ export const mockCustomers = [
 ];
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
+const archivedCustomers = [];
 let nextId = 6;
+
+const clone = (customer) => ({ ...customer });
 
 export async function listCustomers() {
   await delay(300);
-  return [...mockCustomers];
+  return mockCustomers.map(clone);
+}
+
+export async function listDeletedCustomers() {
+  await delay(300);
+  return archivedCustomers.map(clone);
 }
 
 export async function createCustomer(payload) {
   await delay(400);
   const customer = { ...payload, id: nextId++ };
   mockCustomers.push(customer);
-  return customer;
+  return clone(customer);
 }
 
 export async function updateCustomer(id, payload) {
   await delay(400);
-  const index = mockCustomers.findIndex((c) => c.id === id);
+  const index = mockCustomers.findIndex((customer) => customer.id === id);
   if (index === -1) {
     throw { message: 'Customer not found.', errors: {} };
   }
   mockCustomers[index] = { ...mockCustomers[index], ...payload };
-  return mockCustomers[index];
+  return clone(mockCustomers[index]);
 }
 
 export async function deleteCustomer(id) {
   await delay(300);
-  const index = mockCustomers.findIndex((c) => c.id === id);
+  const index = mockCustomers.findIndex((customer) => customer.id === id);
   if (index === -1) {
     throw { message: 'Customer not found.', errors: {} };
   }
-  mockCustomers.splice(index, 1);
+  const [customer] = mockCustomers.splice(index, 1);
+  archivedCustomers.unshift({ ...customer, deleted_at: new Date().toISOString() });
+  return { success: true };
+}
+
+export async function restoreCustomer(id) {
+  await delay(300);
+  const index = archivedCustomers.findIndex((customer) => customer.id === id);
+  if (index === -1) {
+    throw { message: 'Customer not found.', errors: {} };
+  }
+  const [customer] = archivedCustomers.splice(index, 1);
+  const { deleted_at: _removed, ...restored } = customer;
+  mockCustomers.push(restored);
+  return clone(restored);
+}
+
+export async function permanentDeleteCustomer(id) {
+  await delay(300);
+  const index = archivedCustomers.findIndex((customer) => customer.id === id);
+  if (index === -1) {
+    throw { message: 'Customer not found.', errors: {} };
+  }
+  archivedCustomers.splice(index, 1);
   return { success: true };
 }
 
 export async function settleCustomer(id, settlement) {
   await delay(400);
-  const index = mockCustomers.findIndex((c) => c.id === id);
+  const index = mockCustomers.findIndex((customer) => customer.id === id);
   if (index === -1) {
     throw { message: 'Customer not found.', errors: {} };
   }
@@ -97,5 +127,5 @@ export async function settleCustomer(id, settlement) {
     bottle_debt: newBottleDebt,
     outstanding_balance: newOutstandingBalance,
   };
-  return mockCustomers[index];
+  return clone(mockCustomers[index]);
 }

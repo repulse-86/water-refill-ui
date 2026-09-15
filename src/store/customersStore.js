@@ -5,19 +5,13 @@ import { toFieldErrors } from '../utils/formErrors';
 import { toastError, toastSuccess } from '../utils/toast';
 
 export const customerRules = {
-  name: {
-    required: 'The name field is required.',
-  },
-  phone: {
-    required: 'The phone field is required.',
-  },
+  name: { required: 'The name field is required.' },
+  phone: { required: 'The phone field is required.' },
   email: {
     required: 'The email field is required.',
     pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'The email must be a valid email address.' },
   },
-  subscriber_status: {
-    required: 'The subscriber status field is required.',
-  },
+  subscriber_status: { required: 'The subscriber status field is required.' },
   bottle_debt: {
     required: 'The bottle debt field is required.',
     min: { value: 0, message: 'The bottle debt must be a positive number.' },
@@ -30,9 +24,11 @@ export const customerRules = {
 
 const initialState = {
   customers: [],
+  archivedCustomers: [],
   status: 'idle',
   fieldErrors: null,
   message: null,
+  viewMode: 'active',
 };
 
 const useCustomersStore = create(
@@ -44,17 +40,27 @@ const useCustomersStore = create(
         set({ status: 'loading', fieldErrors: null, message: null });
         try {
           const customers = await customersApi.listCustomers();
-          set({ customers, status: 'idle' });
+          set({ customers, status: 'idle', viewMode: 'active' });
           return { success: true, customers };
         } catch (err) {
           const fieldErrors = toFieldErrors(err?.errors);
-          const payload = {
-            status: 'error',
-            fieldErrors,
-            message: err?.message ?? 'Unable to load customers.',
-          };
+          const payload = { status: 'error', fieldErrors, message: err?.message ?? 'Unable to load customers.' };
           set(payload);
           toastError(payload.message, Object.keys(fieldErrors ?? {}).length > 0);
+          return { success: false, ...payload };
+        }
+      },
+
+      fetchDeletedCustomers: async () => {
+        set({ status: 'loading', fieldErrors: null, message: null });
+        try {
+          const archivedCustomers = await customersApi.listDeletedCustomers();
+          set({ archivedCustomers, status: 'idle', viewMode: 'archived' });
+          return { success: true, archivedCustomers };
+        } catch (err) {
+          const payload = { status: 'error', fieldErrors: null, message: err?.message ?? 'Unable to load archived customers.' };
+          set(payload);
+          toastError(payload.message, false);
           return { success: false, ...payload };
         }
       },
@@ -63,16 +69,12 @@ const useCustomersStore = create(
         set({ status: 'loading', fieldErrors: null, message: null });
         try {
           const customer = await customersApi.createCustomer(values);
-          set((state) => ({ customers: [...state.customers, customer], status: 'success' }));
+          set((state) => ({ customers: [...state.customers, customer], status: 'success', viewMode: 'active' }));
           toastSuccess('Customer created.');
           return { success: true, customer };
         } catch (err) {
           const fieldErrors = toFieldErrors(err?.errors);
-          const payload = {
-            status: 'error',
-            fieldErrors,
-            message: err?.message ?? 'Unable to create the customer.',
-          };
+          const payload = { status: 'error', fieldErrors, message: err?.message ?? 'Unable to create the customer.' };
           set(payload);
           toastError(payload.message, Object.keys(fieldErrors ?? {}).length > 0);
           return { success: false, ...payload };
@@ -83,19 +85,12 @@ const useCustomersStore = create(
         set({ status: 'loading', fieldErrors: null, message: null });
         try {
           const updated = await customersApi.updateCustomer(id, values);
-          set((state) => ({
-            customers: state.customers.map((c) => (c.id === id ? updated : c)),
-            status: 'success',
-          }));
+          set((state) => ({ customers: state.customers.map((customer) => (customer.id === id ? updated : customer)), status: 'success' }));
           toastSuccess('Customer updated.');
           return { success: true, customer: updated };
         } catch (err) {
           const fieldErrors = toFieldErrors(err?.errors);
-          const payload = {
-            status: 'error',
-            fieldErrors,
-            message: err?.message ?? 'Unable to update the customer.',
-          };
+          const payload = { status: 'error', fieldErrors, message: err?.message ?? 'Unable to update the customer.' };
           set(payload);
           toastError(payload.message, Object.keys(fieldErrors ?? {}).length > 0);
           return { success: false, ...payload };
@@ -106,15 +101,52 @@ const useCustomersStore = create(
         set({ status: 'loading', fieldErrors: null, message: null });
         try {
           await customersApi.deleteCustomer(id);
-          set((state) => ({ customers: state.customers.filter((c) => c.id !== id), status: 'success' }));
-          toastSuccess('Customer deleted.');
+          set((state) => {
+            const customer = state.customers.find((item) => item.id === id);
+            return {
+              customers: state.customers.filter((item) => item.id !== id),
+              archivedCustomers: customer ? [{ ...customer, deleted_at: new Date().toISOString() }, ...state.archivedCustomers] : state.archivedCustomers,
+              status: 'success',
+            };
+          });
+          toastSuccess('Customer archived.');
           return { success: true };
         } catch (err) {
-          const payload = {
-            status: 'error',
-            fieldErrors: null,
-            message: err?.message ?? 'Unable to delete the customer.',
-          };
+          const payload = { status: 'error', fieldErrors: null, message: err?.message ?? 'Unable to archive the customer.' };
+          set(payload);
+          toastError(payload.message, false);
+          return { success: false, ...payload };
+        }
+      },
+
+      restoreCustomer: async (id) => {
+        set({ status: 'loading', fieldErrors: null, message: null });
+        try {
+          const restored = await customersApi.restoreCustomer(id);
+          set((state) => ({
+            archivedCustomers: state.archivedCustomers.filter((item) => item.id !== id),
+            customers: [restored, ...state.customers],
+            status: 'success',
+          }));
+          toastSuccess('Customer restored.');
+          return { success: true };
+        } catch (err) {
+          const payload = { status: 'error', fieldErrors: null, message: err?.message ?? 'Unable to restore the customer.' };
+          set(payload);
+          toastError(payload.message, false);
+          return { success: false, ...payload };
+        }
+      },
+
+      permanentDeleteCustomer: async (id) => {
+        set({ status: 'loading', fieldErrors: null, message: null });
+        try {
+          await customersApi.permanentDeleteCustomer(id);
+          set((state) => ({ archivedCustomers: state.archivedCustomers.filter((item) => item.id !== id), status: 'success' }));
+          toastSuccess('Customer permanently deleted.');
+          return { success: true };
+        } catch (err) {
+          const payload = { status: 'error', fieldErrors: null, message: err?.message ?? 'Unable to permanently delete the customer.' };
           set(payload);
           toastError(payload.message, false);
           return { success: false, ...payload };
@@ -125,24 +157,18 @@ const useCustomersStore = create(
         set({ status: 'loading', fieldErrors: null, message: null });
         try {
           const customer = await customersApi.settleCustomer(id, settlement);
-          set((state) => ({
-            customers: state.customers.map((c) => (c.id === id ? customer : c)),
-            status: 'success',
-          }));
+          set((state) => ({ customers: state.customers.map((item) => (item.id === id ? customer : item)), status: 'success' }));
           toastSuccess('Customer ledger settled.');
           return { success: true, customer };
         } catch (err) {
-          const payload = {
-            status: 'error',
-            fieldErrors: null,
-            message: err?.message ?? 'Unable to settle the customer ledger.',
-          };
+          const payload = { status: 'error', fieldErrors: null, message: err?.message ?? 'Unable to settle the customer ledger.' };
           set(payload);
           toastError(payload.message, false);
           return { success: false, ...payload };
         }
       },
 
+      setViewMode: (mode) => set({ viewMode: mode, status: 'idle', fieldErrors: null, message: null }),
       resetErrors: () => set({ status: 'idle', fieldErrors: null, message: null }),
     }),
     {

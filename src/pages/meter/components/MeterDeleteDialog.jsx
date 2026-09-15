@@ -7,12 +7,9 @@ export default function MeterDeleteDialog({ reading, isLoading, onClose, onConfi
       isOpen={Boolean(reading)}
       onClose={onClose}
       onConfirm={onConfirm}
-      title="Delete Meter Reading"
-      message={
-        reading
-          ? `Are you sure you want to delete the reading for ${formatDate(reading.reading_date)}? This action cannot be undone.`
-          : ''
-      }
+      title="Archive Meter Reading"
+      message={reading ? `Archive the reading for ${formatDate(reading.reading_date)}? It will move to Archived and can be restored later.` : ''}
+      confirmLabel="Archive"
       isLoading={isLoading}
     />
   );

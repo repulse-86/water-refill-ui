@@ -6,8 +6,9 @@ export default function ProductDeleteDialog({ product, isLoading, onClose, onCon
       isOpen={Boolean(product)}
       onClose={onClose}
       onConfirm={onConfirm}
-      title="Delete Product"
-      message={product ? `Are you sure you want to delete "${product.name}"? This action cannot be undone.` : ''}
+      title="Archive Product"
+      message={product ? `Archive "${product.name}"? It will move to Archived and can be restored later.` : ''}
+      confirmLabel="Archive"
       isLoading={isLoading}
     />
   );

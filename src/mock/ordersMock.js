@@ -6,6 +6,7 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 let nextOrderId = 1;
 let nextItemId = 1;
+const archivedOrders = [];
 
 const isoDaysAgo = (days) => new Date(Date.now() - days * 86400000).toISOString();
 
@@ -140,92 +141,28 @@ function makeCompletedOrder({ orderType, paymentMethod, customerId, customerName
 }
 
 mockOrders.push(
-  makeCompletedOrder({
-    orderType: 'walk_in',
-    paymentMethod: 'cash',
-    customerId: 2,
-    customerName: 'Maria Santos',
-    items: [{ product_id: 1, product_name: 'Purified Water', quantity: 3, unit_price: 25 }],
-    daysAgo: 5,
-    notes: 'Weekend pickup',
-  }),
-  makeCompletedOrder({
-    orderType: 'walk_in',
-    paymentMethod: 'e_wallet',
-    customerId: 4,
-    customerName: 'Ana Garcia',
-    items: [{ product_id: 1, product_name: 'Purified Water', quantity: 3, unit_price: 25 }],
-    daysAgo: 4,
-  }),
-  makeCompletedOrder({
-    orderType: 'delivery',
-    paymentMethod: 'cash',
-    customerId: 3,
-    customerName: 'Pedro Reyes',
-    items: [
-      { product_id: 1, product_name: 'Purified Water', quantity: 2, unit_price: 25 },
-      { product_id: 5, product_name: 'Seal', quantity: 1, unit_price: 1 },
-    ],
-    deliveryFee: 20,
-    daysAgo: 3,
-    address: '456 Oak Ave',
-    bottlesReturned: 2,
-  }),
-  makeCompletedOrder({
-    orderType: 'walk_in',
-    paymentMethod: 'credit',
-    customerId: 1,
-    customerName: 'Juan Dela Cruz',
-    items: [
-      { product_id: 1, product_name: 'Purified Water', quantity: 2, unit_price: 25 },
-      { product_id: 3, product_name: 'Water Jug 5 Gal', quantity: 1, unit_price: 150 },
-    ],
-    daysAgo: 2,
-  }),
-  makeCompletedOrder({
-    orderType: 'delivery',
-    paymentMethod: 'e_wallet',
-    customerId: 2,
-    customerName: 'Maria Santos',
-    items: [
-      { product_id: 1, product_name: 'Purified Water', quantity: 2, unit_price: 25 },
-      { product_id: 4, product_name: 'Cap', quantity: 1, unit_price: 2 },
-      { product_id: 5, product_name: 'Seal', quantity: 1, unit_price: 1 },
-    ],
-    deliveryFee: 15,
-    daysAgo: 1,
-    bottlesReturned: 1,
-  }),
-  makeCompletedOrder({
-    orderType: 'walk_in',
-    paymentMethod: 'cash',
-    customerId: 4,
-    customerName: 'Ana Garcia',
-    items: [{ product_id: 1, product_name: 'Purified Water', quantity: 2, unit_price: 25 }],
-    daysAgo: 0,
-    notes: 'Morning refill',
-  }),
-  makeCompletedOrder({
-    orderType: 'walk_in',
-    paymentMethod: 'e_wallet',
-    customerId: null,
-    customerName: 'Walk-in',
-    items: [
-      { product_id: 1, product_name: 'Purified Water', quantity: 1, unit_price: 25 },
-      { product_id: 5, product_name: 'Seal', quantity: 1, unit_price: 1 },
-    ],
-    daysAgo: 0,
-  })
+  makeCompletedOrder({ orderType: 'walk_in', paymentMethod: 'cash', customerId: 2, customerName: 'Maria Santos', items: [{ product_id: 1, product_name: 'Purified Water', quantity: 3, unit_price: 25 }], daysAgo: 5, notes: 'Weekend pickup' }),
+  makeCompletedOrder({ orderType: 'walk_in', paymentMethod: 'e_wallet', customerId: 4, customerName: 'Ana Garcia', items: [{ product_id: 1, product_name: 'Purified Water', quantity: 3, unit_price: 25 }], daysAgo: 4 }),
+  makeCompletedOrder({ orderType: 'delivery', paymentMethod: 'cash', customerId: 3, customerName: 'Pedro Reyes', items: [{ product_id: 1, product_name: 'Purified Water', quantity: 2, unit_price: 25 }, { product_id: 5, product_name: 'Seal', quantity: 1, unit_price: 1 }], deliveryFee: 20, daysAgo: 3, bottlesReturned: 2 }),
+  makeCompletedOrder({ orderType: 'walk_in', paymentMethod: 'credit', customerId: 1, customerName: 'Juan Dela Cruz', items: [{ product_id: 1, product_name: 'Purified Water', quantity: 2, unit_price: 25 }, { product_id: 3, product_name: 'Water Jug 5 Gal', quantity: 1, unit_price: 150 }], daysAgo: 2 }),
+  makeCompletedOrder({ orderType: 'delivery', paymentMethod: 'e_wallet', customerId: 2, customerName: 'Maria Santos', items: [{ product_id: 1, product_name: 'Purified Water', quantity: 2, unit_price: 25 }, { product_id: 4, product_name: 'Cap', quantity: 1, unit_price: 2 }, { product_id: 5, product_name: 'Seal', quantity: 1, unit_price: 1 }], deliveryFee: 15, daysAgo: 1, bottlesReturned: 1 }),
+  makeCompletedOrder({ orderType: 'walk_in', paymentMethod: 'cash', customerId: 4, customerName: 'Ana Garcia', items: [{ product_id: 1, product_name: 'Purified Water', quantity: 2, unit_price: 25 }], daysAgo: 0, notes: 'Morning refill' }),
+  makeCompletedOrder({ orderType: 'walk_in', paymentMethod: 'e_wallet', customerId: null, customerName: 'Walk-in', items: [{ product_id: 1, product_name: 'Purified Water', quantity: 1, unit_price: 25 }, { product_id: 5, product_name: 'Seal', quantity: 1, unit_price: 1 }], daysAgo: 0 })
 );
 
 export async function listOrders() {
   await delay(300);
-  return mockOrders.map((o) => ({ ...o, items: [...o.items] }));
+  return mockOrders.map((order) => ({ ...order, items: [...order.items] }));
+}
+
+export async function listDeletedOrders() {
+  await delay(300);
+  return archivedOrders.map((order) => ({ ...order, items: [...order.items] }));
 }
 
 export async function createOrder(payload) {
   await delay(400);
-  const customer = mockCustomers.find((c) => c.id === Number(payload.customer_id));
+  const customer = mockCustomers.find((item) => item.id === Number(payload.customer_id));
   const order = {
     ...payload,
     id: nextOrderId++,
@@ -247,12 +184,8 @@ export async function createOrder(payload) {
 
   if (customer) {
     const bottlesReturned = Number(payload.bottles_returned ?? 0);
-    if (bottlesReturned > 0) {
-      customer.bottle_debt = Math.max(0, customer.bottle_debt - bottlesReturned);
-    }
-    if (payload.payment_method === 'credit') {
-      customer.outstanding_balance = Number(customer.outstanding_balance) + Number(payload.total_amount);
-    }
+    if (bottlesReturned > 0) customer.bottle_debt = Math.max(0, customer.bottle_debt - bottlesReturned);
+    if (payload.payment_method === 'credit') customer.outstanding_balance = Number(customer.outstanding_balance) + Number(payload.total_amount);
   }
 
   return { ...order, items: [...order.items] };
@@ -260,11 +193,11 @@ export async function createOrder(payload) {
 
 export async function updateOrder(id, payload) {
   await delay(400);
-  const index = mockOrders.findIndex((o) => o.id === id);
+  const index = mockOrders.findIndex((order) => order.id === id);
   if (index === -1) {
     throw { message: 'Order not found.', errors: {} };
   }
-  const customer = mockCustomers.find((c) => c.id === Number(payload.customer_id));
+  const customer = mockCustomers.find((item) => item.id === Number(payload.customer_id));
   const editable = { ...payload };
   delete editable.status;
   mockOrders[index] = {
@@ -280,17 +213,40 @@ export async function updateOrder(id, payload) {
 
 export async function deleteOrder(id) {
   await delay(300);
-  const index = mockOrders.findIndex((o) => o.id === id);
+  const index = mockOrders.findIndex((order) => order.id === id);
   if (index === -1) {
     throw { message: 'Order not found.', errors: {} };
   }
-  mockOrders.splice(index, 1);
+  const [order] = mockOrders.splice(index, 1);
+  archivedOrders.unshift({ ...order, deleted_at: new Date().toISOString() });
+  return { success: true };
+}
+
+export async function restoreOrder(id) {
+  await delay(300);
+  const index = archivedOrders.findIndex((order) => order.id === id);
+  if (index === -1) {
+    throw { message: 'Order not found.', errors: {} };
+  }
+  const [order] = archivedOrders.splice(index, 1);
+  const { deleted_at: _removed, ...restored } = order;
+  mockOrders.push(restored);
+  return { ...restored, items: [...restored.items] };
+}
+
+export async function permanentDeleteOrder(id) {
+  await delay(300);
+  const index = archivedOrders.findIndex((order) => order.id === id);
+  if (index === -1) {
+    throw { message: 'Order not found.', errors: {} };
+  }
+  archivedOrders.splice(index, 1);
   return { success: true };
 }
 
 export async function transitionOrderStatus(id, status) {
   await delay(300);
-  const index = mockOrders.findIndex((o) => o.id === id);
+  const index = mockOrders.findIndex((order) => order.id === id);
   if (index === -1) {
     throw { message: 'Order not found.', errors: {} };
   }
@@ -305,7 +261,7 @@ export async function transitionOrderStatus(id, status) {
 
 export async function recordDelivery(id, deliveryData) {
   await delay(400);
-  const index = mockOrders.findIndex((o) => o.id === id);
+  const index = mockOrders.findIndex((order) => order.id === id);
   if (index === -1) {
     throw { message: 'Order not found.', errors: {} };
   }
@@ -321,22 +277,19 @@ export async function recordDelivery(id, deliveryData) {
   const cashCollected = Number(deliveryData.cash_collected ?? 0);
 
   if (order.customer_id) {
-    const customerIndex = mockCustomers.findIndex((c) => c.id === order.customer_id);
+    const customerIndex = mockCustomers.findIndex((customer) => customer.id === order.customer_id);
     if (customerIndex !== -1) {
       const customer = mockCustomers[customerIndex];
-      const newBottleDebt = Math.max(0, customer.bottle_debt - bottlesReturned);
-      const newOutstandingBalance = Math.max(0, customer.outstanding_balance - cashCollected);
       mockCustomers[customerIndex] = {
         ...customer,
-        bottle_debt: newBottleDebt,
-        outstanding_balance: newOutstandingBalance,
+        bottle_debt: Math.max(0, customer.bottle_debt - bottlesReturned),
+        outstanding_balance: Math.max(0, customer.outstanding_balance - cashCollected),
       };
     }
   }
 
   const newDeliveryStatus = deliveryData.delivery_status;
   const now = new Date().toISOString();
-
   mockOrders[index] = {
     ...order,
     delivery_status: newDeliveryStatus,
@@ -344,9 +297,7 @@ export async function recordDelivery(id, deliveryData) {
     bottles_returned_at_delivery: bottlesReturned,
     cash_collected_at_delivery: cashCollected,
     delivery_address: deliveryData.delivery_address ?? order.delivery_address,
-    status: canTransition(order, ORDER_STATUSES.completed)
-      ? ORDER_STATUSES.completed
-      : order.status,
+    status: canTransition(order, ORDER_STATUSES.completed) ? ORDER_STATUSES.completed : order.status,
     updated_at: now,
   };
 

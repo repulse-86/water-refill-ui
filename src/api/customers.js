@@ -19,3 +19,15 @@ export async function deleteCustomer(id) {
 export async function settleCustomer(id, settlement) {
   return client.post(`/customers/${id}/settle`, settlement);
 }
+
+export async function listDeletedCustomers() {
+  return client.get('/customers/deleted');
+}
+
+export async function restoreCustomer(id) {
+  return client.post(`/customers/${id}/restore`);
+}
+
+export async function permanentDeleteCustomer(id) {
+  return client.delete(`/customers/${id}/permanent`);
+}

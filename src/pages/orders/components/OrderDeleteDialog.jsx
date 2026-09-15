@@ -6,8 +6,9 @@ export default function OrderDeleteDialog({ order, isLoading, onClose, onConfirm
       isOpen={Boolean(order)}
       onClose={onClose}
       onConfirm={onConfirm}
-      title="Delete Order"
-      message={order ? `Are you sure you want to delete order #${order.id}? This action cannot be undone.` : ''}
+      title="Archive Order"
+      message={order ? `Archive order #${order.id}? It will move to Archived and can be restored later.` : ''}
+      confirmLabel="Archive"
       isLoading={isLoading}
     />
   );

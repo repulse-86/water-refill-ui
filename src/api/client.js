@@ -51,22 +51,35 @@ if (useMocks) {
   mock.onDelete(/\/orders\/\d+$/).reply(reply((config) => ordersMock.deleteOrder(getId(config))));
   mock.onPost(/\/orders\/\d+\/status$/).reply(reply((config) => ordersMock.transitionOrderStatus(getId(config), readBody(config).status)));
   mock.onPost(/\/orders\/\d+\/delivery$/).reply(reply((config) => ordersMock.recordDelivery(getId(config), readBody(config))));
+  mock.onGet('/orders/deleted').reply(reply(() => ordersMock.listDeletedOrders()));
+  mock.onPost(/\/orders\/\d+\/restore$/).reply(reply((config) => ordersMock.restoreOrder(getId(config))));
+  mock.onDelete(/\/orders\/\d+\/permanent$/).reply(reply((config) => ordersMock.permanentDeleteOrder(getId(config))));
 
   mock.onGet('/customers').reply(reply(() => customersMock.listCustomers()));
   mock.onPost('/customers').reply(reply((config) => customersMock.createCustomer(readBody(config))));
   mock.onPut(/\/customers\/\d+$/).reply(reply((config) => customersMock.updateCustomer(getId(config), readBody(config))));
   mock.onDelete(/\/customers\/\d+$/).reply(reply((config) => customersMock.deleteCustomer(getId(config))));
   mock.onPost(/\/customers\/\d+\/settle$/).reply(reply((config) => customersMock.settleCustomer(getId(config), readBody(config))));
+  mock.onGet('/customers/deleted').reply(reply(() => customersMock.listDeletedCustomers()));
+  mock.onPost(/\/customers\/\d+\/restore$/).reply(reply((config) => customersMock.restoreCustomer(getId(config))));
+  mock.onDelete(/\/customers\/\d+\/permanent$/).reply(reply((config) => customersMock.permanentDeleteCustomer(getId(config))));
 
   mock.onGet('/products').reply(reply(() => productsMock.listProducts()));
   mock.onPost('/products').reply(reply((config) => productsMock.createProduct(readBody(config))));
   mock.onPut(/\/products\/\d+$/).reply(reply((config) => productsMock.updateProduct(getId(config), readBody(config))));
   mock.onDelete(/\/products\/\d+$/).reply(reply((config) => productsMock.deleteProduct(getId(config))));
+  mock.onGet('/products/deleted').reply(reply(() => productsMock.listDeletedProducts()));
+  mock.onPost(/\/products\/\d+\/restore$/).reply(reply((config) => productsMock.restoreProduct(getId(config))));
+  mock.onDelete(/\/products\/\d+\/permanent$/).reply(reply((config) => productsMock.permanentDeleteProduct(getId(config))));
+  mock.onGet(/\/products\/\d+\/components$/).reply(reply((config) => productsMock.listProductComponents(getId(config))));
 
   mock.onGet('/meter-readings').reply(reply(() => meterReadingsMock.listMeterReadings()));
   mock.onPost('/meter-readings').reply(reply((config) => meterReadingsMock.createMeterReading(readBody(config))));
   mock.onPut(/\/meter-readings\/\d+$/).reply(reply((config) => meterReadingsMock.updateMeterReading(getId(config), readBody(config))));
   mock.onDelete(/\/meter-readings\/\d+$/).reply(reply((config) => meterReadingsMock.deleteMeterReading(getId(config))));
+  mock.onGet('/meter-readings/deleted').reply(reply(() => meterReadingsMock.listDeletedMeterReadings()));
+  mock.onPost(/\/meter-readings\/\d+\/restore$/).reply(reply((config) => meterReadingsMock.restoreMeterReading(getId(config))));
+  mock.onDelete(/\/meter-readings\/\d+\/permanent$/).reply(reply((config) => meterReadingsMock.permanentDeleteMeterReading(getId(config))));
 
   mock.onGet('/settings').reply(reply(() => settingsMock.getSettings()));
   mock.onPut('/settings').reply(reply((config) => settingsMock.updateSettings(readBody(config))));

@@ -5,11 +5,11 @@ import { enrichReading } from '../domain/meterReading';
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 function dateKey(offsetDays) {
-  const d = new Date();
-  d.setDate(d.getDate() + offsetDays);
-  const mm = String(d.getMonth() + 1).padStart(2, '0');
-  const dd = String(d.getDate()).padStart(2, '0');
-  return `${d.getFullYear()}-${mm}-${dd}`;
+  const date = new Date();
+  date.setDate(date.getDate() + offsetDays);
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${date.getFullYear()}-${month}-${day}`;
 }
 
 export const mockMeterReadings = [
@@ -21,17 +21,17 @@ export const mockMeterReadings = [
   { id: 6, reading_date: dateKey(0), meter_value: 54, notes: 'End of shift', created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
 ];
 
-let readings = [...mockMeterReadings];
-
+const archivedReadings = [];
 let nextId = 7;
+
+const clone = (reading) => ({ ...reading });
 
 const validate = (payload = {}, excludeId = null) => {
   const errors = {};
-
   const readingDate = payload.reading_date?.trim();
   if (!readingDate) {
     errors.reading_date = ['The reading date field is required.'];
-  } else if (readings.some((r) => r.reading_date === readingDate && r.id !== excludeId)) {
+  } else if (mockMeterReadings.some((reading) => reading.reading_date === readingDate && reading.id !== excludeId)) {
     errors.reading_date = ['A reading for this date has already been recorded.'];
   } else {
     const date = new Date(`${readingDate}T00:00:00`);
@@ -48,24 +48,27 @@ const validate = (payload = {}, excludeId = null) => {
   if (payload.meter_value === '' || payload.meter_value == null || Number.isNaN(meterValue) || meterValue < 0) {
     errors.meter_value = ['The meter value must be a positive number.'];
   }
-
   return errors;
 };
 
 export function getMeterReadings() {
-  return readings;
+  return mockMeterReadings.map(clone);
 }
 
 export async function listMeterReadings() {
   await delay(300);
-  return [...readings]
+  return [...mockMeterReadings]
     .sort((a, b) => b.reading_date.localeCompare(a.reading_date))
-    .map((r) => enrichReading(r, readings, mockOrders, mockProducts));
+    .map((reading) => enrichReading(reading, mockMeterReadings, mockOrders, mockProducts));
+}
+
+export async function listDeletedMeterReadings() {
+  await delay(300);
+  return archivedReadings.map(clone);
 }
 
 export async function createMeterReading(payload) {
   await delay(400);
-
   const errors = validate(payload);
   if (Object.keys(errors).length > 0) {
     throw { message: 'The given data was invalid.', errors };
@@ -79,14 +82,13 @@ export async function createMeterReading(payload) {
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
   };
-  readings.push(reading);
-  return enrichReading(reading, readings, mockOrders, mockProducts);
+  mockMeterReadings.push(reading);
+  return enrichReading(reading, mockMeterReadings, mockOrders, mockProducts);
 }
 
 export async function updateMeterReading(id, payload) {
   await delay(400);
-
-  const index = readings.findIndex((r) => r.id === id);
+  const index = mockMeterReadings.findIndex((reading) => reading.id === id);
   if (index === -1) {
     throw { message: 'Reading not found.', errors: {} };
   }
@@ -96,23 +98,45 @@ export async function updateMeterReading(id, payload) {
     throw { message: 'The given data was invalid.', errors };
   }
 
-  readings[index] = {
-    ...readings[index],
+  mockMeterReadings[index] = {
+    ...mockMeterReadings[index],
     reading_date: payload.reading_date.trim(),
     meter_value: Number(payload.meter_value),
     notes: payload.notes?.trim() || null,
     updated_at: new Date().toISOString(),
   };
-  return enrichReading(readings[index], readings, mockOrders, mockProducts);
+  return enrichReading(mockMeterReadings[index], mockMeterReadings, mockOrders, mockProducts);
 }
 
 export async function deleteMeterReading(id) {
   await delay(300);
-
-  const index = readings.findIndex((r) => r.id === id);
+  const index = mockMeterReadings.findIndex((reading) => reading.id === id);
   if (index === -1) {
     throw { message: 'Reading not found.', errors: {} };
   }
-  readings.splice(index, 1);
+  const [reading] = mockMeterReadings.splice(index, 1);
+  archivedReadings.unshift({ ...reading, deleted_at: new Date().toISOString() });
+  return { success: true };
+}
+
+export async function restoreMeterReading(id) {
+  await delay(300);
+  const index = archivedReadings.findIndex((reading) => reading.id === id);
+  if (index === -1) {
+    throw { message: 'Reading not found.', errors: {} };
+  }
+  const [reading] = archivedReadings.splice(index, 1);
+  const { deleted_at: _removed, ...restored } = reading;
+  mockMeterReadings.push(restored);
+  return clone(restored);
+}
+
+export async function permanentDeleteMeterReading(id) {
+  await delay(300);
+  const index = archivedReadings.findIndex((reading) => reading.id === id);
+  if (index === -1) {
+    throw { message: 'Reading not found.', errors: {} };
+  }
+  archivedReadings.splice(index, 1);
   return { success: true };
 }
